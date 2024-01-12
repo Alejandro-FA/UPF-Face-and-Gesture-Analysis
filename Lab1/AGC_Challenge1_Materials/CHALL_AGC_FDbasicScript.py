@@ -17,9 +17,11 @@ if len(sys.argv) != 2:
     exit(-1)
 else:
     output_file_name = sys.argv[1]
-    output_file_name += ".pkl"
 
 print(f"Results will be stored in {output_file_name}")
+
+def CHALL_AGC_ComputeRates(DetectionSTR, AGC_Challenge1_STR):
+    pass
 
 
 def CHALL_AGC_ComputeDetScores(DetectionSTR, AGC_Challenge1_STR, show_figures):
@@ -115,6 +117,10 @@ def CHALL_AGC_ComputeDetScores(DetectionSTR, AGC_Challenge1_STR, show_figures):
             plt.clf()
             plt.close()
 
+    # Save all F1 scores for analysis
+    with open(output_file_name + "_scores.pkl", "wb") as score_file:
+        pickle.dump(scoresSTR["F1"], score_file)
+
     FD_score = np.mean(np.hstack(np.array(scoresSTR['F1'][:])))
     return FD_score
 
@@ -202,11 +208,12 @@ for idx, im in enumerate(AGC_Challenge1_TRAINING['imageName']):
     DetectionSTR.append(det_faces)
 
 
-with open(output_file_name, "wb") as output:
-    pickle.dump(DetectionSTR, output)
 
-
+# CHALL_AGC_ComputeRates(DetectionSTR, AGC_Challenge1_TRAINING)
 FD_score = CHALL_AGC_ComputeDetScores(DetectionSTR, AGC_Challenge1_TRAINING, show_figures=False)
 _, rem = divmod(total_time, 3600)
 minutes, seconds = divmod(rem, 60)
 print('F1-score: %.2f, Total time: %2d m %.2f s' % (100 * FD_score, int(minutes), seconds))
+
+with open(output_file_name + "_bounding_boxes.pkl", "wb") as output:
+    pickle.dump(DetectionSTR, output)
