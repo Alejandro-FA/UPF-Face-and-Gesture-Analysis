@@ -1,6 +1,6 @@
 from __future__ import print_function
 import numpy as np
-from imageio import imread
+from imageio.v2 import imread
 from scipy.io import loadmat
 import pandas as pd
 import time
@@ -125,38 +125,113 @@ def CHALL_AGC_ComputeDetScores(DetectionSTR, AGC_Challenge1_STR, show_figures):
     return FD_score
 
 
-def MyFaceDetectionFunction(A):
 
-    # Function to implement
-    frame_gray = cv.cvtColor(A, cv.COLOR_BGR2GRAY)
-    frame_gray = cv.equalizeHist(frame_gray)
+class Model:
+    def __init__(self, haar_face_model: str, lbp_face_model: str, eyes_model: str) -> None:
+        self.face_haarcascade = cv.CascadeClassifier()
+        self.face_lbpcascade = cv.CascadeClassifier()
+        self.eyes_cascade = cv.CascadeClassifier()
+        
+        try:
+            self.eyes_cascade.load(cv.samples.findFile(eyes_model))
+            self.face_haarcascade.load(cv.samples.findFile(haar_face_model))
+            self.face_lbpcascade.load(cv.samples.findFile(lbp_face_model))
+        except Exception:
+            print('--(!)Error loading opencv file')
+            exit(0)
+        
 
-    #-- Detect faces
-    faces = face_cascade.detectMultiScale(frame_gray)
-    detected_faces = []
+    def detect_faces(self, image) -> list[tuple[int, int, int, int]]:
+        frame_gray = self.preprocess(image)
+
+        #-- Detect faces
+        faces = self.face_lbpcascade.detectMultiScale(frame_gray)
+        # eyes = self.eyes_cascade.detectMultiScale(frame_gray)
+        detected_faces = []
+        # print(len(faces))
+        
+        
+        for (x,y,w,h) in faces:
+            margin = 0.75
+            y2_roi = int(y - margin * h)
+            x2_roi = int(x - margin * w)
+            faceROI = frame_gray[
+                y2_roi : y + int((1 + margin)*h),
+                x2_roi : x + int((1 + margin)*w)
+            ]
+            
+            #-- In each face, detect eyes
+            # eyes = self.eyes_cascade.detectMultiScale(faceROI)
+            large_faces = self.face_haarcascade.detectMultiScale(faceROI)
+            # If a face is detected with the accurate model, find a more suitable bounding box
+            # print(len(large_faces))
+            if len(large_faces) > 0:
+                # detected_faces.append(self.__get_largest_faces(large_faces, 10))
+                detected_large_faces = []
+                for (x2,y2,w2,h2) in large_faces:
+                    detected_large_faces.append(self.__get_box(x2 + x2_roi, y2 + y2_roi , w2, h2, image, 0))
+
+                largest_face = self.__get_largest_faces(detected_large_faces, 1)[0]
+                detected_faces.append(largest_face)
+            else:
+                detected_faces.append(self.__get_box(x,y,w,h,image, 0.3))
+            # detected_faces.append(self.__get_box(x,y,w,h,image, 0.25))
+            
+
+            # if len(eyes) > 0:
+            #     detected_faces.append((x, y, x + w, y + h))
+
+            # for (x2, y2, w2, h2) in eyes:
+            #     detected_faces.append((x+x2, y+y2, x+x2 + w2, y+y2 + h2))
+
+        # return self.__get_largest_faces(detected_faces, 2)
+        return detected_faces
+
+
+    def preprocess(self, image):
+        try:
+            frame_gray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+        except:
+            frame_gray = image
+        frame_gray = cv.equalizeHist(frame_gray)
+        return frame_gray
+
+
+    def __get_largest_faces(self, faces: list[tuple[int, int, int, int]], n: int) -> list[tuple[int, int, int, int]]:
+        largest_faces = sorted(
+            faces,
+            key= lambda x: (x[2] - x[0]) * (x[3] - x[1]),
+            reverse=True
+        )[0:n]
+        
+        return largest_faces
     
-    for (x,y,w,h) in faces:
-        detected_faces.append((x, y, x + w, y + h))
-    
-    return detected_faces
 
+    def __get_box(self, x, y, w, h, image, margin: float) -> tuple[int, int, int, int]:
+        img_h = image.shape[0]
+        img_w = image.shape[1]
+        return (
+            self.__clamp(x - (0 + margin) * w, 0, img_w),
+            self.__clamp(y - (0 + margin) * h, 0, img_h),
+            self.__clamp(x + (1 + margin) * w, 0, img_w),
+            self.__clamp(y + (1 + margin) * h, 0, img_h)
+        )
+
+    def __clamp(self, x: float, min_threshold, max_threshold) -> int:
+        x = int(x)
+        x = min(x, max_threshold)
+        x = max(x, min_threshold)
+        return x
+    
+
+def MyFaceDetectionFunction(A, model: Model):
+    return model.detect_faces(A)
 
 
 # Basic script for Face Detection Challenge
 # --------------------------------------------------------------------
 # AGC Challenge
 # Universitat Pompeu Fabra
-
-# Load OpenCV Model
-face_cascade_name = 'opencv/data/haarcascades/haarcascade_frontalface_alt.xml'
-face_cascade = cv.CascadeClassifier()
-
-#-- 1. Load the cascades
-if not face_cascade.load(cv.samples.findFile(face_cascade_name)):
-    print('--(!)Error loading face cascade')
-    exit(0)
-else:
-    print("face cascade loaded")
 
 # Load challenge Training data
 dir_challenge = "AGC_Challenge1_Materials/"
@@ -175,6 +250,11 @@ DetectionSTR = []
 
 total_images = len(AGC_Challenge1_TRAINING)
 info_every = 100
+
+haar_face = "opencv/data/haarcascades/haarcascade_frontalface_alt.xml"
+lbp_face = "opencv/data/lbpcascades/lbpcascade_frontalface_improved.xml"
+eyes_path = "opencv/data/haarcascades_cuda/haarcascade_eye.xml"
+model = Model(haar_face, lbp_face, eyes_path)
 
 # Initialize timer accumulator
 total_time = 0
@@ -196,14 +276,16 @@ for idx, im in enumerate(AGC_Challenge1_TRAINING['imageName']):
         # Each bounding box that is detected will be indicated in a
         # separate row in det_faces
 
-        det_faces = MyFaceDetectionFunction(A)
+        det_faces = MyFaceDetectionFunction(A, model)
 
         tt = time.time() - ti
         total_time = total_time + tt
-    except:
+    except Exception as e:
+        print(im)
+        det_faces = []
+        raise e
         # If the face detection function fails, it will be assumed that no
         # face was detected for this input image
-        det_faces = []
 
     DetectionSTR.append(det_faces)
 

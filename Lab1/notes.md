@@ -9,3 +9,12 @@ No need to train any model. We can use an already existing Viola-Jones like algo
 
 
 https://docs.opencv.org/4.x/db/d28/tutorial_cascade_classifier.html
+
+
+## TODO
+
+- If a large face is not detected, try to look for an eye to see ensure that we do not have false positives.
+
+- We could also use `alt2` method for detecting large faces, and take the largest face
+
+- Search for profile faces as well.
