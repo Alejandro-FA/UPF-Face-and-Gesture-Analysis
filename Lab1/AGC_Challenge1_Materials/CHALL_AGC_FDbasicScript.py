@@ -7,6 +7,19 @@ import time
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 import cv2 as cv
+import sys
+import pickle
+
+
+if len(sys.argv) != 2:
+    print("You must specify the name of the output file where the detected faces will be stored")
+    print("Be aware that only one name is allowed")
+    exit(-1)
+else:
+    output_file_name = sys.argv[1]
+    output_file_name += ".pkl"
+
+print(f"Results will be stored in {output_file_name}")
 
 
 def CHALL_AGC_ComputeDetScores(DetectionSTR, AGC_Challenge1_STR, show_figures):
@@ -148,17 +161,23 @@ AGC_Challenge1_TRAINING = [[row.flat[0] if row.size == 1 else row for row in lin
 columns = ['id', 'imageName', 'faceBox']
 AGC_Challenge1_TRAINING = pd.DataFrame(AGC_Challenge1_TRAINING, columns=columns)
 
-# Provide the path to the input images, for example
-# 'C:/AGC_Challenge/images/'
+
 imgPath = dir_challenge + "TRAINING/"
 AGC_Challenge1_TRAINING['imageName'] = imgPath + AGC_Challenge1_TRAINING['imageName'].astype(str)
 # Initialize results structure
 DetectionSTR = []
 
+total_images = len(AGC_Challenge1_TRAINING)
+info_every = 100
+
 # Initialize timer accumulator
 total_time = 0
 for idx, im in enumerate(AGC_Challenge1_TRAINING['imageName']):
-    print(im)
+    if idx % info_every == 0:
+        _, rem = divmod(total_time, 3600)
+        minutes, seconds = divmod(rem, 60)
+        print(f"[{idx} / {total_images}] images processed. Elapsed time: {int(minutes)} m {seconds:.2f} s")
+    
     A = imread(im)
     try:
         ti = time.time()
@@ -181,6 +200,11 @@ for idx, im in enumerate(AGC_Challenge1_TRAINING['imageName']):
         det_faces = []
 
     DetectionSTR.append(det_faces)
+
+
+with open(output_file_name, "wb") as output:
+    pickle.dump(DetectionSTR, output)
+
 
 FD_score = CHALL_AGC_ComputeDetScores(DetectionSTR, AGC_Challenge1_TRAINING, show_figures=False)
 _, rem = divmod(total_time, 3600)
