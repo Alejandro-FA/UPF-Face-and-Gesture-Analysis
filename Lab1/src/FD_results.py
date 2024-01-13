@@ -1,14 +1,9 @@
 from __future__ import print_function
 import numpy as np
-from imageio import imread
 from scipy.io import loadmat
 import pandas as pd
-import time
-import matplotlib.pyplot as plt
-from matplotlib.patches import Rectangle
 import cv2 as cv
 import pickle
-import sys
 import os
 import argparse
 from typing import Any
