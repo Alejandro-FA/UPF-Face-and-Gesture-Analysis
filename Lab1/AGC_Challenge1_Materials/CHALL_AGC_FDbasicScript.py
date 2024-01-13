@@ -117,7 +117,7 @@ def CHALL_AGC_ComputeDetScores(DetectionSTR, AGC_Challenge1_STR, show_figures):
             plt.clf()
             plt.close()
 
-    # Save all F1 scores for analysis
+    # Save all F1 scores for analysis
     with open(output_file_name + "_scores.pkl", "wb") as score_file:
         pickle.dump(scoresSTR["F1"], score_file)
 
@@ -127,15 +127,21 @@ def CHALL_AGC_ComputeDetScores(DetectionSTR, AGC_Challenge1_STR, show_figures):
 
 
 class Model:
-    def __init__(self, haar_face_model: str, lbp_face_model: str, eyes_model: str) -> None:
+    def __init__(self, haar_face_model: str, lbp_face_model: str, eyes_model: str, smile_model: str, upper_body_model: str, profile_model: str) -> None:
         self.face_haarcascade = cv.CascadeClassifier()
         self.face_lbpcascade = cv.CascadeClassifier()
         self.eyes_cascade = cv.CascadeClassifier()
+        self.smile_cascade = cv.CascadeClassifier()
+        self.upper_body = cv.CascadeClassifier()
+        self.profile_lbpcascade = cv.CascadeClassifier()
         
         try:
             self.eyes_cascade.load(cv.samples.findFile(eyes_model))
             self.face_haarcascade.load(cv.samples.findFile(haar_face_model))
             self.face_lbpcascade.load(cv.samples.findFile(lbp_face_model))
+            self.smile_cascade.load(cv.samples.findFile(smile_model))
+            self.upper_body.load(cv.samples.findFile(upper_body_model))
+            self.profile_lbpcascade.load(cv.samples.findFile(profile_model))
         except Exception:
             print('--(!)Error loading opencv file')
             exit(0)
@@ -143,13 +149,18 @@ class Model:
 
     def detect_faces(self, image) -> list[tuple[int, int, int, int]]:
         frame_gray = self.preprocess(image)
+        OVERLAP_THRESHOLD = 0.1
 
         #-- Detect faces
         faces = self.face_lbpcascade.detectMultiScale(frame_gray)
-        # eyes = self.eyes_cascade.detectMultiScale(frame_gray)
+        profile_faces = self.profile_lbpcascade.detectMultiScale(frame_gray)
         detected_faces = []
-        # print(len(faces))
+        detected_profiles = []
         
+        for (x,y,w,h) in profile_faces:
+            detected_profiles.append(self.__get_box(x,y,w,h,image, 0))
+        
+        detected_profiles = self.__remove_overlaps(detected_profiles, OVERLAP_THRESHOLD)
         
         for (x,y,w,h) in faces:
             margin = 0.75
@@ -174,18 +185,38 @@ class Model:
                 largest_face = self.__get_largest_faces(detected_large_faces, 1)[0]
                 detected_faces.append(largest_face)
             else:
-                detected_faces.append(self.__get_box(x,y,w,h,image, 0.3))
-            # detected_faces.append(self.__get_box(x,y,w,h,image, 0.25))
+                margin = 0
+                eyesROI = frame_gray[
+                    y : y + h,
+                    x : x + w
+                ]
+                smileROI = eyesROI
+                bodyROI = frame_gray[
+                    y - h : y + 3 * h,
+                    x - 2 * w : x + 3 * w
+                ]
+                if len(self.eyes_cascade.detectMultiScale(eyesROI)) > 0 or \
+                    len(self.smile_cascade.detectMultiScale(smileROI)) > 0 or \
+                    len(self.upper_body.detectMultiScale(bodyROI)) > 0:
+                    detected_faces.append(self.__get_box(x,y,w,h,image, 0.25))
             
 
-            # if len(eyes) > 0:
-            #     detected_faces.append((x, y, x + w, y + h))
-
-            # for (x2, y2, w2, h2) in eyes:
-            #     detected_faces.append((x+x2, y+y2, x+x2 + w2, y+y2 + h2))
+            detected_faces = self.__remove_overlaps(detected_faces, OVERLAP_THRESHOLD)
+        
+        # FIXME: move apart
+        results = detected_faces
+        for profile in detected_profiles:
+            has_overlap = False
+            for face in detected_faces:
+                if self.__overlap(profile, face, OVERLAP_THRESHOLD):
+                    has_overlap = True
+                    break
+            
+            if not has_overlap:
+                results.append(profile)
 
         # return self.__get_largest_faces(detected_faces, 2)
-        return detected_faces
+        return results
 
 
     def preprocess(self, image):
@@ -223,6 +254,38 @@ class Model:
         x = max(x, min_threshold)
         return x
     
+    def __area_box(self, box: tuple[int, int, int, int]) -> float:
+        return (box[2] - box[0]) * (box[3] - box[1])
+
+    def __overlap(self, face1, face2, threshold) -> bool:
+        f = face1
+        g = face2
+        # Intersection box
+        x1 = max(f[0], g[0])
+        y1 = max(f[1], g[1])
+        x2 = min(f[2], g[2])
+        y2 = min(f[3], g[3])
+        # Areas
+        int_Area = max(0, (x2 - x1)) * max(0, (y2 - y1))
+        total_Area = (f[2] - f[0]) * (f[3] - f[1]) + (g[2] - g[0]) * (g[3] - g[1]) - int_Area
+        
+        return int_Area / total_Area > threshold
+    
+    def __remove_overlaps(self, faces: list[tuple[int, int, int, int]], threshold: float) -> list[tuple[int, int, int, int]]:
+        non_overlapped = []
+        
+        for i in range(len(faces)):
+            has_overlap = False
+            for j in range(i, len(faces)):
+                if self.__overlap(faces[i], faces[j], threshold) and (self.__area_box(faces[i]) < self.__area_box(faces[j])):
+                    has_overlap = True
+                    break
+
+            # No overlap
+            if not has_overlap:
+                non_overlapped.append(faces[i])
+                    
+        return non_overlapped
 
 def MyFaceDetectionFunction(A, model: Model):
     return model.detect_faces(A)
@@ -254,7 +317,10 @@ info_every = 100
 haar_face = "opencv/data/haarcascades/haarcascade_frontalface_alt.xml"
 lbp_face = "opencv/data/lbpcascades/lbpcascade_frontalface_improved.xml"
 eyes_path = "opencv/data/haarcascades_cuda/haarcascade_eye.xml"
-model = Model(haar_face, lbp_face, eyes_path)
+smile_path = "opencv/data/haarcascades_cuda/haarcascade_smile.xml"
+upper_body_path = "opencv/data/haarcascades_cuda/haarcascade_upperbody.xml"
+profile_path = "opencv/data/haarcascades/haarcascade_profileface.xml"
+model = Model(haar_face, lbp_face, eyes_path, smile_path, upper_body_path, profile_path)
 
 # Initialize timer accumulator
 total_time = 0

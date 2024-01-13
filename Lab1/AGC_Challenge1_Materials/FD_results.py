@@ -131,10 +131,10 @@ def show_figures(df: pd.DataFrame, image_holder: ImageHolder, scores: list[Any])
         if key_pressed == 27:
             cv.destroyAllWindows()
             break
-        elif key_pressed == 3:
+        elif key_pressed == 100: # 'D'
             curr_image = image_holder.next()
             count = bb_manager.next()
-        elif key_pressed == 2:
+        elif key_pressed == 97: # 'A'
             curr_image = image_holder.prev()
             count = bb_manager.prev()
         cv.destroyAllWindows()
