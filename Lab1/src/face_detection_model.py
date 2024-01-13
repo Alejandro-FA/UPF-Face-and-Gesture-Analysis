@@ -2,13 +2,15 @@ import cv2 as cv
 
 
 class FaceDetectionModel:
-    def __init__(self, haar_face_model: str, lbp_face_model: str, eyes_model: str, smile_model: str, upper_body_model: str, profile_model: str) -> None:
+    def __init__(self, haar_face_model: str, lbp_face_model: str, eyes_model: str, smile_model: str, upper_body_model: str, profile_model: str, nose_model: str, mouth_model: str) -> None:
         self.face_haarcascade = cv.CascadeClassifier()
         self.face_lbpcascade = cv.CascadeClassifier()
         self.eyes_cascade = cv.CascadeClassifier()
         self.smile_cascade = cv.CascadeClassifier()
         self.upper_body = cv.CascadeClassifier()
         self.profile_lbpcascade = cv.CascadeClassifier()
+        self.nose_cascade = cv.CascadeClassifier()
+        self.mouth_cacade = cv.CascadeClassifier()
         
         try:
             self.eyes_cascade.load(cv.samples.findFile(eyes_model))
@@ -17,6 +19,8 @@ class FaceDetectionModel:
             self.smile_cascade.load(cv.samples.findFile(smile_model))
             self.upper_body.load(cv.samples.findFile(upper_body_model))
             self.profile_lbpcascade.load(cv.samples.findFile(profile_model))
+            self.nose_cascade.load(cv.samples.findFile(nose_model))
+            self.mouth_cacade.load(cv.samples.findFile(mouth_model))
         except Exception:
             print('--(!)Error loading opencv file')
             exit(0)
@@ -25,15 +29,22 @@ class FaceDetectionModel:
     def detect_faces(self, image) -> list[tuple[int, int, int, int]]:
         frame_gray = self.preprocess(image)
         OVERLAP_THRESHOLD = 0.1
-
+    
+        
+        
+        
+    
         #-- Detect faces
         faces = self.face_lbpcascade.detectMultiScale(frame_gray)
-        profile_faces = self.profile_lbpcascade.detectMultiScale(frame_gray)
+        profile_faces = self.profile_lbpcascade.detectMultiScale(frame_gray, scaleFactor=1.05)
         detected_faces = []
         detected_profiles = []
         
         for (x,y,w,h) in profile_faces:
-            detected_profiles.append(self.__get_box(x,y,w,h,image, 0))
+            faceROI = frame_gray[y:y+h,x:x+w]
+            eyes = self.eyes_cascade.detectMultiScale(faceROI)
+            if len(eyes) > 0:
+                detected_profiles.append(self.__get_box(x,y,w,h,image, 0))
         
         detected_profiles = self.__remove_overlaps(detected_profiles, OVERLAP_THRESHOLD)
         
@@ -48,7 +59,7 @@ class FaceDetectionModel:
             
             #-- In each face, detect eyes
             # eyes = self.eyes_cascade.detectMultiScale(faceROI)
-            large_faces = self.face_haarcascade.detectMultiScale(faceROI)
+            large_faces = self.face_haarcascade.detectMultiScale(faceROI, scaleFactor=1.05, minNeighbors=4)
             # If a face is detected with the accurate model, find a more suitable bounding box
             # print(len(large_faces))
             if len(large_faces) > 0:
@@ -70,9 +81,10 @@ class FaceDetectionModel:
                     y - h : y + 3 * h,
                     x - 2 * w : x + 3 * w
                 ]
-                if len(self.eyes_cascade.detectMultiScale(eyesROI)) > 0 or \
-                    len(self.smile_cascade.detectMultiScale(smileROI)) > 0 or \
-                    len(self.upper_body.detectMultiScale(bodyROI)) > 0:
+                if len(self.eyes_cascade.detectMultiScale(eyesROI, scaleFactor=1.05)) > 0 or \
+                    len(self.smile_cascade.detectMultiScale(smileROI, scaleFactor=1.05)) > 0 or \
+                    len(self.upper_body.detectMultiScale(bodyROI, scaleFactor=1.05)) > 0  or \
+                    len(self.nose_cascade.detectMultiScale(smileROI, scaleFactor=1.05)) > 0:
                     detected_faces.append(self.__get_box(x,y,w,h,image, 0.25))
             
 
@@ -90,7 +102,34 @@ class FaceDetectionModel:
             if not has_overlap:
                 results.append(profile)
 
-        # return self.__get_largest_faces(detected_faces, 2)
+            # return self.__get_largest_faces(detected_faces, 2)
+        results = self.__remove_overlaps(results, OVERLAP_THRESHOLD)
+        
+        #TODO: keep working on rotations
+        # if len(faces) == 0:
+        #     rotation_angles = [10, 15, 20, 25, 30, -10, -15, -20, -25, -30]
+        #     rotated_images = [self.preprocess(self.__rotate_image(image, angle)) for angle in rotation_angles]
+        #     for frame in rotated_images:
+        #         faces = self.face_haarcascade.detectMultiScale(frame_gray)
+        #         added = False
+        #         rotated_face = None
+        #         for (x, y, w, h) in faces:
+        #             rotated_face = self.__get_box(x, y, w, h, frame, 0)
+        #             added = True
+        #         if added:
+        #             rotated_face_ROI = frame[
+        #                 rotated_face[1] - rotated_face[3]:rotated_face[1] + rotated_face[3],
+        #                 rotated_face[0] - rotated_face[2]:rotated_face[0] + rotated_face[2]
+        #             ]
+        #             if len(self.eyes_cascade.detectMultiScale(rotated_face_ROI, scaleFactor=1.05)) > 0 or \
+        #             len(self.smile_cascade.detectMultiScale(rotated_face_ROI, scaleFactor=1.05)) > 0 or \
+        #             len(self.upper_body.detectMultiScale(rotated_face_ROI, scaleFactor=1.05)) > 0  or \
+        #             len(self.nose_cascade.detectMultiScale(rotated_face_ROI, scaleFactor=1.05)) > 0:
+        #                 results.append(rotated_face)
+        #             break
+                    
+        # results = self.__remove_overlaps(results, OVERLAP_THRESHOLD)
+        
         return results
 
 
@@ -161,3 +200,14 @@ class FaceDetectionModel:
                 non_overlapped.append(faces[i])
                     
         return non_overlapped
+    
+    def __rotate_image(self, image, angle):    
+        
+        height, width = image.shape[:2]
+        center = (width // 2, height // 2)
+
+        rotation_matrix = cv.getRotationMatrix2D(center, angle, 1.0)
+
+        rotated_image = cv.warpAffine(image, rotation_matrix, (width, height))
+        
+        return rotated_image
