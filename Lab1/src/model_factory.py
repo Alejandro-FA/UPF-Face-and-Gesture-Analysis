@@ -1,4 +1,5 @@
 from face_detection_model import FaceDetectionModel
+import cv2 as cv
 
 class ModelFactory:
     def get_model(self) -> FaceDetectionModel:
@@ -12,14 +13,35 @@ class ModelFactory:
         mouth_path = "opencv/data/haarcascades/haarcascade_mcs_mouth.xml"
         eyes_pair = "opencv/data/haarcascades/haarcascade_mcs_eyepair_big.xml"
 
+        face_haarcascade = cv.CascadeClassifier()
+        face_lbpcascade = cv.CascadeClassifier()
+        eyes_cascade = cv.CascadeClassifier()
+        smile_cascade = cv.CascadeClassifier()
+        upper_body = cv.CascadeClassifier()
+        profile_lbpcascade = cv.CascadeClassifier()
+        nose_cascade = cv.CascadeClassifier()
+        mouth_cacade = cv.CascadeClassifier()
+        
+        try:
+            face_haarcascade.load(cv.samples.findFile(haar_face))
+            face_lbpcascade.load(cv.samples.findFile(lbp_face))
+            eyes_cascade.load(cv.samples.findFile(eyes_path))
+            smile_cascade.load(cv.samples.findFile(smile_path))
+            upper_body.load(cv.samples.findFile(upper_body_path))
+            profile_lbpcascade.load(cv.samples.findFile(profile_path))
+            nose_cascade.load(cv.samples.findFile(nose_path))
+            mouth_cacade.load(cv.samples.findFile(mouth_path))
+        except Exception as e:
+            print('--(!)Error loading opencv model file')
+            exit(0)
+
         return FaceDetectionModel(
-            haar_face_model=haar_face,
-            lbp_face_model=lbp_face,
-            eyes_model=eyes_path,
-            smile_model=smile_path,
-            upper_body_model=upper_body_path,
-            profile_model=profile_path,
-            nose_model=nose_path,
-            mouth_model=mouth_path,
-            eye_pair_model=eyes_pair
+            haar_face_model=face_haarcascade,
+            lbp_face_model=face_lbpcascade,
+            eyes_model=eyes_cascade,
+            smile_model=smile_cascade,
+            upper_body_model=upper_body,
+            profile_model=profile_lbpcascade,
+            nose_model=nose_cascade,
+            mouth_model=mouth_cacade
         )

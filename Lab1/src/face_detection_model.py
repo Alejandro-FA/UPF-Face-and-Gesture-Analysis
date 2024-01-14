@@ -2,50 +2,78 @@ import cv2 as cv
 import math
 
 
+class ROI:
+    """
+    Class used to represent Regions Of Interest of an image
+    """
+    def __init__(self, base_image, bounding_box: tuple[int, int, int, int]=None, margin=0) -> None:
+        self.base_image = base_image
+        self.base_image_w = base_image.shape[1]
+        self.base_image_h = base_image.shape[0]
+
+        if bounding_box is None:
+            self.x0_roi = 0
+            self.y0_roi = 0
+            self.w_roi =  self.base_image_w
+            self.h_roi =  self.base_image_h
+        else:
+            self.x0_roi = bounding_box[0]
+            self.y0_roi = bounding_box[1]
+            self.w_roi =  bounding_box[2] - bounding_box[0]
+            self.h_roi =  bounding_box[3] - bounding_box[1]
+
+        self.margin = margin
+        self.__roi = None
+
+    def get_frame(self):
+        if not self.__roi:
+            y_min = max(self.y0_roi - int(self.margin * self.h_roi), 0)
+            y_max = min(self.y0_roi + int((1 + self.margin) * self.h_roi), self.base_image_h)
+            x_min = max(self.x0_roi - int(self.margin * self.w_roi), 0)
+            x_max = min(self.x0_roi + int((1 + self.margin) * self.w_roi), self.base_image_w)
+            self.__roi = self.base_image[y_min : y_max, x_min : x_max]
+
+        return self.__roi
+
+
+
 class FaceDetectionModel:
-    def __init__(self, haar_face_model: str, lbp_face_model: str, eyes_model: str, smile_model: str, upper_body_model: str, profile_model: str, nose_model: str, mouth_model: str, eye_pair_model: str) -> None:
-        self.face_haarcascade = cv.CascadeClassifier()
-        self.face_lbpcascade = cv.CascadeClassifier()
-        self.eyes_cascade = cv.CascadeClassifier()
-        self.smile_cascade = cv.CascadeClassifier()
-        self.upper_body = cv.CascadeClassifier()
-        self.profile_lbpcascade = cv.CascadeClassifier()
-        self.nose_cascade = cv.CascadeClassifier()
-        self.mouth_cacade = cv.CascadeClassifier()
-        self.eye_pair = cv.CascadeClassifier()
-        
-        try:
-            self.eyes_cascade.load(cv.samples.findFile(eyes_model))
-            self.face_haarcascade.load(cv.samples.findFile(haar_face_model))
-            self.face_lbpcascade.load(cv.samples.findFile(lbp_face_model))
-            self.smile_cascade.load(cv.samples.findFile(smile_model))
-            self.upper_body.load(cv.samples.findFile(upper_body_model))
-            self.profile_lbpcascade.load(cv.samples.findFile(profile_model))
-            self.nose_cascade.load(cv.samples.findFile(nose_model))
-            self.mouth_cacade.load(cv.samples.findFile(mouth_model))
-            self.eye_pair.load(cv.samples.findFile(eye_pair_model))
-        except Exception:
-            print('--(!)Error loading opencv file')
-            exit(0)
-        
+    def __init__(
+        self,
+        haar_face_model,
+        lbp_face_model,
+        eyes_model,
+        smile_model,
+        upper_body_model,
+        profile_model,
+        nose_model,
+        mouth_model,
+        eye_pair_model,
+    ) -> None:
+        self.face_haarcascade = haar_face_model
+        self.face_lbpcascade = lbp_face_model
+        self.eyes_cascade = eyes_model
+        self.smile_cascade = smile_model
+        self.upper_body = upper_body_model
+        self.profile_lbpcascade = profile_model
+        self.nose_cascade = nose_model
+        self.mouth_cacade = mouth_model
+        self.eye_pair = eye_pair_model
 
     def detect_faces(self, image) -> list[tuple[int, int, int, int]]:
         frame_gray = self.preprocess(image)
         OVERLAP_THRESHOLD = 0.1
-    
-        #-- Detect faces
+
+        # -- Detect faces
         faces = self.face_lbpcascade.detectMultiScale(frame_gray)
-        profile_faces = self.profile_lbpcascade.detectMultiScale(frame_gray, scaleFactor=1.05)
         detected_faces = []
         detected_profiles = []
-        
-        for (x,y,w,h) in profile_faces:
-            faceROI = frame_gray[y:y+h,x:x+w]
-            eyes = self.eyes_cascade.detectMultiScale(faceROI)
+
+        for box in self.detect_elements(self.profile_lbpcascade, ROI(frame_gray)):
+            eyesROI = ROI(frame_gray, box)
+            eyes = self.detect_elements(self.eyes_cascade, eyesROI)
             if len(eyes) > 0:
-                detected_profiles.append(self.__get_box(x,y,w,h,image, 0))
-        
-        detected_profiles = self.__remove_overlaps(detected_profiles, OVERLAP_THRESHOLD)
+                detected_profiles.append(box)
         
         for (x,y,w,h) in faces:
             margin = 0.75
@@ -137,6 +165,17 @@ class FaceDetectionModel:
             frame_gray = image
         frame_gray = cv.equalizeHist(frame_gray)
         return frame_gray
+    
+
+    def detect_elements(self, model, roi: ROI, overlap_threshold=1.0, scale_factor=1.1) -> list[tuple[int, int, int, int]]:
+        elements = model.detectMultiScale(roi.get_frame(), scaleFactor=scale_factor)
+        bounding_boxes = []
+        for x, y, w, h in elements:
+            # box = FaceDetectionModel.__get_box(x, y, w, h, image, 0)
+            bounding_boxes.append((x, y, x + w, y + h))
+
+        bounding_boxes = self.__remove_overlaps(bounding_boxes, overlap_threshold)
+        return bounding_boxes
 
 
     def __get_largest_faces(self, faces: list[tuple[int, int, int, int]], n: int) -> list[tuple[int, int, int, int]]:
