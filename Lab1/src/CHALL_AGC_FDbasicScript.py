@@ -126,7 +126,7 @@ def save_scores(output_path: str, bounding_boxes, f1_scores):
 def get_args():
     parser = argparse.ArgumentParser(description="AGC Challenge 1")
     parser.add_argument("--results_path", required=False, help="Path prefix to the results file")
-    parser.add_argument("--show_figures", required=False, help="Whether to show figures at the end or not", action='store_true', default=False)
+    parser.add_argument("--show-figures", required=False, help="Whether to show figures at the end or not", action='store_true', default=False)
     return parser.parse_args() 
 
 
@@ -135,7 +135,7 @@ if __name__ == '__main__':
     args = get_args()
     OUTPUT_FILE = args.results_path
     SHOW_FIGURES = args.show_figures
-    if args.results_path:
+    if OUTPUT_FILE:
         print(f"Results will be stored in {OUTPUT_FILE}")
 
     # Basic script for Face Detection Challenge
