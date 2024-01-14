@@ -2,38 +2,71 @@ import cv2 as cv
 import math
 
 
+class BoundingBox:
+    def __init__(self, x, y, w, h):
+        self.x1 = x
+        self.y1 = y
+        self.width = w
+        self.height = h
+    
+    def get_resized(self, max_x2, max_y2, margin):
+        x1 = max(self.x1 - int(margin * self.width), 0)
+        y1 = max(self.y1 - int(margin * self.height), 0)
+        x2 = min(self.x1 + int((1 + margin) * self.width), max_x2)
+        y2 = min(self.y1 + int((1 + margin) * self.height), max_y2)
+
+        width = x2 - x1
+        height = y2 - y1
+        return BoundingBox(x1, y1, width, height)
+    
+    def get_coords(self) -> list[int, int, int, int]:
+        return [self.x1, self.y1, self.x1 + self.width, self.y1 + self.height]
+
+    def get_area(self):
+        return self.width * self.height
+
+    def has_overlap(self, bbox2: 'BoundingBox', threshold) -> bool:
+        # Intersection box
+        x1 = max(self.x1, bbox2.x1)
+        y1 = max(self.y1, bbox2.y1)
+        x2 = min(self.x1 + self.width, bbox2.x1 + bbox2.width)
+        y2 = min(self.y1 + self.height, bbox2.y1 + bbox2.height)
+        # Areas
+        int_Area = max(0, (x2 - x1)) * max(0, (y2 - y1))
+        total_Area = self.get_area() + bbox2.get_area() - int_Area
+        
+        return int_Area / total_Area > threshold
+
 class ROI:
     """
     Class used to represent Regions Of Interest of an image
     """
-    def __init__(self, base_image, bounding_box: tuple[int, int, int, int]=None, margin=0) -> None:
+    def __init__(self, base_image, bounding_box: BoundingBox=None, margin:float=0) -> None:
         self.base_image = base_image
-        self.base_image_w = base_image.shape[1]
-        self.base_image_h = base_image.shape[0]
+        base_image_w = base_image.shape[1]
+        base_image_h = base_image.shape[0]
 
         if bounding_box is None:
-            self.x0_roi = 0
-            self.y0_roi = 0
-            self.w_roi =  self.base_image_w
-            self.h_roi =  self.base_image_h
+            self.bounding_box = BoundingBox(0, 0, base_image_w, base_image_h)
         else:
-            self.x0_roi = bounding_box[0]
-            self.y0_roi = bounding_box[1]
-            self.w_roi =  bounding_box[2] - bounding_box[0]
-            self.h_roi =  bounding_box[3] - bounding_box[1]
+            self.bounding_box = bounding_box
+        
+        if margin != 0:
+            self.bounding_box = bounding_box.get_resized(base_image_w, base_image_h, margin)
 
-        self.margin = margin
-        self.__roi = None
+        self.__roi = self.base_image[
+            self.bounding_box.y1 : self.bounding_box.y1 + self.bounding_box.height,
+            self.bounding_box.x1 : self.bounding_box.x1 + self.bounding_box.width
+        ]
 
     def get_frame(self):
-        if not self.__roi:
-            y_min = max(self.y0_roi - int(self.margin * self.h_roi), 0)
-            y_max = min(self.y0_roi + int((1 + self.margin) * self.h_roi), self.base_image_h)
-            x_min = max(self.x0_roi - int(self.margin * self.w_roi), 0)
-            x_max = min(self.x0_roi + int((1 + self.margin) * self.w_roi), self.base_image_w)
-            self.__roi = self.base_image[y_min : y_max, x_min : x_max]
-
         return self.__roi
+    
+    def width(self):
+        return self.bounding_box.width
+    
+    def height(self):
+        return self.bounding_box.height
 
 
 
@@ -62,60 +95,41 @@ class FaceDetectionModel:
 
     def detect_faces(self, image) -> list[tuple[int, int, int, int]]:
         frame_gray = self.preprocess(image)
+        base_image = ROI(frame_gray)
         OVERLAP_THRESHOLD = 0.1
 
         # -- Detect faces
-        faces = self.face_lbpcascade.detectMultiScale(frame_gray)
         detected_faces = []
         detected_profiles = []
 
-        for box in self.detect_elements(self.profile_lbpcascade, ROI(frame_gray)):
+        
+        for box in self.detect_elements(self.profile_lbpcascade, base_image):
             eyesROI = ROI(frame_gray, box)
             eyes = self.detect_elements(self.eyes_cascade, eyesROI)
             if len(eyes) > 0:
-                detected_profiles.append(box)
+                detected_profiles.append(box.get_coords())
         
-        for (x,y,w,h) in faces:
-            margin = 0.75
-            y2_roi = int(y - margin * h)
-            x2_roi = int(x - margin * w)
-            faceROI = frame_gray[
-                y2_roi : y + int((1 + margin)*h),
-                x2_roi : x + int((1 + margin)*w)
-            ]
-            
-            #-- In each face, detect eyes
-            # eyes = self.eyes_cascade.detectMultiScale(faceROI)
-            large_faces = self.face_haarcascade.detectMultiScale(faceROI, scaleFactor=1.05, minNeighbors=4)
-            # If a face is detected with the accurate model, find a more suitable bounding box
-            # print(len(large_faces))
-            if len(large_faces) > 0:
-                # detected_faces.append(self.__get_largest_faces(large_faces, 10))
-                detected_large_faces = []
-                for (x2,y2,w2,h2) in large_faces:
-                    detected_large_faces.append(self.__get_box(x2 + x2_roi, y2 + y2_roi , w2, h2, image, 0))
 
-                largest_face = self.__get_largest_faces(detected_large_faces, 1)[0]
-                detected_faces.append(largest_face)
+        faces = self.detect_elements(self.face_lbpcascade, base_image)
+        for box in faces:
+            faceROI = ROI(frame_gray, box, margin=0.75)
+            haar_faces = self.detect_elements(self.face_haarcascade, faceROI, scaleFactor=1.05, minNeighbors=4)
+
+            if len(haar_faces) > 0:
+                largest_face = self.__get_largest_faces(haar_faces, 1)[0]
+                detected_faces.append(largest_face.get_coords())
             else:
-                margin = 0
-                eyesROI = frame_gray[
-                    y : y + h,
-                    x : x + w
-                ]
-                smileROI = eyesROI
-                bodyROI = frame_gray[
-                    y - h : y + 3 * h,
-                    x - 2 * w : x + 3 * w
-                ]
-                if len(self.eyes_cascade.detectMultiScale(eyesROI, scaleFactor=1.05)) > 0 or \
-                    len(self.smile_cascade.detectMultiScale(smileROI, scaleFactor=1.05)) > 0 or \
-                    len(self.upper_body.detectMultiScale(bodyROI, scaleFactor=1.05)) > 0  or \
-                    len(self.nose_cascade.detectMultiScale(smileROI, scaleFactor=1.05)) > 0:
-                    detected_faces.append(self.__get_box(x,y,w,h,image, 0.25))
-            
+                eyesROI = ROI(frame_gray, box)
+                smileROI = ROI(frame_gray, box)
+                bodyROI = ROI(frame_gray, box, margin=2)
 
-            detected_faces = self.__remove_overlaps(detected_faces, OVERLAP_THRESHOLD)
+                if len(self.detect_elements(self.eyes_cascade, eyesROI, scaleFactor=1.05)) > 0 or \
+                len(self.detect_elements(self.smile_cascade, smileROI, scaleFactor=1.05)) > 0 or \
+                len(self.detect_elements(self.upper_body, bodyROI, scaleFactor=1.05)) > 0  or \
+                len(self.detect_elements(self.nose_cascade, smileROI, scaleFactor=1.05)) > 0:
+                    adjusted_box = box.get_resized(base_image.width(), base_image.height(), margin=0.25)
+                    detected_faces.append(adjusted_box.get_coords())
+
         
         # FIXME: move apart
         results = detected_faces
@@ -130,7 +144,7 @@ class FaceDetectionModel:
                 results.append(profile)
 
             # return self.__get_largest_faces(detected_faces, 2)
-        results = self.__remove_overlaps(results, OVERLAP_THRESHOLD)
+        results = self.__remove_overlaps2(results, OVERLAP_THRESHOLD)
         
         #TODO: keep working on rotations
         if len(faces) == 0:
@@ -167,21 +181,21 @@ class FaceDetectionModel:
         return frame_gray
     
 
-    def detect_elements(self, model, roi: ROI, overlap_threshold=1.0, scale_factor=1.1) -> list[tuple[int, int, int, int]]:
-        elements = model.detectMultiScale(roi.get_frame(), scaleFactor=scale_factor)
+    def detect_elements(self, model, roi: ROI, overlap_threshold=1.0, scaleFactor=1.1, minNeighbors=3) -> list[BoundingBox]:
+        elements = model.detectMultiScale(roi.get_frame(), scaleFactor=scaleFactor, minNeighbors=minNeighbors)
         bounding_boxes = []
         for x, y, w, h in elements:
-            # box = FaceDetectionModel.__get_box(x, y, w, h, image, 0)
-            bounding_boxes.append((x, y, x + w, y + h))
+            bbox = BoundingBox(roi.bounding_box.x1 + x, roi.bounding_box.y1 + y, w, h)
+            bounding_boxes.append(bbox)
 
         bounding_boxes = self.__remove_overlaps(bounding_boxes, overlap_threshold)
         return bounding_boxes
 
 
-    def __get_largest_faces(self, faces: list[tuple[int, int, int, int]], n: int) -> list[tuple[int, int, int, int]]:
+    def __get_largest_faces(self, faces: list[BoundingBox], n: int) -> list[BoundingBox]:
         largest_faces = sorted(
             faces,
-            key= lambda x: (x[2] - x[0]) * (x[3] - x[1]),
+            key= lambda x: (x.width) * (x.height),
             reverse=True
         )[0:n]
         
@@ -207,6 +221,7 @@ class FaceDetectionModel:
     def __area_box(self, box: tuple[int, int, int, int]) -> float:
         return (box[2] - box[0]) * (box[3] - box[1])
 
+
     def __overlap(self, face1, face2, threshold) -> bool:
         f = face1
         g = face2
@@ -221,7 +236,23 @@ class FaceDetectionModel:
         
         return int_Area / total_Area > threshold
     
-    def __remove_overlaps(self, faces: list[tuple[int, int, int, int]], threshold: float) -> list[tuple[int, int, int, int]]:
+    def __remove_overlaps(self, faces: list[BoundingBox], threshold: float) -> list[BoundingBox]:
+        non_overlapped = []
+        
+        for i in range(len(faces)):
+            has_overlap = False
+            for j in range(i, len(faces)):
+                if faces[i].has_overlap(faces[j], threshold) and (faces[i].get_area() < faces[j].get_area()):
+                    has_overlap = True
+                    break
+
+            # No overlap
+            if not has_overlap:
+                non_overlapped.append(faces[i])
+                    
+        return non_overlapped
+
+    def __remove_overlaps2(self, faces: list[tuple[int, int, int, int]], threshold: float) -> list[tuple[int, int, int, int]]:
         non_overlapped = []
         
         for i in range(len(faces)):

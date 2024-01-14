@@ -11,7 +11,7 @@ class ModelFactory:
         profile_path = "opencv/data/haarcascades/haarcascade_profileface.xml"
         nose_path = "opencv/data/haarcascades/haarcascade_mcs_nose.xml"
         mouth_path = "opencv/data/haarcascades/haarcascade_mcs_mouth.xml"
-        eyes_pair = "opencv/data/haarcascades/haarcascade_mcs_eyepair_big.xml"
+        eyes_pair_path = "opencv/data/haarcascades/haarcascade_mcs_eyepair_big.xml"
 
         face_haarcascade = cv.CascadeClassifier()
         face_lbpcascade = cv.CascadeClassifier()
@@ -21,6 +21,7 @@ class ModelFactory:
         profile_lbpcascade = cv.CascadeClassifier()
         nose_cascade = cv.CascadeClassifier()
         mouth_cacade = cv.CascadeClassifier()
+        eyes_pair_cascade = cv.CascadeClassifier()
         
         try:
             face_haarcascade.load(cv.samples.findFile(haar_face))
@@ -31,6 +32,7 @@ class ModelFactory:
             profile_lbpcascade.load(cv.samples.findFile(profile_path))
             nose_cascade.load(cv.samples.findFile(nose_path))
             mouth_cacade.load(cv.samples.findFile(mouth_path))
+            eyes_pair_cascade.load(cv.samples.findFile(eyes_pair_path))
         except Exception as e:
             print('--(!)Error loading opencv model file')
             exit(0)
@@ -43,5 +45,6 @@ class ModelFactory:
             upper_body_model=upper_body,
             profile_model=profile_lbpcascade,
             nose_model=nose_cascade,
-            mouth_model=mouth_cacade
+            mouth_model=mouth_cacade,
+            eye_pair_model=eyes_pair_cascade, 
         )
