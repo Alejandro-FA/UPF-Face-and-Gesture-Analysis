@@ -28,7 +28,7 @@ python -m pip install -r requirements.txt
 First run this command to generate the results (bounding boxes + f1 scores):
 
 ```bash
-python src/CHALL_AGC_FDbasicScript.py results-2/test
+python src/CHALL_AGC_FDbasicScript.py --results_path results-3/test
 ```
 
 Then run the following command to visualize the bounding boxes on top of the images. You can iterate over the images using the `A` and `D` keys of your keyboard.
