@@ -109,8 +109,8 @@ def CHALL_AGC_ComputeDetScores(DetectionSTR, AGC_Challenge1_STR, show_figures):
     return FD_score, scoresSTR['F1']
 
 
-def MyFaceDetectionFunction(A, model: FaceDetectionModel):
-    return model.detect_faces(A)
+def MyFaceDetectionFunction(A, model: FaceDetectionModel, im):
+    return model.detect_faces(A, im)
 
 
 def save_scores(output_path: str, bounding_boxes, f1_scores):
@@ -176,7 +176,7 @@ if __name__ == '__main__':
             # Each bounding box that is detected will be indicated in a
             # separate row in det_faces
 
-            det_faces = MyFaceDetectionFunction(A, model)
+            det_faces = MyFaceDetectionFunction(A, model, im)
 
             tt = time.time() - ti
             total_time = total_time + tt
