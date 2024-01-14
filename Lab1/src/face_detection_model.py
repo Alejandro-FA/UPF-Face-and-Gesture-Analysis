@@ -35,7 +35,7 @@ class FaceDetectionModel:
         self.eye_pair = eye_pair_model
 
         self.overlap_filter = OverlapFilter(threshold=OVERLAP_THRESHOLD)
-        self.log_path = "log7.txt"
+        self.log_path = "log2.txt"
         with open(self.log_path, 'w') as file:
             pass # Delete current contents of file for clarity
 
@@ -92,14 +92,14 @@ class FaceDetectionModel:
 
         if len(faces) == 0:
             rotation_angles = [10, 15, 20, 25, 30, -10, -15, -20, -25, -30]
-            rotated_images = [(self.preprocess(self.__rotate_image(image, angle)), angle) for angle in rotation_angles]
+            rotated_images = [(self.__rotate_image(frame_gray, angle), angle) for angle in rotation_angles]
+            
             for frame, angle in rotated_images:
-                frame_gray = self.preprocess(frame)
-                base_image = ROI(frame_gray)
+                base_image = ROI(frame)
                 rotated_faces = self.detect_elements(self.face_haarcascade, base_image)
                 face_added = False
                 for curr_face in rotated_faces:
-                    rotated_face_ROI = ROI(frame_gray, curr_face)
+                    rotated_face_ROI = ROI(frame, curr_face)
                     if len(self.detect_elements(self.face_lbpcascade, rotated_face_ROI, scaleFactor=1.05)) > 0 or \
                     len(self.detect_elements(self.profile_lbpcascade, rotated_face_ROI, scaleFactor=1.05)) > 0:
                         detected_rotated.append(curr_face)
