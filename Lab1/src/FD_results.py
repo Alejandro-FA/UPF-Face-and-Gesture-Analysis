@@ -85,7 +85,7 @@ def load_matlab_file(file_path):
     data = np.squeeze(data['AGC_Challenge1_TRAINING'])
     data = [[row.flat[0] if row.size == 1 else row for row in line] for line in data]
     
-    return pd.DataFrame(data, columns=[['id', 'imageName', 'faceBox']])["faceBox"]
+    return pd.DataFrame(data, columns=[['id', 'imageName', 'faceBox']])
 
 def show_figures(df: pd.DataFrame, image_holder: ImageHolder, scores: list[Any]):
     bb_manager = CarrousselManager(image_holder.num_images)
@@ -119,7 +119,8 @@ def show_figures(df: pd.DataFrame, image_holder: ImageHolder, scores: list[Any])
                 
             processed_images[count] = True
         
-        cv.imshow("Image", curr_image)
+        image_name = df.iloc[count]["image_name"]
+        cv.imshow(image_name, curr_image)
         print(f"F-score: {scores[count]}")
         key_pressed = cv.waitKey(0)
         
@@ -161,8 +162,8 @@ ground_truth = load_matlab_file(ground_truth_path)
 image_holder = ImageHolder(images_path)
 
 bounding_boxes_df = pd.DataFrame(columns=["ground_truth", "generated"])
-bounding_boxes_df["ground_truth"] = ground_truth
+bounding_boxes_df["ground_truth"] = ground_truth['faceBox']
 bounding_boxes_df["generated"] = generated_results
-
+bounding_boxes_df["image_name"] = ground_truth['imageName']
 
 show_figures(bounding_boxes_df, image_holder, scores)

@@ -100,7 +100,9 @@ class OverlapFilter:
     
 
     def filter_pair(self, boxes1: list[BoundingBox], boxes2: list[BoundingBox]) -> list[BoundingBox]:
-        """The same as filter, but prioritizes elements from boxes 1.
+        """The same as filter, but prioritizes elements from boxes1. Elements
+        from boxes2 are only added if they do not overlap with any element of
+        boxes1.
 
         Returns:
             list[BoundingBox]: A combined list with non-overlapped bounding

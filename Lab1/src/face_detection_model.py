@@ -35,28 +35,34 @@ class FaceDetectionModel:
         self.eye_pair = eye_pair_model
 
         self.overlap_filter = OverlapFilter(threshold=OVERLAP_THRESHOLD)
-        self.img_count = 0
-        self.output_file = open("log.txt", "wt")
+        self.log_path = "log7.txt"
+        with open(self.log_path, 'w') as file:
+            pass # Delete current contents of file for clarity
 
-    def detect_faces(self, image, im) -> list[tuple[int, int, int, int]]:
+    def detect_faces(self, image, image_path: str) -> list[tuple[int, int, int, int]]:
         frame_gray = self.preprocess(image)
         base_image = ROI(frame_gray)
 
-        detected_faces = []
-        detected_profiles = []
-
         # ---------------------------------------------------------------------
         # -- Detect profile faces
+        detected_profiles = []
+
         for box in self.detect_elements(self.profile_lbpcascade, base_image):
             eyesROI = ROI(frame_gray, box)
             eyes = self.detect_elements(self.eyes_cascade, eyesROI)
+
             # Only add them if it is also possible to find at least 1 eye
-            if len(eyes) > 0:
-                print(f"{im}: Checkpoint 1. profile and eyes detected", file=self.output_file)
+            # NOTE: Does not produce false positives in training
+            # Produces 3 false negatives (images 164, 198, 515) that are not
+            # re-detected with frontal faces nor rotated faces
+            if len(eyes) > 0: 
                 detected_profiles.append(box)
-        
+                self.__log(image_path, method_id=1, description='profile and eyes detected')
+
         # ---------------------------------------------------------------------
         # -- Detect frontal faces
+        detected_faces = []
+
         faces = self.detect_elements(self.face_lbpcascade, base_image)
         for box in faces:
             faceROI = ROI(frame_gray, box, margin=0.75)
@@ -65,10 +71,11 @@ class FaceDetectionModel:
             # Add face if it is found both with a lbpcascade and a haarcascade
             if len(haar_faces) > 0:
                 largest_face = self.__get_largest_faces(haar_faces, 1)[0]
-                print(f"{im}: Checkpoint 2. lbp cascade and haar face detected", file=self.output_file)
                 detected_faces.append(largest_face)
+                self.__log(image_path, method_id=2, description='lbp cascade and haar face detected')
 
             # If not, try to find other human elements
+            # NOTE: Does not produce false positives nor false negatives in training
             else:
                 eyesROI = ROI(frame_gray, box)
                 smileROI = ROI(frame_gray, box)
@@ -76,25 +83,16 @@ class FaceDetectionModel:
                 if len(self.detect_elements(self.eyes_cascade, eyesROI, scaleFactor=1.05)) > 0 and \
                 len(self.detect_elements(self.smile_cascade, smileROI, scaleFactor=1.05)) > 0:
                     adjusted_box = box.get_resized(base_image.width(), base_image.height(), margin=0.25)
-                    print(f"{im}: Checkpoint 3. lbp cascade and some other elements", file=self.output_file)
                     detected_faces.append(adjusted_box)
-
-                # else:
-                #     adjusted_box = box.get_resized(base_image.width(), base_image.height(), margin=0.25)
-                #     print(f"{im}: Checkpoint 4. Plain old lbp cascade", file=self.output_file)
-                #     detected_faces.append(adjusted_box)
-
-        
-        # ---------------------------------------------------------------------
-        # -- Remove repeated faces
-        results = self.overlap_filter.filter_pair(detected_faces, detected_profiles)
+                    self.__log(image_path, method_id=3, description='lbp cascade and some other elements')
 
         # ---------------------------------------------------------------------
         # -- Detect rotated faces
+        detected_rotated = []
+
         if len(faces) == 0:
             rotation_angles = [10, 15, 20, 25, 30, -10, -15, -20, -25, -30]
             rotated_images = [(self.preprocess(self.__rotate_image(image, angle)), angle) for angle in rotation_angles]
-            results_rotated = []
             for frame, angle in rotated_images:
                 frame_gray = self.preprocess(frame)
                 base_image = ROI(frame_gray)
@@ -104,17 +102,18 @@ class FaceDetectionModel:
                     rotated_face_ROI = ROI(frame_gray, curr_face)
                     if len(self.detect_elements(self.face_lbpcascade, rotated_face_ROI, scaleFactor=1.05)) > 0 or \
                     len(self.detect_elements(self.profile_lbpcascade, rotated_face_ROI, scaleFactor=1.05)) > 0:
-                        print(f"{im}: Checkpoint 5. rotation added", file=self.output_file)
-                        results_rotated.append(curr_face)
+                        detected_rotated.append(curr_face)
                         face_added = True
+                        self.__log(image_path, method_id=4, description='rotation added')
                 if face_added:
                     break
-            results = self.overlap_filter.filter_pair(results, results_rotated)
-        
-        results = [box.get_coords() for box in results]
-                                        
-        self.img_count += 1
-        return results
+
+        # ---------------------------------------------------------------------
+        # -- Remove repeated faces
+        results = self.overlap_filter.filter_pair(detected_rotated, detected_profiles)
+        results = self.overlap_filter.filter_pair(detected_faces, results)
+         
+        return [box.get_coords() for box in results]  
 
 
     def preprocess(self, image):
@@ -126,7 +125,7 @@ class FaceDetectionModel:
         return frame_gray
     
 
-    def detect_elements(self, model, roi: ROI, overlap_threshold=0.5, scaleFactor=1.1, minNeighbors=3) -> list[BoundingBox]:
+    def detect_elements(self, model, roi: ROI, scaleFactor=1.1, minNeighbors=3) -> list[BoundingBox]:
         elements = model.detectMultiScale(roi.get_frame(), scaleFactor=scaleFactor, minNeighbors=minNeighbors)
         bounding_boxes = []
         for x, y, w, h in elements:
@@ -156,3 +155,8 @@ class FaceDetectionModel:
         rotated_image = cv.warpAffine(image, rotation_matrix, (width, height))
         
         return rotated_image
+    
+
+    def __log(self, image_path: str, method_id: int, description: str):
+        with open(self.log_path, 'a') as file:
+            file.write(f"{image_path}: Checkpoint {method_id}. {description}\n")
