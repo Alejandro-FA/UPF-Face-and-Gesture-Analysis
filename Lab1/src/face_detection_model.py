@@ -1,8 +1,9 @@
 import cv2 as cv
+import math
 
 
 class FaceDetectionModel:
-    def __init__(self, haar_face_model: str, lbp_face_model: str, eyes_model: str, smile_model: str, upper_body_model: str, profile_model: str, nose_model: str, mouth_model: str) -> None:
+    def __init__(self, haar_face_model: str, lbp_face_model: str, eyes_model: str, smile_model: str, upper_body_model: str, profile_model: str, nose_model: str, mouth_model: str, eye_pair_model: str) -> None:
         self.face_haarcascade = cv.CascadeClassifier()
         self.face_lbpcascade = cv.CascadeClassifier()
         self.eyes_cascade = cv.CascadeClassifier()
@@ -11,6 +12,7 @@ class FaceDetectionModel:
         self.profile_lbpcascade = cv.CascadeClassifier()
         self.nose_cascade = cv.CascadeClassifier()
         self.mouth_cacade = cv.CascadeClassifier()
+        self.eye_pair = cv.CascadeClassifier()
         
         try:
             self.eyes_cascade.load(cv.samples.findFile(eyes_model))
@@ -21,6 +23,7 @@ class FaceDetectionModel:
             self.profile_lbpcascade.load(cv.samples.findFile(profile_model))
             self.nose_cascade.load(cv.samples.findFile(nose_model))
             self.mouth_cacade.load(cv.samples.findFile(mouth_model))
+            self.eye_pair.load(cv.samples.findFile(eye_pair_model))
         except Exception:
             print('--(!)Error loading opencv file')
             exit(0)
@@ -29,10 +32,6 @@ class FaceDetectionModel:
     def detect_faces(self, image) -> list[tuple[int, int, int, int]]:
         frame_gray = self.preprocess(image)
         OVERLAP_THRESHOLD = 0.1
-    
-        
-        
-        
     
         #-- Detect faces
         faces = self.face_lbpcascade.detectMultiScale(frame_gray)
@@ -106,30 +105,28 @@ class FaceDetectionModel:
         results = self.__remove_overlaps(results, OVERLAP_THRESHOLD)
         
         #TODO: keep working on rotations
-        # if len(faces) == 0:
-        #     rotation_angles = [10, 15, 20, 25, 30, -10, -15, -20, -25, -30]
-        #     rotated_images = [self.preprocess(self.__rotate_image(image, angle)) for angle in rotation_angles]
-        #     for frame in rotated_images:
-        #         faces = self.face_haarcascade.detectMultiScale(frame_gray)
-        #         added = False
-        #         rotated_face = None
-        #         for (x, y, w, h) in faces:
-        #             rotated_face = self.__get_box(x, y, w, h, frame, 0)
-        #             added = True
-        #         if added:
-        #             rotated_face_ROI = frame[
-        #                 rotated_face[1] - rotated_face[3]:rotated_face[1] + rotated_face[3],
-        #                 rotated_face[0] - rotated_face[2]:rotated_face[0] + rotated_face[2]
-        #             ]
-        #             if len(self.eyes_cascade.detectMultiScale(rotated_face_ROI, scaleFactor=1.05)) > 0 or \
-        #             len(self.smile_cascade.detectMultiScale(rotated_face_ROI, scaleFactor=1.05)) > 0 or \
-        #             len(self.upper_body.detectMultiScale(rotated_face_ROI, scaleFactor=1.05)) > 0  or \
-        #             len(self.nose_cascade.detectMultiScale(rotated_face_ROI, scaleFactor=1.05)) > 0:
-        #                 results.append(rotated_face)
-        #             break
+        if len(faces) == 0:
+            rotation_angles = [10, 15, 20, 25, 30, -10, -15, -20, -25, -30]
+            rotated_images = [(self.preprocess(self.__rotate_image(image, angle)), angle) for angle in rotation_angles]
+            for frame, angle in rotated_images:
+                faces = self.face_haarcascade.detectMultiScale(frame_gray)
+                added = False
+                rotated_face = None
+                for (x, y, w, h) in faces:
+                    rotated_face = self.__get_box(x, y, w, h, frame, 0)
+                    added = True
+                if added:
+                    rotated_face_ROI = frame[
+                        rotated_face[1]:rotated_face[1] + rotated_face[3],
+                        rotated_face[0]:rotated_face[0] + rotated_face[2]
+                    ]
+                    lbp_faces = self.face_lbpcascade.detectMultiScale(rotated_face_ROI, scaleFactor=1.05)
+                    profile_rotated = self.profile_lbpcascade.detectMultiScale(rotated_face_ROI, scaleFactor=1.05)
+                    if len(lbp_faces) > 0 or \
+                    len(profile_rotated) > 0:
+                        results.append(rotated_face)
+                    break
                     
-        # results = self.__remove_overlaps(results, OVERLAP_THRESHOLD)
-        
         return results
 
 

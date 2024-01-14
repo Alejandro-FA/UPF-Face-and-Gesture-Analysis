@@ -10,6 +10,7 @@ class ModelFactory:
         profile_path = "opencv/data/haarcascades/haarcascade_profileface.xml"
         nose_path = "opencv/data/haarcascades/haarcascade_mcs_nose.xml"
         mouth_path = "opencv/data/haarcascades/haarcascade_mcs_mouth.xml"
+        eyes_pair = "opencv/data/haarcascades/haarcascade_mcs_eyepair_big.xml"
 
         return FaceDetectionModel(
             haar_face_model=haar_face,
@@ -19,5 +20,6 @@ class ModelFactory:
             upper_body_model=upper_body_path,
             profile_model=profile_path,
             nose_model=nose_path,
-            mouth_model=mouth_path
+            mouth_model=mouth_path,
+            eye_pair_model=eyes_pair
         )
