@@ -1,4 +1,5 @@
 import cv2 as cv
+import numpy as np
 from utils import BoundingBox, ROI, OverlapFilter
 
 
@@ -35,7 +36,7 @@ class FaceDetectionModel:
         self.eye_pair = eye_pair_model
 
         self.overlap_filter = OverlapFilter(threshold=OVERLAP_THRESHOLD)
-        self.log_path = "log2.txt"
+        self.log_path = "log3.txt"
         with open(self.log_path, 'w') as file:
             pass # Delete current contents of file for clarity
 
@@ -66,6 +67,8 @@ class FaceDetectionModel:
         faces = self.detect_elements(self.face_lbpcascade, base_image)
         for box in faces:
             faceROI = ROI(frame_gray, box, margin=0.75)
+            eyesROI = ROI(frame_gray, box)
+            smileROI = ROI(frame_gray, box)
             haar_faces = self.detect_elements(self.face_haarcascade, faceROI, scaleFactor=1.05, minNeighbors=4)
 
             # Add face if it is found both with a lbpcascade and a haarcascade
@@ -76,36 +79,77 @@ class FaceDetectionModel:
 
             # If not, try to find other human elements
             # NOTE: Does not produce false positives nor false negatives in training
-            else:
-                eyesROI = ROI(frame_gray, box)
-                smileROI = ROI(frame_gray, box)
-
-                if len(self.detect_elements(self.eyes_cascade, eyesROI, scaleFactor=1.05)) > 0 and \
-                len(self.detect_elements(self.smile_cascade, smileROI, scaleFactor=1.05)) > 0:
-                    adjusted_box = box.get_resized(base_image.width(), base_image.height(), margin=0.25)
-                    detected_faces.append(adjusted_box)
-                    self.__log(image_path, method_id=3, description='lbp cascade and some other elements')
+            elif len(self.detect_elements(self.eyes_cascade, eyesROI, scaleFactor=1.05)) > 0 and \
+            len(self.detect_elements(self.smile_cascade, smileROI, scaleFactor=1.05)) > 0:
+                adjusted_box = box.get_resized(base_image.width(), base_image.height(), margin=0.25)
+                detected_faces.append(adjusted_box)
+                self.__log(image_path, method_id=3, description='lbp cascade and some other elements')
 
         # ---------------------------------------------------------------------
         # -- Detect rotated faces
         detected_rotated = []
 
         if len(faces) == 0:
-            rotation_angles = [10, 15, 20, 25, 30, -10, -15, -20, -25, -30]
-            rotated_images = [(self.__rotate_image(frame_gray, angle), angle) for angle in rotation_angles]
-            
-            for frame, angle in rotated_images:
+            rotation_angles = [10, -10, 15, -15, 20, -20, 25, -25, 30, -30]
+
+            for angle in rotation_angles:
+                m, m_back = self.__get_rotation_matrices(frame_gray, angle)
+                frame = self.__rotate_image(frame_gray, rotation_matrix=m)
                 base_image = ROI(frame)
                 rotated_faces = self.detect_elements(self.face_haarcascade, base_image)
                 face_added = False
+
                 for curr_face in rotated_faces:
                     rotated_face_ROI = ROI(frame, curr_face)
                     if len(self.detect_elements(self.face_lbpcascade, rotated_face_ROI, scaleFactor=1.05)) > 0 or \
                     len(self.detect_elements(self.profile_lbpcascade, rotated_face_ROI, scaleFactor=1.05)) > 0:
+                        # # FIXME: Rotate point back to original coordinates. NOT USEFUL :(
+                        # coords = curr_face.get_coords()
+                        # box_origin = np.array([coords[0], coords[1], 1])  # Extend to homogeneous coordinates
+                        # box_end = np.array([coords[2], coords[3], 1])  # Extend to homogeneous coordinates
+                        # rotated_point = np.dot(m_back, box_origin) 
+                        # rotated_point_end = np.dot(m_back, box_end) # Rotate point back to original coordinates
+
+                        # rotated_point = tuple(map(int, rotated_point))
+                        # rotated_point_end = tuple(map(int, rotated_point_end))
+                        # new_box = BoundingBox(
+                        #     rotated_point[0],
+                        #     rotated_point[1],
+                        #     rotated_point_end[0] - rotated_point[0],
+                        #     rotated_point_end[1] - rotated_point[1]
+                        # )
+
+                        # detected_rotated.append(new_box)
                         detected_rotated.append(curr_face)
                         face_added = True
                         self.__log(image_path, method_id=4, description='rotation added')
-                if face_added:
+
+                # # FIXME: F1-score achieved with this method: 86.94
+                # rotated_faces = self.detect_elements(self.face_lbpcascade, base_image)
+                # for box in rotated_faces:
+                #     faceROI = ROI(frame, box, margin=0.75)
+                #     eyesROI = ROI(frame, box)
+                #     smileROI = ROI(frame, box)
+                #     haar_faces = self.detect_elements(self.face_haarcascade, faceROI, scaleFactor=1.05, minNeighbors=4)
+
+                #     # Add face if it is found both with a lbpcascade and a haarcascade
+                #     if len(haar_faces) > 0:
+                #         largest_face = self.__get_largest_faces(haar_faces, 1)[0]
+                #         detected_faces.append(largest_face)
+                #         face_added = True
+                #         self.__log(image_path, method_id=4, description='ROTATED lbp cascade and haar face detected')
+
+                #     # # If not, try to find other human elements
+                #     # # NOTE: Does not produce false positives nor false negatives in training
+                #     # elif len(self.detect_elements(self.eyes_cascade, eyesROI, scaleFactor=1.05)) > 0 and \
+                #     # len(self.detect_elements(self.smile_cascade, smileROI, scaleFactor=1.05)) > 0:
+                #     #     adjusted_box = box.get_resized(base_image.width(), base_image.height(), margin=0.25)
+                #     #     detected_faces.append(adjusted_box)
+                #     #     face_added = True
+                #     #     self.__log(image_path, method_id=5, description='ROTATED lbp cascade and some other elements')
+
+
+                if face_added: # Only adds faces from one rotation angle at most
                     break
 
         # ---------------------------------------------------------------------
@@ -146,14 +190,17 @@ class FaceDetectionModel:
         return largest_faces
     
 
-    def __rotate_image(self, image, angle):
+    def __get_rotation_matrices(self, image, angle) -> tuple:
         height, width = image.shape[:2]
         center = (width // 2, height // 2)
+        m = cv.getRotationMatrix2D(center, angle, 1.0)
+        m_back = cv.getRotationMatrix2D(center, -angle, 1.0)
+        return m, m_back
 
-        rotation_matrix = cv.getRotationMatrix2D(center, angle, 1.0)
 
+    def __rotate_image(self, image, rotation_matrix):
+        height, width = image.shape[:2]
         rotated_image = cv.warpAffine(image, rotation_matrix, (width, height))
-        
         return rotated_image
     
 
