@@ -92,7 +92,7 @@ def CHALL_AGC_ComputeDetScores(DetectionSTR, AGC_Challenge1_STR, show_figures):
                         scoresSTR['Fmatrix'][i] = 0
                     else:
                         max_ind = np.unravel_index(np.argmax(scoresSTR['Fmatrix'][i], axis=None), scoresSTR['Fmatrix'][i].shape)
-                        scoresSTR['F1'][i][max_ind[1]] = max_F
+                        scoresSTR['F1'][i][k3] = max_F
                         scoresSTR['Fmatrix'][i][max_ind[0], :] = 0
                         scoresSTR['Fmatrix'][i][:, max_ind[1]] = 0
         if show_figures:
@@ -113,7 +113,7 @@ def MyFaceDetectionFunction(A, model: FaceDetectionModel, im):
     return model.detect_faces(A, im)
 
 
-def save_scores(output_path: str, bounding_boxes, f1_scores):
+def save_scores(output_path: str, bounding_boxes, FD_score, f1_scores):
     # Save all F1 scores for analysis
     with open(output_path + "_scores.pkl", "wb") as file:
         pickle.dump(f1_scores, file)
@@ -123,6 +123,7 @@ def save_scores(output_path: str, bounding_boxes, f1_scores):
         pickle.dump(bounding_boxes, file)
 
     with open(output_path + "_scores.txt", 'wt') as file:
+        file.write(f'Overall F1-score: {FD_score}\n\n')
         for score, image_path in zip(f1_scores, AGC_Challenge1_TRAINING['imageName']):
             file.write(f'{image_path}: {score}\n')
 
@@ -200,4 +201,4 @@ if __name__ == '__main__':
     print('F1-score: %.2f, Total time: %2d m %.2f s' % (100 * FD_score, int(minutes), seconds))
 
     if OUTPUT_FILE:
-        save_scores(OUTPUT_FILE, bounding_boxes=DetectionSTR, f1_scores=f1_scores)
+        save_scores(OUTPUT_FILE, bounding_boxes=DetectionSTR, FD_score=FD_score, f1_scores=f1_scores)

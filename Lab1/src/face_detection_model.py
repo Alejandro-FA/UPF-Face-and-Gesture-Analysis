@@ -122,7 +122,7 @@ class FaceDetectionModel:
         # -- Remove repeated faces and get 2 largest faces
         results = self.overlap_filter.filter_pair(detected_rotated, detected_profiles)
         results = self.overlap_filter.filter_pair(detected_faces, results)
-        # results = self.__get_largest_faces(results, n=2)
+        results = self.__get_largest_faces(results, n=2)
         return [box.get_coords() for box in results]  
 
 
@@ -180,7 +180,7 @@ class FaceDetectionModel:
         files = [f for f in os.listdir(base_dir) if f.startswith(base_filename) and f.endswith('.' + extension)]
         
         if not files:
-            return f"{base_filename}-{1:0{max_digits}d}.{extension}"
+            return f"{base_dir}/{base_filename}-{1:0{max_digits}d}.{extension}"
         
         existing_numbers = [int(f[len(base_filename)+1:len(base_filename)+1+max_digits]) for f in files]
         next_number = max(existing_numbers) + 1 if existing_numbers else 1

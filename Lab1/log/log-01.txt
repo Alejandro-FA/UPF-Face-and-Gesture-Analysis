@@ -4,7 +4,6 @@ data/TRAINING/image_A0007.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0011.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0014.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0016.jpg: Checkpoint 2. lbp cascade and haar face detected
-data/TRAINING/image_A0017.jpg: Checkpoint 4. rotation added
 data/TRAINING/image_A0022.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0028.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0030.jpg: Checkpoint 2. lbp cascade and haar face detected
@@ -25,6 +24,7 @@ data/TRAINING/image_A0051.jpg: Checkpoint 1. profile and eyes detected
 data/TRAINING/image_A0051.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0054.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0055.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0056.jpg: Checkpoint 4. rotation added
 data/TRAINING/image_A0058.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0060.jpg: Checkpoint 1. profile and eyes detected
 data/TRAINING/image_A0060.jpg: Checkpoint 2. lbp cascade and haar face detected
@@ -35,9 +35,7 @@ data/TRAINING/image_A0069.jpg: Checkpoint 1. profile and eyes detected
 data/TRAINING/image_A0069.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0070.jpg: Checkpoint 1. profile and eyes detected
 data/TRAINING/image_A0070.jpg: Checkpoint 2. lbp cascade and haar face detected
-data/TRAINING/image_A0072.jpg: Checkpoint 4. rotation added
 data/TRAINING/image_A0074.jpg: Checkpoint 2. lbp cascade and haar face detected
-data/TRAINING/image_A0075.jpg: Checkpoint 4. rotation added
 data/TRAINING/image_A0076.jpg: Checkpoint 1. profile and eyes detected
 data/TRAINING/image_A0076.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0077.jpg: Checkpoint 2. lbp cascade and haar face detected
@@ -50,7 +48,6 @@ data/TRAINING/image_A0089.jpg: Checkpoint 1. profile and eyes detected
 data/TRAINING/image_A0089.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0091.jpg: Checkpoint 4. rotation added
 data/TRAINING/image_A0092.jpg: Checkpoint 2. lbp cascade and haar face detected
-data/TRAINING/image_A0095.jpg: Checkpoint 4. rotation added
 data/TRAINING/image_A0096.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0098.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0099.jpg: Checkpoint 2. lbp cascade and haar face detected
@@ -163,12 +160,12 @@ data/TRAINING/image_A0247.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0249.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0250.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0253.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0253.jpg: Checkpoint 4. rotation added
 data/TRAINING/image_A0254.jpg: Checkpoint 4. rotation added
 data/TRAINING/image_A0255.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0258.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0259.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0261.jpg: Checkpoint 2. lbp cascade and haar face detected
-data/TRAINING/image_A0263.jpg: Checkpoint 4. rotation added
 data/TRAINING/image_A0265.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0266.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0267.jpg: Checkpoint 1. profile and eyes detected
@@ -198,7 +195,6 @@ data/TRAINING/image_A0303.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0304.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0306.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0310.jpg: Checkpoint 2. lbp cascade and haar face detected
-data/TRAINING/image_A0311.jpg: Checkpoint 4. rotation added
 data/TRAINING/image_A0316.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0317.jpg: Checkpoint 1. profile and eyes detected
 data/TRAINING/image_A0317.jpg: Checkpoint 2. lbp cascade and haar face detected
@@ -250,6 +246,7 @@ data/TRAINING/image_A0379.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0381.jpg: Checkpoint 1. profile and eyes detected
 data/TRAINING/image_A0381.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0381.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0382.jpg: Checkpoint 4. rotation added
 data/TRAINING/image_A0384.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0386.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0388.jpg: Checkpoint 2. lbp cascade and haar face detected
@@ -308,7 +305,6 @@ data/TRAINING/image_A0467.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0469.jpg: Checkpoint 4. rotation added
 data/TRAINING/image_A0471.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0473.jpg: Checkpoint 4. rotation added
-data/TRAINING/image_A0474.jpg: Checkpoint 4. rotation added
 data/TRAINING/image_A0475.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0479.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0485.jpg: Checkpoint 2. lbp cascade and haar face detected
@@ -339,7 +335,6 @@ data/TRAINING/image_A0529.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0530.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0532.jpg: Checkpoint 1. profile and eyes detected
 data/TRAINING/image_A0532.jpg: Checkpoint 2. lbp cascade and haar face detected
-data/TRAINING/image_A0533.jpg: Checkpoint 4. rotation added
 data/TRAINING/image_A0536.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0537.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0541.jpg: Checkpoint 2. lbp cascade and haar face detected
@@ -347,7 +342,6 @@ data/TRAINING/image_A0542.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0544.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0545.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0547.jpg: Checkpoint 2. lbp cascade and haar face detected
-data/TRAINING/image_A0548.jpg: Checkpoint 4. rotation added
 data/TRAINING/image_A0550.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0552.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0555.jpg: Checkpoint 2. lbp cascade and haar face detected
@@ -368,7 +362,6 @@ data/TRAINING/image_A0573.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0575.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0578.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0581.jpg: Checkpoint 4. rotation added
-data/TRAINING/image_A0583.jpg: Checkpoint 4. rotation added
 data/TRAINING/image_A0584.jpg: Checkpoint 1. profile and eyes detected
 data/TRAINING/image_A0584.jpg: Checkpoint 2. lbp cascade and haar face detected
 data/TRAINING/image_A0585.jpg: Checkpoint 2. lbp cascade and haar face detected
