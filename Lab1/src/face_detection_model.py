@@ -1,9 +1,12 @@
 import cv2 as cv
 import numpy as np
+import os
 from utils import BoundingBox, ROI, OverlapFilter
-
+from dnn_detector import DNNDetector
 
 OVERLAP_THRESHOLD = 0.3
+DNN_THRESHOLD_1 = 0.85
+DNN_THRESHOLD_2 = 0.75
 
 
 class FaceDetectionModel:
@@ -35,10 +38,10 @@ class FaceDetectionModel:
         self.mouth_cacade = mouth_model
         self.eye_pair = eye_pair_model
 
+        self.dnn_detector = DNNDetector()
         self.overlap_filter = OverlapFilter(threshold=OVERLAP_THRESHOLD)
-        self.log_path = "log3.txt"
-        with open(self.log_path, 'w') as file:
-            pass # Delete current contents of file for clarity
+        self.log_path = self.__get_next_log_filename()
+        print(f"Next log file: {self.log_path}")
 
     def detect_faces(self, image, image_path: str) -> list[tuple[int, int, int, int]]:
         frame_gray = self.preprocess(image)
@@ -100,29 +103,24 @@ class FaceDetectionModel:
                 face_added = False
 
                 for curr_face in rotated_faces:
+                    dnn_detections = self.dnn_detector.detect_faces(image_path)
+                    dnn_probs = [f[1] for f in dnn_detections if f[0].overlap(curr_face) > OVERLAP_THRESHOLD]
+                    clear_detection_1 = any([prob > DNN_THRESHOLD_1 for prob in dnn_probs])
+                    
                     rotated_face_ROI = ROI(frame, curr_face)
-                    if len(self.detect_elements(self.face_lbpcascade, rotated_face_ROI, scaleFactor=1.05)) > 0 or \
-                    len(self.detect_elements(self.profile_lbpcascade, rotated_face_ROI, scaleFactor=1.05)) > 0:
-                        # # FIXME: Rotate point back to original coordinates. NOT USEFUL :(
-                        # coords = curr_face.get_coords()
-                        # box_origin = np.array([coords[0], coords[1], 1])  # Extend to homogeneous coordinates
-                        # box_end = np.array([coords[2], coords[3], 1])  # Extend to homogeneous coordinates
-                        # rotated_point = np.dot(m_back, box_origin) 
-                        # rotated_point_end = np.dot(m_back, box_end) # Rotate point back to original coordinates
-
-                        # rotated_point = tuple(map(int, rotated_point))
-                        # rotated_point_end = tuple(map(int, rotated_point_end))
-                        # new_box = BoundingBox(
-                        #     rotated_point[0],
-                        #     rotated_point[1],
-                        #     rotated_point_end[0] - rotated_point[0],
-                        #     rotated_point_end[1] - rotated_point[1]
-                        # )
-
-                        # detected_rotated.append(new_box)
+                    clear_detection_2 = any([prob > DNN_THRESHOLD_2 for prob in dnn_probs]) and \
+                        self.detect_elements(self.face_lbpcascade, rotated_face_ROI, scaleFactor=1.05)
+                    # if len(self.detect_elements(self.face_lbpcascade, rotated_face_ROI, scaleFactor=1.05)) > 0 or \
+                    # len(self.detect_elements(self.profile_lbpcascade, rotated_face_ROI, scaleFactor=1.05)) > 0:
+                    if clear_detection_1 == True:
                         detected_rotated.append(curr_face)
                         face_added = True
                         self.__log(image_path, method_id=4, description='rotation added')
+
+                    elif clear_detection_2 == True:
+                        detected_rotated.append(curr_face)
+                        face_added = True
+                        self.__log(image_path, method_id=5, description='rotation added with lbp')
 
                 # # FIXME: F1-score achieved with this method: 86.94
                 # rotated_faces = self.detect_elements(self.face_lbpcascade, base_image)
@@ -207,3 +205,15 @@ class FaceDetectionModel:
     def __log(self, image_path: str, method_id: int, description: str):
         with open(self.log_path, 'a') as file:
             file.write(f"{image_path}: Checkpoint {method_id}. {description}\n")
+
+
+    def __get_next_log_filename(self, base_dir='log', base_filename='log', extension='txt', max_digits=2):
+        files = [f for f in os.listdir(base_dir) if f.startswith(base_filename) and f.endswith('.' + extension)]
+        
+        if not files:
+            return f"{base_filename}-{1:0{max_digits}d}.{extension}"
+        
+        existing_numbers = [int(f[len(base_filename)+1:len(base_filename)+1+max_digits]) for f in files]
+        next_number = max(existing_numbers) + 1
+        
+        return f"{base_dir}/{base_filename}-{next_number:0{max_digits}d}.{extension}"

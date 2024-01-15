@@ -1,0 +1,6 @@
+data/TRAINING/image_A0003.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0006.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0007.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0011.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0014.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0016.jpg: Checkpoint 2. lbp cascade and haar face detected
