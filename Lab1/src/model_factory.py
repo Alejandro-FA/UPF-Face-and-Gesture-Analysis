@@ -2,7 +2,7 @@ from face_detection_model import FaceDetectionModel
 import cv2 as cv
 
 class ModelFactory:
-    def get_model(self) -> FaceDetectionModel:
+    def get_model(self, save_logs=False) -> FaceDetectionModel:
         haar_face = "opencv/data/haarcascades/haarcascade_frontalface_alt.xml"
         haar_face2 = "opencv/data/haarcascades/haarcascade_frontalface_alt2.xml"
         haar_face3 = "opencv/data/haarcascades/haarcascade_frontalface_alt_tree.xml"
@@ -59,4 +59,5 @@ class ModelFactory:
             nose_model=nose_cascade,
             mouth_model=mouth_cacade,
             eye_pair_model=eyes_pair_cascade,
+            save_logs=save_logs,
         )

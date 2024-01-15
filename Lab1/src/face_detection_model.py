@@ -5,9 +5,7 @@ from utils import BoundingBox, ROI, OverlapFilter
 from dnn_detector import DNNDetector
 
 OVERLAP_THRESHOLD = 0.3
-DNN_THRESHOLD_1 = 0.85
-DNN_THRESHOLD_2 = 0.75
-
+DNN_THRESHOLD = 0.85
 
 class FaceDetectionModel:
     def __init__(
@@ -24,6 +22,7 @@ class FaceDetectionModel:
         nose_model,
         mouth_model,
         eye_pair_model,
+        save_logs=True,
     ) -> None:
         self.face_haarcascade = haar_face_model
         self.face_haarcascade2 = haar_face_model2
@@ -38,10 +37,12 @@ class FaceDetectionModel:
         self.mouth_cacade = mouth_model
         self.eye_pair = eye_pair_model
 
+        self.save_logs = save_logs
         self.dnn_detector = DNNDetector()
         self.overlap_filter = OverlapFilter(threshold=OVERLAP_THRESHOLD)
-        self.log_path = self.__get_next_log_filename()
-        print(f"Next log file: {self.log_path}")
+        if self.save_logs:
+            self.log_path = self.__get_next_log_filename()
+            print(f"Next log file: {self.log_path}")
 
     def detect_faces(self, image, image_path: str) -> list[tuple[int, int, int, int]]:
         frame_gray = self.preprocess(image)
@@ -102,59 +103,26 @@ class FaceDetectionModel:
                 rotated_faces = self.detect_elements(self.face_haarcascade, base_image)
                 face_added = False
 
+                # Corroborate that the face is human by using a DNN detector as well
+                # Only improves f1-score by 0.16 in TRAINING
                 for curr_face in rotated_faces:
                     dnn_detections = self.dnn_detector.detect_faces(image_path)
                     dnn_probs = [f[1] for f in dnn_detections if f[0].overlap(curr_face) > OVERLAP_THRESHOLD]
-                    clear_detection_1 = any([prob > DNN_THRESHOLD_1 for prob in dnn_probs])
+                    clear_detection = any([prob > DNN_THRESHOLD for prob in dnn_probs])
                     
-                    rotated_face_ROI = ROI(frame, curr_face)
-                    clear_detection_2 = any([prob > DNN_THRESHOLD_2 for prob in dnn_probs]) and \
-                        self.detect_elements(self.face_lbpcascade, rotated_face_ROI, scaleFactor=1.05)
-                    # if len(self.detect_elements(self.face_lbpcascade, rotated_face_ROI, scaleFactor=1.05)) > 0 or \
-                    # len(self.detect_elements(self.profile_lbpcascade, rotated_face_ROI, scaleFactor=1.05)) > 0:
-                    if clear_detection_1 == True:
+                    if clear_detection == True:
                         detected_rotated.append(curr_face)
                         face_added = True
                         self.__log(image_path, method_id=4, description='rotation added')
-
-                    elif clear_detection_2 == True:
-                        detected_rotated.append(curr_face)
-                        face_added = True
-                        self.__log(image_path, method_id=5, description='rotation added with lbp')
-
-                # # FIXME: F1-score achieved with this method: 86.94
-                # rotated_faces = self.detect_elements(self.face_lbpcascade, base_image)
-                # for box in rotated_faces:
-                #     faceROI = ROI(frame, box, margin=0.75)
-                #     eyesROI = ROI(frame, box)
-                #     smileROI = ROI(frame, box)
-                #     haar_faces = self.detect_elements(self.face_haarcascade, faceROI, scaleFactor=1.05, minNeighbors=4)
-
-                #     # Add face if it is found both with a lbpcascade and a haarcascade
-                #     if len(haar_faces) > 0:
-                #         largest_face = self.__get_largest_faces(haar_faces, 1)[0]
-                #         detected_faces.append(largest_face)
-                #         face_added = True
-                #         self.__log(image_path, method_id=4, description='ROTATED lbp cascade and haar face detected')
-
-                #     # # If not, try to find other human elements
-                #     # # NOTE: Does not produce false positives nor false negatives in training
-                #     # elif len(self.detect_elements(self.eyes_cascade, eyesROI, scaleFactor=1.05)) > 0 and \
-                #     # len(self.detect_elements(self.smile_cascade, smileROI, scaleFactor=1.05)) > 0:
-                #     #     adjusted_box = box.get_resized(base_image.width(), base_image.height(), margin=0.25)
-                #     #     detected_faces.append(adjusted_box)
-                #     #     face_added = True
-                #     #     self.__log(image_path, method_id=5, description='ROTATED lbp cascade and some other elements')
-
 
                 if face_added: # Only adds faces from one rotation angle at most
                     break
 
         # ---------------------------------------------------------------------
-        # -- Remove repeated faces
+        # -- Remove repeated faces and get 2 largest faces
         results = self.overlap_filter.filter_pair(detected_rotated, detected_profiles)
         results = self.overlap_filter.filter_pair(detected_faces, results)
-         
+        # results = self.__get_largest_faces(results, n=2)
         return [box.get_coords() for box in results]  
 
 
@@ -203,6 +171,7 @@ class FaceDetectionModel:
     
 
     def __log(self, image_path: str, method_id: int, description: str):
+        if not self.save_logs: return
         with open(self.log_path, 'a') as file:
             file.write(f"{image_path}: Checkpoint {method_id}. {description}\n")
 
@@ -214,6 +183,6 @@ class FaceDetectionModel:
             return f"{base_filename}-{1:0{max_digits}d}.{extension}"
         
         existing_numbers = [int(f[len(base_filename)+1:len(base_filename)+1+max_digits]) for f in files]
-        next_number = max(existing_numbers) + 1
+        next_number = max(existing_numbers) + 1 if existing_numbers else 1
         
         return f"{base_dir}/{base_filename}-{next_number:0{max_digits}d}.{extension}"

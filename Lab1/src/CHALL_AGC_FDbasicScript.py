@@ -122,11 +122,16 @@ def save_scores(output_path: str, bounding_boxes, f1_scores):
     with open(output_path + "_bounding_boxes.pkl", "wb") as file:
         pickle.dump(bounding_boxes, file)
 
+    with open(output_path + "_scores.txt", 'wt') as file:
+        for score, image_path in zip(f1_scores, AGC_Challenge1_TRAINING['imageName']):
+            file.write(f'{image_path}: {score}\n')
+
 
 def get_args():
     parser = argparse.ArgumentParser(description="AGC Challenge 1")
     parser.add_argument("--results_path", required=False, help="Path prefix to the results file")
-    parser.add_argument("--show-figures", required=False, help="Whether to show figures at the end or not", action='store_true', default=False)
+    parser.add_argument("--show_figures", required=False, help="Whether to show figures at the end or not", action='store_true', default=False)
+    parser.add_argument("--disable_logs", required=False, help="Flag to disable debugging information", action='store_true', default=False)
     return parser.parse_args() 
 
 
@@ -158,7 +163,7 @@ if __name__ == '__main__':
     AGC_Challenge1_TRAINING['imageName'] = imgPath + AGC_Challenge1_TRAINING['imageName'].astype(str)
     # Initialize results structure
     DetectionSTR = []
-    model = ModelFactory().get_model()
+    model = ModelFactory().get_model(save_logs=not args.disable_logs)
 
     # Initialize timer accumulator
     total_images = len(AGC_Challenge1_TRAINING)
@@ -181,11 +186,11 @@ if __name__ == '__main__':
             tt = time.time() - ti
             total_time = total_time + tt
         except Exception as e:
-            det_faces = []
-            print('Problematic image:', im) # FIXME: remove this for submission
-            raise e # FIXME: remove this for submission
+            # print('Problematic image:', im) # FIXME: remove this for submission
+            # raise e # FIXME: remove this for submission
             # If the face detection function fails, it will be assumed that no
             # face was detected for this input image
+            det_faces = []
 
         DetectionSTR.append(det_faces)
 
