@@ -5,7 +5,8 @@ from utils import BoundingBox, ROI, OverlapFilter
 from dnn_detector import DNNDetector
 
 OVERLAP_THRESHOLD = 0.3
-DNN_THRESHOLD = 0.85
+DNN_THRESHOLD_STRICT = 0.85
+DNN_THRESHOLD_LAX = 0.80
 
 class FaceDetectionModel:
     def __init__(
@@ -74,15 +75,11 @@ class FaceDetectionModel:
             eyesROI = ROI(frame_gray, box)
             smileROI = ROI(frame_gray, box)
             haar_faces = self.detect_elements(self.face_haarcascade, faceROI, scaleFactor=1.05, minNeighbors=4)
+
             # Add face if it is found both with a lbpcascade and a haarcascade
             if len(haar_faces) > 0:
-                dnn_detections = self.dnn_detector.detect_faces(image_path)
                 largest_face = self.__get_largest_faces(haar_faces, 1)[0]
                 detected_faces.append(largest_face)
-                
-                for dnn_image, prob in dnn_detections:
-                    if largest_face.overlap(dnn_image) < OVERLAP_THRESHOLD and prob > 0.8:
-                        detected_faces.append(dnn_image)
                 self.__log(image_path, method_id=2, description='lbp cascade and haar face detected')
 
             # If not, try to find other human elements
@@ -93,6 +90,17 @@ class FaceDetectionModel:
                 detected_faces.append(adjusted_box)
                 self.__log(image_path, method_id=3, description='lbp cascade and some other elements')
 
+        # ---------------------------------------------------------------------
+        # -- Detect small/difficult faces with DNN (only if there are other faces in the image)
+        dnn_faces = self.dnn_detector.detect_faces(image_path)
+
+        detected_dnn = []
+        if len(faces) > 0:
+            for dnn_face, prob in dnn_faces:
+                if prob > DNN_THRESHOLD_LAX:
+                    self.__log(image_path, method_id=4, description='DNN after lbp cascade')
+                    detected_dnn.append(dnn_face)
+        
         # ---------------------------------------------------------------------
         # -- Detect rotated faces
         detected_rotated = []
@@ -110,22 +118,31 @@ class FaceDetectionModel:
                 # Corroborate that the face is human by using a DNN detector as well
                 # Only improves f1-score by 0.16 in TRAINING
                 for curr_face in rotated_faces:
-                    dnn_detections = self.dnn_detector.detect_faces(image_path)
-                    dnn_probs = [f[1] for f in dnn_detections if f[0].overlap(curr_face) > OVERLAP_THRESHOLD]
-                    clear_detection = any([prob > DNN_THRESHOLD for prob in dnn_probs])
+                    dnn_probs = [f[1] for f in dnn_faces if f[0].overlap(curr_face) > OVERLAP_THRESHOLD]
+                    clear_detection = any([prob > DNN_THRESHOLD_STRICT for prob in dnn_probs])
                     
                     if clear_detection == True:
                         detected_rotated.append(curr_face)
                         face_added = True
-                        self.__log(image_path, method_id=4, description='rotation added')
+                        self.__log(image_path, method_id=5, description='rotation added')
 
                 if face_added: # Only adds faces from one rotation angle at most
                     break
 
         # ---------------------------------------------------------------------
         # -- Remove repeated faces and get 2 largest faces
-        results = self.overlap_filter.filter_pair(detected_rotated, detected_profiles)
-        results = self.overlap_filter.filter_pair(detected_faces, results)
+        frontal_faces = self.overlap_filter.filter_prioritized(
+            high_priority=detected_faces,
+            low_priority=detected_dnn
+        )
+        non_frontal_faces = self.overlap_filter.filter_prioritized(
+            high_priority=detected_rotated,
+            low_priority=detected_profiles
+        )
+        results = self.overlap_filter.filter_prioritized(
+            high_priority=frontal_faces,
+            low_priority=non_frontal_faces
+        )
         results = self.__get_largest_faces(results, n=2)
         return [box.get_coords() for box in results]  
 

@@ -99,19 +99,19 @@ class OverlapFilter:
         return non_overlapped
     
 
-    def filter_pair(self, boxes1: list[BoundingBox], boxes2: list[BoundingBox]) -> list[BoundingBox]:
-        """The same as filter, but prioritizes elements from boxes1. Elements
-        from boxes2 are only added if they do not overlap with any element of
-        boxes1.
+    def filter_prioritized(self, high_priority: list[BoundingBox], low_priority: list[BoundingBox]) -> list[BoundingBox]:
+        """The same as filter, but prioritizes elements from high_priority.
+        Elements from low_priority are only added if they do not overlap with
+        any element of high_priority.
 
         Returns:
             list[BoundingBox]: A combined list with non-overlapped bounding
             boxes from the two input lists.
         """
-        results = boxes1
-        for b2 in boxes2:
+        results = high_priority
+        for b2 in low_priority:
             has_overlap = False
-            for b1 in boxes1:
+            for b1 in high_priority:
                 if b1.overlap(b2) > self.threshold:
                     has_overlap = True
                     break
