@@ -58,7 +58,7 @@ Finally, we have also been able to improve the accuracy by rotating the images a
 
 | F1-score  | Computation time (600 images)  |
 |---|---|
-| 87.77 | 1 m 30 s (Apple Macbook Pro M1) |
+| 87.99 | 1 m 30 s (Apple Macbook Pro M1) |
 
 
 ## Submission notes
