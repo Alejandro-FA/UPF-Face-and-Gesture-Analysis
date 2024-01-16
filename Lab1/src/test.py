@@ -72,7 +72,7 @@ def visualize(
 
 
 
-IMAGE_FILE = 'data/TRAINING/image_A0017.jpg'
+IMAGE_FILE = 'data/TRAINING/image_A0240.jpg'
 
 import cv2
 

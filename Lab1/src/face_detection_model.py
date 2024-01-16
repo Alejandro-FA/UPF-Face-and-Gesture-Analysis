@@ -74,11 +74,15 @@ class FaceDetectionModel:
             eyesROI = ROI(frame_gray, box)
             smileROI = ROI(frame_gray, box)
             haar_faces = self.detect_elements(self.face_haarcascade, faceROI, scaleFactor=1.05, minNeighbors=4)
-
             # Add face if it is found both with a lbpcascade and a haarcascade
             if len(haar_faces) > 0:
+                dnn_detections = self.dnn_detector.detect_faces(image_path)
                 largest_face = self.__get_largest_faces(haar_faces, 1)[0]
                 detected_faces.append(largest_face)
+                
+                for dnn_image, prob in dnn_detections:
+                    if largest_face.overlap(dnn_image) < OVERLAP_THRESHOLD and prob > 0.8:
+                        detected_faces.append(dnn_image)
                 self.__log(image_path, method_id=2, description='lbp cascade and haar face detected')
 
             # If not, try to find other human elements

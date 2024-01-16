@@ -36,7 +36,7 @@ mkdir results
 python src/CHALL_AGC_FDbasicScript.py --results_path results/test
 ```
 
-Then you can run the following script to visualize the bounding boxes on top of the images. You can iterate over the images using the `A` and `D` keys of your keyboard.
+Then you can run the following script to visualize the bounding boxes on top of the images. You can iterate over the images using the `A` and `D` keys of your keyboard. The F1-score of each image is printed out in the terminal.
 
 ```bash
 python src/FD_results.py \
@@ -58,7 +58,7 @@ Finally, we have also been able to improve the accuracy by rotating the images a
 
 | F1-score  | Computation time (600 images)  |
 |---|---|
-| 87.47 | 1 m 30 s (Apple Macbook Pro M1) |
+| 87.77 | 1 m 30 s (Apple Macbook Pro M1) |
 
 
 ## Submission notes

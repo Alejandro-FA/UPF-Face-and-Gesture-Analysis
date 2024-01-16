@@ -21,7 +21,7 @@ class BoundingBox:
     def get_area(self):
         return self.width * self.height
 
-    def overlap(self, bbox2: 'BoundingBox') -> bool:
+    def overlap(self, bbox2: 'BoundingBox') -> float:
         # Intersection box
         x1 = max(self.x1, bbox2.x1)
         y1 = max(self.y1, bbox2.y1)
