@@ -1,0 +1,16 @@
+name: face_analysis
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.11
+  - imageio
+  - matplotlib
+  - numpy
+  - pandas
+  - scipy
+  - opencv
+  - tqdm
+  - pip
+  - pip:
+      - mediapipe
