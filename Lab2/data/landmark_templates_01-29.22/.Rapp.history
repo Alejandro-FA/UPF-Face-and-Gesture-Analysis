@@ -1,0 +1,20 @@
+library(tidyverse)
+setwd('/Volumes/GoogleDrive/My\ Drive/Personal\ Psychology\ Folder/Faces/189\ point\ templates/CFD\ Faces_Top\ 80\ with\ Templates\ +\ Ovals/All_templates_1-29')
+getwd()
+s <- seq(1,189)
+temp <- list.files(pattern="*.tem")
+data.list <- list()
+df <- data.frame("x" = as.numeric(),
+"y" = as.numeric(),
+"fname" = as.character(),
+"pointnum" = as.numeric())
+for (i in 1:length(temp)){
+print(i)
+print(temp[i])
+a <-suppressWarnings(read_tsv(temp[i], skip = 1, col_names = FALSE))
+a1 <- a[1:189,]
+names(a1) <- c("x", "y")
+a1$fname <- temp[i]
+a1$pointnum <- s
+df <- rbind(df, a1)
+}

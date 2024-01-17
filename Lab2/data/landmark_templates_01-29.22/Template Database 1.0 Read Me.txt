@@ -1,0 +1,36 @@
+Version 1.0 January 20222
+
+
+OVERVIEW.
+
+The landmark database was developed at the University of Colorado Boulder by Balbir Singh, Ashleigh Gambrell, and Joshua Correll. This database is a companion to the CFD and is intended for use in scientific research. Currently, this landmark database consists of templates for the 597 neutral images included in the main CFD. Each template consists of 189 points and is saved as a .tem file.
+
+These templates can be used with Psychomorph (Tiddeman et al., 2005) and Webmorph (DeBruine, 2018). The template file names are the same name as its corresponding image (with different file extensions). If the template is placed in the same folder as the image, then the user can autoload the template with Psychomorph or Webmorph.
+
+
+TYPE OF FILES. 
+
+Template Folder.
+
+Within this folder are the 597 .tem files. As suggested above, we suggest placing the template file with the image so you can load them easily into the program of your choice.
+
+Template Database CSV 012922.csv.
+
+This csv file includes the x,y coordinates of all 597 template files. These can be used to measure and analyze the template files with a program like R. 
+
+
+TERMS OF USE.
+
+The landmark template database broadly has the same terms of use as the main database. This database is a free resource for the scientific community. The templates and any information drawn from them may be used free of charge for non-commercial research purposes only.
+
+
+ACKNOWLEDGEMENT.
+Use of the materials should be acknowledged as follows:
+
+Singh, B., Gambrell, A., Correll, J. (2022). Face Templates for the Chicago Face Database. PsyArXiv. https://doi.org/10.31234/osf.io/f56a4
+
+
+VERSION HISTORY. 
+
+Version 1.0 includes templates for the CFD Wave 1 and Wave 2. 
+The paper associated with this version is currently under review at Behavior Research Methods. 
