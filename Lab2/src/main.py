@@ -20,7 +20,9 @@ if __name__ == '__main__':
     print(f'Landmarks points:\n{landmarks[0].as_matrix()}\n')
     
     image_visualizer = Visualizer(images, landmarks)
-    image_visualizer.visualize(show_images=False, show_landmarks=True)
+    image_visualizer.visualize(show_images=True, show_landmarks=True)
+    image_visualizer.show_all_landmarks()
+
 
     # # How to use images
     # for i in range(5):

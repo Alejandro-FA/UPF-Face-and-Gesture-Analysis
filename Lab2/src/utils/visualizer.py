@@ -147,8 +147,6 @@ class Visualizer:
         curr_idx = self.carroussel_manager.next()
         processed_images = [None] * len(self.images)
         
-        
-        #TODO: add functionality to optionally display the landmarks or the images
         while True:
             if processed_images[curr_idx] is None:
                 curr_image = self.images[curr_idx]
@@ -180,3 +178,13 @@ class Visualizer:
             elif key_pressed == 97: # 'A'
                 curr_idx = self.carroussel_manager.prev()
             cv.destroyAllWindows()
+    
+    def show_all_landmarks(self):
+        background = np.ones((self.IMAGES_HEIGHT, self.IMAGES_WIDTH, 3), dtype=np.uint8) * 255
+        
+        for landmark in self.landmarks:
+            for x, y in landmark.as_matrix():
+                background = cv.circle(background, (int(x), int(y)), 2, (255, 0, 0), thickness=4)
+        
+        cv.imshow("All landmarks", background)
+        cv.waitKey(0)
