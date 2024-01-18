@@ -1,5 +1,6 @@
 import os
 from utils.cfd_loader import CFDLoader
+from utils.visualizer import Visualizer
 
 DATA_PATH = 'data'
 CFD_DIR = os.path.join(DATA_PATH, 'CFD Version 3.0')
@@ -17,14 +18,17 @@ if __name__ == '__main__':
     print(f'Landmarks path: {landmarks[0].path}')
     print(f'Landmarks shape: {landmarks[0].as_matrix().shape}')
     print(f'Landmarks points:\n{landmarks[0].as_matrix()}\n')
+    
+    image_visualizer = Visualizer(images, landmarks)
+    image_visualizer.visualize()
 
-    # How to use images
-    for i in range(5):
-        print(f'Image path: {images[i].path}')
-        print(f'Image shape: {images[i].as_matrix().shape}')
-        print(f'Image flattened shape: {images[i].as_vector().shape}')
-        images[i].show()
+    # # How to use images
+    # for i in range(5):
+    #     print(f'Image path: {images[i].path}')
+    #     print(f'Image shape: {images[i].as_matrix().shape}')
+    #     print(f'Image flattened shape: {images[i].as_vector().shape}')
+    #     images[i].show()
 
-    print(f'Original image pixels:\n{images[0].as_matrix()}\n')
-    print(f'Flattened image pixels:\n{images[0].as_vector()}\n')
-    assert((images[0].as_matrix() == images[0].as_vector().reshape(images[0].height, images[0].width, 3)).all())
+    # print(f'Original image pixels:\n{images[0].as_matrix()}\n')
+    # print(f'Flattened image pixels:\n{images[0].as_vector()}\n')
+    # assert((images[0].as_matrix() == images[0].as_vector().reshape(images[0].height, images[0].width, 3)).all())
