@@ -20,13 +20,13 @@ if __name__ == '__main__':
     print(f'Landmarks points:\n{landmarks[0].as_matrix()}\n')
     
     image_visualizer = Visualizer(images, landmarks)
-    image_visualizer.visualize()
+    image_visualizer.visualize(show_images=False, show_landmarks=True)
 
     # # How to use images
     # for i in range(5):
-    #     print(f'Image path: {images[i].path}')
-    #     print(f'Image shape: {images[i].as_matrix().shape}')
-    #     print(f'Image flattened shape: {images[i].as_vector().shape}')
+    #     # print(f'Image path: {images[i].path}')
+    #     # print(f'Image shape: {images[i].as_matrix().shape}')
+    #     # print(f'Image flattened shape: {images[i].as_vector().shape}')
     #     images[i].show()
 
     # print(f'Original image pixels:\n{images[0].as_matrix()}\n')
