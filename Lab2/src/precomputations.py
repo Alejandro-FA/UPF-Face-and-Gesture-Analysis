@@ -64,7 +64,7 @@ def __load_data(data_path: str) -> tuple[list[Image], list[Landmarks]]:
     landmarks_preprocessor = LandmarksPreprocessor(new_scale=DOWNSAMPLE_SIZE, unwanted_points=p)
     image_preprocessor = ImagePreprocessor(new_size=DOWNSAMPLE_SIZE, new_color=cv2.COLOR_BGR2GRAY)
 
-    # Load data
+    # Load data
     loader = CFDLoader(cfd_dir, landmarks_dir, image_preprocessor, landmarks_preprocessor)
     images = loader.get_images()
     landmarks = loader.get_landmarks()

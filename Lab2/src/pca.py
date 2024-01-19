@@ -14,12 +14,12 @@ class PCA:
 
     def to_pca_space(self, x: np.ndarray, num_components: int=None) -> np.ndarray:
         p = num_components if num_components else x.shape[0]
-        return self.__eigenvectors[:, 0:p].T @ (x - self.__mean)
+        return self.__eigenvectors[:, :p].T @ (x - self.__mean)
 
 
     def from_pca_space(self, x: np.ndarray) -> np.ndarray:
         p = x.shape[0]
-        assert p < self.__eigenvectors.shape[1], 'The number of rows in the input data must be at most the number of columns in the eigenvector matrix'
+        assert p <= self.__eigenvectors.shape[1], 'The number of rows in the input data must be at most the number of columns in the eigenvector matrix'
         return (self.__eigenvectors[:, 0:p] @ x) + self.__mean
     
 
@@ -70,6 +70,7 @@ class PCA:
 
         if use_pseudocovariance:
             eigenvectors = x @ eigenvectors
+            eigenvectors = eigenvectors / np.linalg.norm(eigenvectors, axis=0)
         
         return eigenvalues, eigenvectors
     

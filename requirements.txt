@@ -6,3 +6,4 @@ scipy
 opencv-python
 tqdm
 mediapipe
+scikit-learn

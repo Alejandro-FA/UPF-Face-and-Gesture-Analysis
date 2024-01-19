@@ -38,8 +38,9 @@ class Image:
         __pixels (np.ndarray): The pixel values of the image.
         __path (str): The path of the image file.
     """
-    
     def __init__(self, data: np.ndarray, input_path: str=None, preprocessor=ImagePreprocessor()) -> None:
+        data = Image.__clamp(data, min_val=0, max_val=255)
+        data = data.astype(np.uint8)
         self.__pixels: np.ndarray = preprocessor.preprocess(data)
         self.__path: str = input_path
 
@@ -119,3 +120,7 @@ class Image:
         cv2.imshow(title, self.__pixels)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
+
+    @staticmethod
+    def __clamp(data: np.ndarray, min_val: int, max_val: int) -> np.ndarray:
+        return np.clip(data, min_val, max_val)
