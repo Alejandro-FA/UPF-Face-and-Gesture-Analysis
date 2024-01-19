@@ -1,10 +1,10 @@
 import os
 import re
 import pandas as pd
-from .image import Image, ImagePreprocessor
-from .landmarks import Landmarks, LandmarksPreprocessor
 import numpy as np
 from tqdm import tqdm
+from .image import Image, ImagePreprocessor
+from .landmarks import Landmarks, LandmarksPreprocessor
 
 
 class CFDLoader:
@@ -28,7 +28,8 @@ class CFDLoader:
         Args:
             cfd_dataset_dir (str): The directory path of the CFD dataset.
             landmarks_dir (str): The directory path of the landmarks.
-            landmarks_parser (LandmarksParser, optional): The landmarks parser object. Defaults to LandmarksParser().
+            image_preprocessor (ImagePreprocessor, optional): The image preprocessor object. Defaults to ImagePreprocessor().
+            landmarks_preprocessor (LandmarksPreprocessor, optional): The landmarks preprocessor object. Defaults to LandmarksPreprocessor().
         """
         self.__images = []
         self.__landmarks = []
@@ -40,8 +41,10 @@ class CFDLoader:
 
     def get_images(self) -> list[Image]:
         """
+        Returns a list of Image objects representing the loaded images.
+
         Returns:
-            list[Image]: A list of Image objects representing the loaded images.
+            list[Image]: A list of Image objects.
         """
         if not self.__images:
             self.__images = self.__load_images()
@@ -50,8 +53,10 @@ class CFDLoader:
 
     def get_landmarks(self) -> list[Landmarks]:
         """
+        Returns a list of Landmarks objects representing the loaded landmarks.
+
         Returns:
-            list[Landmarks]: A list of Landmarks objects representing the loaded landmarks.
+            list[Landmarks]: A list of Landmarks objects.
         """
         if not self.__landmarks:
             path = os.path.join(self.__landmarks_path, self.LANDMARKS_CSV)
@@ -88,6 +93,7 @@ class CFDLoader:
         Args:
             path (str): The path in which to search for directories.
             regex (str): The regular expression to match.
+            only_dirs (bool, optional): Whether to include only directories in the result. Defaults to False.
 
         Returns:
             list[str]: A list of directory names that match the regular expression.

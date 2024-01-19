@@ -1,10 +1,7 @@
 import os
-import numpy as np
-import matplotlib.pyplot as plt
-import cv2
-from utils.visualizer import Visualizer
-from utils.image import Image
-from precomputations import load_precomputations
+from eigenfaces.utils.visualizer import Visualizer
+from eigenfaces.utils.image import Image
+from eigenfaces.precomputations import load_precomputations
 
 
 RESULTS_PATH = 'assets'

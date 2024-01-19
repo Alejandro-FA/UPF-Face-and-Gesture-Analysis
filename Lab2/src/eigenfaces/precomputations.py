@@ -2,12 +2,11 @@ import os
 import numpy as np
 import cv2
 import pickle
-from collections import namedtuple
-from utils.cfd_loader import CFDLoader
-from utils.image import Image, ImagePreprocessor
-from utils.landmarks import Landmarks, LandmarksPreprocessor
-from pca import PCA
 from typing import NamedTuple
+from .utils.cfd_loader import CFDLoader
+from .utils.image import Image, ImagePreprocessor
+from .utils.landmarks import Landmarks, LandmarksPreprocessor
+from .pca import PCA
 
 
 DOWNSAMPLE_SIZE = (1222, 859)
@@ -23,6 +22,18 @@ class Precomputations(NamedTuple):
 
 
 def load_precomputations(data_path: str) -> Precomputations:
+    """
+    Load precomputed data from files and return a Precomputations object.
+
+    Args:
+        data_path (str): The path to the directory containing the precomputed data files.
+
+    Returns:
+        Precomputations: An object containing the loaded precomputed data.
+
+    Raises:
+        FileNotFoundError: If the precomputed data files are not found, the function will create them and recursively call itself to load the data.
+    """
     try:
         with open(os.path.join(data_path, IMAGES_FILE), 'rb') as f:
             images = pickle.load(f)

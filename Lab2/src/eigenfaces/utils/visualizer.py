@@ -1,7 +1,7 @@
-from utils.image import Image
-from utils.landmarks import Landmarks
-import cv2 as cv
+import cv2
 import numpy as np
+from .image import Image
+from .landmarks import Landmarks
 
 class CarrousselManager:
     """
@@ -142,6 +142,7 @@ class Visualizer:
         Parameters:
             show_images (bool): Whether to display images
             show_landmarks (bool): Whether to display landmarks
+            show_landmarks_idx (bool): Whether to display landmark indices
         """
         
         curr_idx = self.carroussel_manager.next()
@@ -160,34 +161,37 @@ class Visualizer:
                 
                 if show_landmarks:
                     for i, (x, y) in enumerate(curr_landmarks):
-                        image_coords = cv.circle(image_coords, (x, y), 2, (0, 0, 0), thickness=-1)
+                        image_coords = cv2.circle(image_coords, (x, y), 2, (0, 0, 0), thickness=-1)
                         if show_landmarks_idx:
-                            image_coords = cv.putText(image_coords, str(i), (x, y), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1, cv.LINE_AA)
+                            image_coords = cv2.putText(image_coords, str(i), (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
                 
                 processed_images[curr_idx] = image_coords
             else:
                 image_coords = processed_images[curr_idx]
 
             
-            cv.imshow(curr_image.path, image_coords)
+            cv2.imshow(curr_image.path, image_coords)
             
-            key_pressed = cv.waitKey(0)
+            key_pressed = cv2.waitKey(0)
             if key_pressed == 27:
-                cv.destroyAllWindows()
+                cv2.destroyAllWindows()
                 break
             elif key_pressed == 100: # 'D'
                 curr_idx = self.carroussel_manager.next()
             elif key_pressed == 97: # 'A'
                 curr_idx = self.carroussel_manager.prev()
-            cv.destroyAllWindows()
+            cv2.destroyAllWindows()
     
     def show_all_landmarks(self):
+        """
+        Displays all landmarks on a blank background.
+        """
         background = np.ones((self.IMAGES_HEIGHT, self.IMAGES_WIDTH, 3), dtype=np.uint8) * 255
         
         for landmark in self.landmarks:
             for x, y in landmark.as_matrix():
-                background = cv.circle(background, (x, y), 2, (255, 0, 0), thickness=-1)
+                background = cv2.circle(background, (x, y), 2, (255, 0, 0), thickness=-1)
         
-        cv.imshow("All landmarks", background)
-        cv.waitKey(0)
-        cv.destroyAllWindows()
+        cv2.imshow("All landmarks", background)
+        cv2.waitKey(0)
+        cv2.destroyAllWindows()
