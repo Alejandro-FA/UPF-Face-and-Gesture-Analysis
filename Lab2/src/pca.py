@@ -2,13 +2,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 class PCA:
-    def __init__(self, x: np.ndarray) -> None:
+    def __init__(self, data: np.ndarray) -> None:
         # Expects the data to be a 2D matrix, where the number of rows
         # represents the number of dimensions of the data and the number of
         # columns corresponds to the number of samples
-        self.__mean = PCA.__get_mean(x)
-        use_pseudocovariance = x.shape[0] > x.shape[1]
-        self.__eigenvalues, self.__eigenvectors = PCA.__eig(x, use_pseudocovariance)
+        use_pseudocovariance = data.shape[0] > data.shape[1]
+        self.__data = data
+        self.__mean = PCA.__get_mean(data)
+        self.__eigenvalues, self.__eigenvectors = PCA.__eig(data, use_pseudocovariance)
     
 
     def to_pca_space(self, x: np.ndarray, num_components: int=None) -> np.ndarray:
@@ -16,8 +17,9 @@ class PCA:
         return self.__eigenvectors[:, 0:p].T @ (x - self.__mean)
 
 
-    def from_pca_space(self, x: np.ndarray, num_components: int=None) -> np.ndarray:
-        p = num_components if num_components else x.shape[0]
+    def from_pca_space(self, x: np.ndarray) -> np.ndarray:
+        p = x.shape[0]
+        assert p < self.__eigenvectors.shape[1], 'The number of rows in the input data must be at most the number of columns in the eigenvector matrix'
         return (self.__eigenvectors[:, 0:p] @ x) + self.__mean
     
 
@@ -43,6 +45,16 @@ class PCA:
     @property
     def eigenvectors(self) -> np.ndarray:
         return self.__eigenvectors
+    
+
+    @property
+    def mean(self) -> np.ndarray:
+        return self.__mean.flatten()
+    
+    
+    @property
+    def data(self) -> np.ndarray:
+        return self.__data
     
 
     @staticmethod

@@ -111,10 +111,11 @@ class Image:
         return self.__path
 
     
-    def show(self) -> None:
+    def show(self, title: str=None) -> None:
         """
         Displays the image.
         """
-        cv2.imshow(self.__path, self.__pixels)
+        title = title if title else self.__path
+        cv2.imshow(title, self.__pixels)
         cv2.waitKey(0)
         cv2.destroyAllWindows()
