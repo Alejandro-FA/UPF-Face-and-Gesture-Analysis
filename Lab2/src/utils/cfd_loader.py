@@ -108,12 +108,33 @@ class CFDLoader:
         """
         dir = os.path.join(self.__images_path, self.IMAGES_BASE_PATH)
         images = []
-        for model_id in tqdm(os.listdir(dir), desc='Loading images'):
-            model_path = os.path.join(dir, model_id)
-            for image_name in os.listdir(model_path):
-                if re.match(self.NEUTRAL_FACE_REGEX, image_name):
-                    image = Image(os.path.join(model_path, image_name))
-                    images.append(image)
-                    continue
+        model_ids = self.__listdir_with_regex(dir, r'\w{2}-\d{3}')
+
+        for id in tqdm(model_ids, desc='Loading images'):
+            model_path = os.path.join(dir, id)
+            image_names = self.__listdir_with_regex(model_path, self.NEUTRAL_FACE_REGEX)
+
+            for image_name in image_names:
+                image = Image(os.path.join(model_path, image_name))
+                images.append(image)
+
         return images
+    
+
+    def __listdir_with_regex(self, path: str, regex: str, only_dirs=False) -> list[str]:
+        """
+        Returns a list of directories in the given path that match the given regular expression.
+
+        Args:
+            path (str): The path in which to search for directories.
+            regex (str): The regular expression to match.
+
+        Returns:
+            list[str]: A list of directory names that match the regular expression.
+        """
+        return [
+            dir for dir in os.listdir(path) 
+            if re.match(regex, dir) and
+            (os.path.isdir(os.path.join(path, dir)) or not only_dirs)
+        ]
     
