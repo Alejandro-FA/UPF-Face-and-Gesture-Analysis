@@ -1,6 +1,31 @@
 import numpy as np
 import cv2
 
+
+
+class ImagePreprocessor:
+    def __init__(self, new_size: tuple[int, int]=None, new_color=None) -> None:
+        self.__new_size = new_size
+        self.__new_color = new_color
+
+
+    def preprocess(self, image: np.ndarray) -> np.ndarray:
+        if self.__new_size:
+            image = ImagePreprocessor.__resize(image, self.__new_size)
+        if self.__new_color:
+            image = ImagePreprocessor.__convert_color(image, self.__new_color)
+        return image
+
+    @staticmethod
+    def __resize(image: np.ndarray, new_size: tuple[int, int]) -> np.ndarray:
+        return cv2.resize(image, new_size)
+
+    @staticmethod
+    def __convert_color(image: np.ndarray, new_color: int) -> np.ndarray:
+        return cv2.cvtColor(image, new_color)
+    
+
+
 class Image:
     """
     A class representing an image.
@@ -10,14 +35,15 @@ class Image:
         __path (str): The path of the image file.
     """
     
-    def __init__(self, input_path: str) -> None:
+    def __init__(self, input_path: str, preprocessor=ImagePreprocessor()) -> None:
         """
         Initializes the Image object.
 
         Args:
             input_path (str): The path of the image file.
         """
-        self.__pixels: np.ndarray = cv2.imread(input_path)
+        image = cv2.imread(input_path)
+        self.__pixels: np.ndarray = preprocessor.preprocess(image)
         if self.__pixels is None:
             print(f'Failed to read image from path: {input_path}')
             exit(1)

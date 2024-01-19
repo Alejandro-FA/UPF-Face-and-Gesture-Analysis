@@ -8,6 +8,10 @@
 
 ### 2.2. Eigenfaces algorithm
 
+## 3. Dataset
+
+We use the Chicago Faces Dataset. Images and landmarks from model `BF-209` have been removed because the dimensions (`2436 x 1712 x 3`) do not match the dimensions of the rest of the pictures (`2444 x 1718 x 3`).
+
 ## 3. Results
 
 (include criterion to determine meaningfulness and representation of the 10 extracted bases in each feature space)

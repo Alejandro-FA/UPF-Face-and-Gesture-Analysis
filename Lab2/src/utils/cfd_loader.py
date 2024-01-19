@@ -1,51 +1,10 @@
 import os
 import re
 import pandas as pd
-from .image import Image
-from .landmarks import Landmarks
+from .image import Image, ImagePreprocessor
+from .landmarks import Landmarks, LandmarksPreprocessor
 import numpy as np
 from tqdm import tqdm
-
-
-class LandmarksParser:
-    """
-    A class for parsing landmarks data from a CSV file.
-    """
-
-    def parse(self, csv_path: str) -> list[Landmarks]:
-        """
-        Parses the landmarks data from the specified CSV file.
-
-        Args:
-            csv_path (str): The path to the CSV file.
-
-        Returns:
-            list[Landmarks]: A list of Landmarks objects representing the parsed data.
-        """
-        try:
-            df = pd.read_csv(csv_path)
-            return self.__parse_df(df)
-        except FileNotFoundError:
-            print(f'Landmarks file not found: {csv_path}')
-            exit(1)
-
-
-    def __parse_df(self, df: pd.DataFrame) -> list[Landmarks]:
-        """
-        Parses the landmarks data from a DataFrame.
-
-        Args:
-            df (pd.DataFrame): The DataFrame containing the landmarks data.
-
-        Returns:
-            list[Landmarks]: A list of Landmarks objects representing the parsed data.
-        """
-        grouped = df.groupby('fname')
-        landmarks_df = grouped.apply(lambda x: np.vstack((x['x'], x['y'])).T)
-        return [Landmarks(points, file_path) for file_path, points in landmarks_df.items()]
-
- 
-
 
 
 class CFDLoader:
@@ -62,7 +21,7 @@ class CFDLoader:
     NEUTRAL_FACE_REGEX = re.compile(pattern=r'[\w\-]+-N.jpg')
 
 
-    def __init__(self, cfd_dataset_dir: str, landmarks_dir: str, landmarks_parser=LandmarksParser()) -> None:
+    def __init__(self, cfd_dataset_dir: str, landmarks_dir: str, image_preprocessor=ImagePreprocessor(), landmarks_preprocessor=LandmarksPreprocessor()) -> None:
         """
         Initializes a new instance of the CFDLoader class.
 
@@ -73,9 +32,10 @@ class CFDLoader:
         """
         self.__images = []
         self.__landmarks = []
-        self.__landmarks_parser = landmarks_parser
+        self.__image_preprocessor = image_preprocessor
         self.__images_path = cfd_dataset_dir
         self.__landmarks_path = landmarks_dir
+        self.__landmarks_preprocessor = landmarks_preprocessor
 
 
     def get_images(self) -> list[Image]:
@@ -95,7 +55,7 @@ class CFDLoader:
         """
         if not self.__landmarks:
             path = os.path.join(self.__landmarks_path, self.LANDMARKS_CSV)
-            self.__landmarks = self.__landmarks_parser.parse(path)
+            self.__landmarks = self.__parse_landmarks(path)
         return self.__landmarks
 
 
@@ -115,7 +75,7 @@ class CFDLoader:
             image_names = self.__listdir_with_regex(model_path, self.NEUTRAL_FACE_REGEX)
 
             for image_name in image_names:
-                image = Image(os.path.join(model_path, image_name))
+                image = Image(os.path.join(model_path, image_name), self.__image_preprocessor)
                 images.append(image)
 
         return images
@@ -138,3 +98,26 @@ class CFDLoader:
             (os.path.isdir(os.path.join(path, dir)) or not only_dirs)
         ]
     
+    
+    def __parse_landmarks(self, csv_path: str) -> list[Landmarks]:
+        """
+        Parses the landmarks data from the specified CSV file.
+
+        Args:
+            csv_path (str): The path to the CSV file.
+
+        Returns:
+            list[Landmarks]: A list of Landmarks objects representing the parsed data.
+        """
+        try:
+            df = pd.read_csv(csv_path)
+            grouped = df.groupby('fname')
+            landmarks_df = grouped.apply(lambda x: np.vstack((x['x'], x['y'])).T)
+            return [
+                Landmarks(points, file_path, self.__landmarks_preprocessor)
+                for file_path, points in landmarks_df.items()
+            ]
+        
+        except FileNotFoundError:
+            print(f'Landmarks file not found: {csv_path}')
+            exit(1)

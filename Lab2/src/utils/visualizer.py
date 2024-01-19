@@ -87,8 +87,8 @@ class Visualizer:
         landmarks (list[Landmarks]): A list of Landmarks objects representing the landmarks associated with the images.
         information (dict): A dictionary containing ordered information about image coordinates and landmark coordinates.
     """
-    IMAGES_WIDTH = 2444
-    IMAGES_HEIGHT = 1718
+    IMAGES_WIDTH = 1222
+    IMAGES_HEIGHT = 859
     
     def __init__(self, images: list[Image], landmarks: list[Landmarks]) -> None:
         """
@@ -135,7 +135,7 @@ class Visualizer:
                 return landmark.as_matrix()
     
     
-    def visualize(self, show_images=True, show_landmarks=True, show_landmarks_idx=True):
+    def visualize(self, show_images=True, show_landmarks=True, show_landmarks_idx=False):
         """
         Visualizes images with optional display of landmarks.
 
@@ -155,14 +155,14 @@ class Visualizer:
                 if show_images:
                     image_coords = curr_image.as_matrix().copy()
                 else:
-                    image_coords = np.ones((self.IMAGES_HEIGHT, self.IMAGES_WIDTH, 3), dtype=np.uint8) * 255
+                    image_coords = np.ones((self.IMAGES_HEIGHT, self.IMAGES_WIDTH, 3), dtype=np.uint8)
                     
                 
                 if show_landmarks:
                     for i, (x, y) in enumerate(curr_landmarks):
-                        image_coords = cv.circle(image_coords, (int(x), int(y)), 2, (255, 0, 0), thickness=4)
+                        image_coords = cv.circle(image_coords, (x, y), 2, (0, 0, 0), thickness=-1)
                         if show_landmarks_idx:
-                            image_coords = cv.putText(image_coords, str(i), (int(x), int(y)), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1, cv.LINE_AA)
+                            image_coords = cv.putText(image_coords, str(i), (x, y), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1, cv.LINE_AA)
                 
                 processed_images[curr_idx] = image_coords
             else:
@@ -186,7 +186,7 @@ class Visualizer:
         
         for landmark in self.landmarks:
             for x, y in landmark.as_matrix():
-                background = cv.circle(background, (int(x), int(y)), 2, (255, 0, 0), thickness=4)
+                background = cv.circle(background, (x, y), 2, (255, 0, 0), thickness=-1)
         
         cv.imshow("All landmarks", background)
         cv.waitKey(0)
