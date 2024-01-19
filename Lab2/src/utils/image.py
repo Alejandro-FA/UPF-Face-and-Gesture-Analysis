@@ -39,19 +39,25 @@ class Image:
         __path (str): The path of the image file.
     """
     
-    def __init__(self, input_path: str, preprocessor=ImagePreprocessor()) -> None:
-        """
-        Initializes the Image object.
+    def __init__(self, data: np.ndarray, input_path: str=None, preprocessor=ImagePreprocessor()) -> None:
+        self.__pixels: np.ndarray = preprocessor.preprocess(data)
+        self.__path: str = input_path
 
-        Args:
-            input_path (str): The path of the image file.
-        """
-        image = cv2.imread(input_path)
-        if image is None:
+
+    def from_file(input_path: str, preprocessor=ImagePreprocessor()) -> 'Image':
+        data = cv2.imread(input_path)
+        if data is None:
             print(f'Failed to read image from path: {input_path}')
             exit(1)
-        self.__pixels: np.ndarray = preprocessor.preprocess(image)
-        self.__path: str = input_path
+        return Image(data, input_path, preprocessor)
+
+
+    @staticmethod
+    def from_vector(vector: np.ndarray, image_size: int, input_path: str=None, preprocessor=ImagePreprocessor()) -> 'Image':
+        assert vector.ndim == 1, 'The input data is not a 1D vector.'
+        width, height = image_size
+        data = vector.reshape(height, width)
+        return Image(data, input_path, preprocessor)
 
 
     def as_vector(self) -> np.ndarray:
@@ -68,6 +74,14 @@ class Image:
             np.ndarray: The pixels of the image as a 3D-matrix (width x height x channels).
         """
         return self.__pixels
+    
+
+    def copy(self) -> 'Image':
+        """
+        Returns:
+            Image: A copy of the image.
+        """
+        return Image(self.__pixels.copy(), self.__path)
 
 
     @property

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import cv2
 from utils.cfd_loader import CFDLoader
 from utils.visualizer import Visualizer
-from utils.image import ImagePreprocessor
+from utils.image import Image, ImagePreprocessor
 from utils.landmarks import LandmarksPreprocessor
 from pca import PCA
 
@@ -14,13 +14,14 @@ DATA_PATH = 'data'
 CFD_DIR = os.path.join(DATA_PATH, 'CFD Version 3.0')
 LANDMARKS_DIR = os.path.join(DATA_PATH, 'landmark_templates_01-29.22')
 
+DOWNSAMPLE_SIZE = (1222, 859)
+
 
 if __name__ == '__main__':
     # Load data
-    image_dims = (1222, 859)
     p = list(range(145, 158)) + [183, 184] + list(range(135, 144))
-    landmarks_preprocessor = LandmarksPreprocessor(new_scale=image_dims, unwanted_points=p)
-    image_preprocessor = ImagePreprocessor(new_size=image_dims, new_color=cv2.COLOR_BGR2GRAY)
+    landmarks_preprocessor = LandmarksPreprocessor(new_scale=DOWNSAMPLE_SIZE, unwanted_points=p)
+    image_preprocessor = ImagePreprocessor(new_size=DOWNSAMPLE_SIZE, new_color=cv2.COLOR_BGR2GRAY)
 
     loader = CFDLoader(CFD_DIR, LANDMARKS_DIR, image_preprocessor, landmarks_preprocessor)
     images = loader.get_images()
@@ -51,13 +52,12 @@ if __name__ == '__main__':
     reconstruction = images_pca.from_pca_space(pcs, num_components=p)
     print('Done!')
 
-    print('\nReconstred images shape', reconstruction.shape)
     for i, image in enumerate(images[0:5]):
-        print('Original image shape:', image.as_matrix().shape)
-        path = image.path
-        cv2.imshow(path, reconstruction[:, i].reshape(859,1222))
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        reconstructed_image = Image.from_vector(reconstruction[:, i], DOWNSAMPLE_SIZE)
+        reconstructed_image.show()
 
-    # Show images
+    # Show mean face and first 10 principal components and the full reconstruction
+    # TODO:
+
+    # Show plots
     plt.show()

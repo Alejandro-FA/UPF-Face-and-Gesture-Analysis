@@ -75,7 +75,7 @@ class CFDLoader:
             image_names = self.__listdir_with_regex(model_path, self.NEUTRAL_FACE_REGEX)
 
             for image_name in image_names:
-                image = Image(os.path.join(model_path, image_name), self.__image_preprocessor)
+                image = Image.from_file(os.path.join(model_path, image_name), self.__image_preprocessor)
                 images.append(image)
 
         return images

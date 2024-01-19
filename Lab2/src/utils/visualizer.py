@@ -190,3 +190,4 @@ class Visualizer:
         
         cv.imshow("All landmarks", background)
         cv.waitKey(0)
+        cv.destroyAllWindows()
