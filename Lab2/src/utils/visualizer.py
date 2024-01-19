@@ -135,7 +135,7 @@ class Visualizer:
                 return landmark.as_matrix()
     
     
-    def visualize(self, show_images=True, show_landmarks=True):
+    def visualize(self, show_images=True, show_landmarks=True, show_landmarks_idx=True):
         """
         Visualizes images with optional display of landmarks.
 
@@ -159,8 +159,10 @@ class Visualizer:
                     
                 
                 if show_landmarks:
-                    for x, y in curr_landmarks:
+                    for i, (x, y) in enumerate(curr_landmarks):
                         image_coords = cv.circle(image_coords, (int(x), int(y)), 2, (255, 0, 0), thickness=4)
+                        if show_landmarks_idx:
+                            image_coords = cv.putText(image_coords, str(i), (int(x), int(y)), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1, cv.LINE_AA)
                 
                 processed_images[curr_idx] = image_coords
             else:

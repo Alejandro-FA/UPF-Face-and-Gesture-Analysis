@@ -26,7 +26,8 @@ class Landmarks:
             AssertionError: If the shape of the points array is not (NUM_POINTS, 2).
         """
         assert(points.shape == (self.NUM_POINTS, 2))
-        self.__points = points
+        unwanted = list(range(145, 158)) + [183, 184] + list(range(135, 144))
+        self.__points = Landmarks.__remove_unwanted_points(points, unwanted)
         self.__path = file_path
 
 
@@ -45,3 +46,15 @@ class Landmarks:
             str: The file path associated with the landmarks.
         """
         return self.__path
+    
+
+    @staticmethod
+    def __remove_unwanted_points(points, indices: list[int]) -> None:
+        """
+        Removes unwanted points from the landmarks.
+
+        Args:
+            indices (set[int]): A set of indices to remove from the landmarks.
+        """
+        points = np.delete(points, indices, axis=0)
+        return points
