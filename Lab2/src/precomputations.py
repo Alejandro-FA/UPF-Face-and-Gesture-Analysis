@@ -7,6 +7,7 @@ from utils.cfd_loader import CFDLoader
 from utils.image import Image, ImagePreprocessor
 from utils.landmarks import Landmarks, LandmarksPreprocessor
 from pca import PCA
+from typing import NamedTuple
 
 
 DOWNSAMPLE_SIZE = (1222, 859)
@@ -15,7 +16,10 @@ LANDMARKS_FILE = 'landmarks.pkl'
 IMAGES_PCA_FILE = 'images_pca.pkl'
 
 
-Precomputations = namedtuple('Precomputations', ['images', 'landmarks', 'images_pca'])
+class Precomputations(NamedTuple):
+    images: list[Image]
+    landmarks: list[Landmarks]
+    images_pca: PCA
 
 
 def load_precomputations(data_path: str) -> Precomputations:
