@@ -14,8 +14,10 @@ LANDMARKS_DIR = os.path.join(DATA_PATH, 'landmark_templates_01-29.22')
 
 
 if __name__ == '__main__':
+    p = list(range(145, 158)) + [183, 184] + list(range(135, 144))
+    landmarks_preprocessor = LandmarksPreprocessor(new_scale=(1222, 859), unwanted_points=p)
     image_preprocessor = ImagePreprocessor(new_size=(1222, 859), new_color=cv2.COLOR_BGR2GRAY)
-    landmarks_preprocessor = LandmarksPreprocessor(new_scale=(1222, 859))
+    
     loader = CFDLoader(CFD_DIR, LANDMARKS_DIR, image_preprocessor, landmarks_preprocessor)
     images = loader.get_images()
     landmarks = loader.get_landmarks()

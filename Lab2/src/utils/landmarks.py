@@ -5,13 +5,15 @@ class LandmarksPreprocessor:
     ORIGINAL_WIDTH = 2444
     ORIGINAL_HEIGHT = 1718
     
-    def __init__(self, new_scale: tuple[int, int]=None) -> None:
+    def __init__(self, new_scale: tuple[int, int]=None, unwanted_points: list[int]=[]) -> None:
         self.__new_scale = new_scale
+        self.__unwanted_points = unwanted_points
 
     def preprocess(self, points: np.ndarray) -> np.ndarray:
         if self.__new_scale:
             points = LandmarksPreprocessor.__rescale(points, self.__new_scale)
-            
+        if self.__unwanted_points:
+            points = LandmarksPreprocessor.__remove_unwanted(points, self.__unwanted_points)
         return points
 
     @staticmethod
@@ -23,6 +25,11 @@ class LandmarksPreprocessor:
         new_points[:, 1] = (points[:, 1] * sf_y)
         
         return new_points
+
+    @staticmethod
+    def __remove_unwanted(points: np.ndarray, unwanted_points: list[int]) -> np.ndarray:
+        return np.delete(points, unwanted_points, axis=0)
+
 
 class Landmarks:
     """
@@ -42,8 +49,6 @@ class Landmarks:
             points (np.ndarray): The array of landmark points.
             file_path (str): The file path associated with the landmarks.
         """
-        unwanted = list(range(145, 158)) + [183, 184] + list(range(135, 144))
-        points = Landmarks.__remove_unwanted_points(points, unwanted)
         self.__points = preprocessor.preprocess(points).astype(int)
         self.__path = file_path
 
@@ -63,15 +68,3 @@ class Landmarks:
             str: The file path associated with the landmarks.
         """
         return self.__path
-    
-
-    @staticmethod
-    def __remove_unwanted_points(points, indices: list[int]) -> None:
-        """
-        Removes unwanted points from the landmarks.
-
-        Args:
-            indices (set[int]): A set of indices to remove from the landmarks.
-        """
-        points = np.delete(points, indices, axis=0)
-        return points
