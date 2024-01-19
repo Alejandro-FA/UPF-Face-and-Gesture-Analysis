@@ -16,14 +16,18 @@ class ImagePreprocessor:
             image = ImagePreprocessor.__convert_color(image, self.__new_color)
         return image
 
+
     @staticmethod
     def __resize(image: np.ndarray, new_size: tuple[int, int]) -> np.ndarray:
         return cv2.resize(image, new_size)
+
 
     @staticmethod
     def __convert_color(image: np.ndarray, new_color: int) -> np.ndarray:
         return cv2.cvtColor(image, new_color)
     
+
+
 
 
 class Image:
@@ -43,11 +47,11 @@ class Image:
             input_path (str): The path of the image file.
         """
         image = cv2.imread(input_path)
-        self.__pixels: np.ndarray = preprocessor.preprocess(image)
-        if self.__pixels is None:
+        if image is None:
             print(f'Failed to read image from path: {input_path}')
             exit(1)
-        self.__path = input_path
+        self.__pixels: np.ndarray = preprocessor.preprocess(image)
+        self.__path: str = input_path
 
 
     def as_vector(self) -> np.ndarray:

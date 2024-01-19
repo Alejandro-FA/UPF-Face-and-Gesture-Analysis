@@ -1,6 +1,7 @@
 import numpy as np
 
 
+
 class LandmarksPreprocessor:
     ORIGINAL_WIDTH = 2444
     ORIGINAL_HEIGHT = 1718
@@ -9,12 +10,14 @@ class LandmarksPreprocessor:
         self.__new_scale = new_scale
         self.__unwanted_points = unwanted_points
 
+
     def preprocess(self, points: np.ndarray) -> np.ndarray:
         if self.__new_scale:
             points = LandmarksPreprocessor.__rescale(points, self.__new_scale)
         if self.__unwanted_points:
             points = LandmarksPreprocessor.__remove_unwanted(points, self.__unwanted_points)
         return points
+
 
     @staticmethod
     def __rescale(points: np.ndarray, new_scale: tuple[int, int]) -> np.ndarray:
@@ -26,9 +29,13 @@ class LandmarksPreprocessor:
         
         return new_points
 
+
     @staticmethod
     def __remove_unwanted(points: np.ndarray, unwanted_points: list[int]) -> np.ndarray:
         return np.delete(points, unwanted_points, axis=0)
+
+
+
 
 
 class Landmarks:
