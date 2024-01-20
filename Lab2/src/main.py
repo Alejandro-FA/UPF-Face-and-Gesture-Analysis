@@ -22,7 +22,7 @@ if __name__ == '__main__':
     # image_visualizer.show_all_landmarks()
 
     # Compute principal components
-    p = 10
+    p = 30
     image_data = images_pca.data
     
     print('Computing principal components...')
@@ -41,19 +41,27 @@ if __name__ == '__main__':
 
     # Show mean face
     mean_face = Image.from_vector(images_pca.mean, DOWNSAMPLE_SIZE)
-    mean_face.show('Mean face')
+    mean_face.show(title='Mean face')
 
     # Visualize the first p eigenvectors
     eigenvectors = images_pca.eigenvectors
+    eigenvalues = images_pca.eigenvalues
     for i in range(p):
-        image = Image.from_vector(eigenvectors[:, i], DOWNSAMPLE_SIZE)
-        image.show()
+        e = eigenvectors[:, i] * eigenvalues[i] * 255
+        image = Image.from_vector(e, DOWNSAMPLE_SIZE)
+        # print(image.as_matrix())
+        image.show(title=f'Eigenvector {i}')
         
     # Visualize the last p eigenvectors
     eigenvectors = images_pca.eigenvectors
     for i in range(1, p + 1):
-        image = Image.from_vector(eigenvectors[:, -i], DOWNSAMPLE_SIZE)
-        image.show()
+        e = eigenvectors[:, -i - 100] * eigenvalues[-i - 100] * 255
+        image = Image.from_vector(e, DOWNSAMPLE_SIZE)
+        image.show(title=f'Eigenvector {len(e) - i}')
+
+
+    # mean_face + eigenvector * 1*sigma
+        
     
 
     # eigenvectors = [

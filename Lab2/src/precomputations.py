@@ -22,6 +22,7 @@ class Precomputations(NamedTuple):
     images_pca: PCA
 
 
+# FIXME: Create pickles directory if it doesn't exist
 def load_precomputations(data_path: str, pickles_path: str) -> Precomputations:
     """
     Load precomputed data from files and return a Precomputations object.
