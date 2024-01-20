@@ -8,7 +8,7 @@ RESULTS_PATH = 'assets'
 DATA_PATH = 'data'
 PICKLES_PATH = 'pickles'
 DOWNSAMPLE_SIZE = (1222, 859)
-COMPUTE_SCREEN_PLOT = True
+COMPUTE_SCREE_PLOT = True
 
 
 if __name__ == '__main__':
@@ -19,7 +19,7 @@ if __name__ == '__main__':
     images_pca = precomputations.images_pca
 
     # Compute scree plot
-    if COMPUTE_SCREEN_PLOT:
+    if COMPUTE_SCREE_PLOT:
         print('\nComputing scree plot...')
         fig = images_pca.scree_plot(max_eigenvalues=20, num_permutations=100) # WARNING: This takes a long time to compute!
         fig.savefig(os.path.join(RESULTS_PATH, 'scree_plot.png'), dpi=1000)
