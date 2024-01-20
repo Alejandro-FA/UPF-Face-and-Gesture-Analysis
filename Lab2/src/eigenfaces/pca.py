@@ -67,31 +67,32 @@ class PCA:
         return (self.__eigenvectors[:, 0:p] @ x) + self.__mean
     
 
-    def scree_plot(self, do_bootrap: bool=False) -> plt.Figure:
+    def scree_plot(self, max_eigenvalues: int=None, num_permutations: int=0) -> plt.Figure:
         """
         Generates a scree plot to visualize the explained variance of each principal component.
 
         Returns:
             plt.Figure: The scree plot figure.
         """
+        max_eigenvalues = max_eigenvalues if max_eigenvalues else len(self.__eigenvalues)
         total_variance = np.sum(self.__eigenvalues)
-        x = np.arange(1, len(self.__eigenvalues) + 1)
-        y = self.__eigenvalues / total_variance
+        x = np.arange(1, len(self.__eigenvalues[0:max_eigenvalues]) + 1, dtype=int)
+        y = self.__eigenvalues[0:max_eigenvalues] / total_variance
 
         fig = plt.figure(figsize=(10, 5))
-        plt.plot(x, y, marker="*", linewidth=0.5, markersize=0.5, color="blue", label="Original eigenvalues")
-        plt.xlabel("i")
+        plt.plot(x, y, marker="*", linewidth=1.25, markersize=3, color="blue", label="Original eigenvalues")
+        plt.xlabel("Eigenvalue index")
         plt.ylabel("$\lambda_i$ (ratio of total variance))")
         title = "Scree plot"
 
-        if do_bootrap:
-            bootstrap_eigs = _bootstrap_pca(self.data, b=100)
-            for eigs in bootstrap_eigs:
-                y2 = eigs / total_variance
-                plt.plot(x, y2, color="red")
+        if num_permutations > 0:
+            bootstrap_eigs = _bootstrap_pca(self.data, b=num_permutations)
+            for i in range(bootstrap_eigs.shape[1]):
+                y2 = bootstrap_eigs[0:max_eigenvalues, i] / total_variance
+                plt.plot(x, y2, color="red", linewidth=0.75, alpha=0.4, label=f"Bootstrap eigenvalues (b={num_permutations})" if i == 0 else None)
 
             alpha = 0.05
-            num_significant = _get_significant_eigenvalues(self.__eigenvalues, bootstrap_eigs, alpha)
+            num_significant = self.get_significant_eigenvalues(bootstrap_eigs, alpha)
             title += f', (significant components (alpha {alpha}): {num_significant})'
 
         plt.title(title, fontsize=14, fontweight="bold")
@@ -99,6 +100,20 @@ class PCA:
         plt.grid()
         
         return fig
+    
+
+    def get_significant_eigenvalues(self, bootstrap_eig: np.ndarray, alpha: float=0.05) -> int:
+        # Expects bootstrap_eig to be a 2D matrix, where the number of rows represents the number of dimensions of the data and the number of columns corresponds to the number of bootstrap samples.
+        p = self.eigenvalues.shape[0]
+        b = len(bootstrap_eig)
+        p_values = np.zeros(p)
+
+        # Compute how many bootstrap eigenvalues are greater than the original ones (by chance)
+        for i in range(p):
+            count = np.sum(bootstrap_eig[i, :] > self.eigenvalues[i])
+            p_values[i] = (count + 1) / (b + 1)
+        
+        return np.sum(p_values < alpha)
 
 
     @property
@@ -197,30 +212,16 @@ class PCA:
         p = x.shape[0]
         return np.mean(x, axis=1).reshape(p, 1)
 
-
-
-def _get_significant_eigenvalues(original_eig: np.ndarray, bootstrap_eig: list[np.ndarray], alpha: float=0.05) -> int:
-    p = original_eig.shape[0]
-    b = len(bootstrap_eig)
-    p_values = [None] * p
-
-    # Compute how many bootstrap eigenvalues are greater than the original ones (by chance)
-    for i in range(p):
-        count = np.sum(bootstrap_eig[i] > original_eig)
-        p_values[i] = (count + 1) / (b + 1)
-    
-    return np.sum(p_values < alpha)
         
 
-def _bootstrap_pca(data: np.ndarray, b: int=100) -> list[np.ndarray]:
+def _bootstrap_pca(data: np.ndarray, b: int=100) -> np.ndarray:
     rng = np.random.default_rng()
     all_eigenvalues = [None] * b
-    desc = '\nComputing PCA for permutation samples'
+    desc = 'Computing PCA of permuted samples'
 
     for i in tqdm(range(b), desc=desc):
         permuted = rng.permuted(data, axis=0)
         bootstrap_pca = PCA(permuted)
         all_eigenvalues[i] = bootstrap_pca.eigenvalues
     
-    
-    return all_eigenvalues
+    return np.stack(all_eigenvalues, axis=1)

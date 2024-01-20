@@ -4,9 +4,11 @@ from eigenfaces.utils.image import Image
 from precomputations import load_precomputations
 
 
+RESULTS_PATH = 'assets'
 DATA_PATH = 'data'
 PICKLES_PATH = 'pickles'
 DOWNSAMPLE_SIZE = (1222, 859)
+COMPUTE_SCREEN_PLOT = True
 
 
 if __name__ == '__main__':
@@ -15,6 +17,14 @@ if __name__ == '__main__':
     images = precomputations.images
     landmarks = precomputations.landmarks
     images_pca = precomputations.images_pca
+
+    # Compute scree plot
+    if COMPUTE_SCREEN_PLOT:
+        print('\nComputing scree plot...')
+        fig = images_pca.scree_plot(max_eigenvalues=20, num_permutations=100) # WARNING: This takes a long time to compute!
+        fig.savefig(os.path.join(RESULTS_PATH, 'scree_plot.png'), dpi=1000)
+        print('Done!')
+        exit()
 
     # # Data exploration
     # image_visualizer = Visualizer(images, landmarks)
@@ -25,7 +35,7 @@ if __name__ == '__main__':
     p = 30
     image_data = images_pca.data
     
-    print('Computing principal components...')
+    print('\nComputing principal components...')
     pcs = images_pca.to_pca_space(image_data, num_components=p)
     print('Reconstructing images to the original space...')
     reconstruction = images_pca.from_pca_space(pcs)

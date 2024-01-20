@@ -13,7 +13,6 @@ DOWNSAMPLE_SIZE = (1222, 859)
 IMAGES_FILE = 'images.pkl'
 LANDMARKS_FILE = 'landmarks.pkl'
 IMAGES_PCA_FILE = 'images_pca.pkl'
-SCREE_PLOT_FILE = 'assets/scree_plot.png'
 
 
 class Precomputations(NamedTuple):
@@ -51,7 +50,7 @@ def load_precomputations(data_path: str, pickles_path: str) -> Precomputations:
         print('Precomputations not found, creating them...\n')
         __do_precomputations(data_path, pickles_path)
         print('\nPrecomputations created!')
-        print('---------------------------------------------\n')
+        print('---------------------------------------------')
         return load_precomputations(data_path, pickles_path)
 
 
@@ -67,10 +66,6 @@ def __do_precomputations(data_path: str, pickles_path: str) -> None:
     pca_result = __compute_pca(images)
     with open(os.path.join(pickles_path, IMAGES_PCA_FILE), 'wb') as f:
         pickle.dump(pca_result, f)
-
-    # Compute scree plot
-    fig = pca_result.scree_plot(do_bootrap=True)
-    fig.savefig(SCREE_PLOT_FILE)
     
 
 def __load_data(data_path: str) -> tuple[list[Image], list[Landmarks]]:
