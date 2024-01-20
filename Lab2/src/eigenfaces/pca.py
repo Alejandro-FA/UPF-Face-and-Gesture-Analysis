@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 
 class PCA:
@@ -66,7 +67,7 @@ class PCA:
         return (self.__eigenvectors[:, 0:p] @ x) + self.__mean
     
 
-    def scree_plot(self) -> plt.Figure:
+    def scree_plot(self, do_bootrap: bool=False) -> plt.Figure:
         """
         Generates a scree plot to visualize the explained variance of each principal component.
 
@@ -78,11 +79,25 @@ class PCA:
         y = self.__eigenvalues / total_variance
 
         fig = plt.figure(figsize=(10, 5))
-        plt.plot(x, y, marker="*", linewidth=0.5)
+        plt.plot(x, y, marker="*", linewidth=0.5, markersize=0.5, color="blue", label="Original eigenvalues")
         plt.xlabel("i")
-        plt.ylabel("$\lambda_i$ (percentage of total variance))")
-        plt.title("Scree plot", fontsize=14, fontweight="bold")
+        plt.ylabel("$\lambda_i$ (ratio of total variance))")
+        title = "Scree plot"
+
+        if do_bootrap:
+            bootstrap_eigs = _bootstrap_pca(self.data, b=100)
+            for eigs in bootstrap_eigs:
+                y2 = eigs / total_variance
+                plt.plot(x, y2, color="red")
+
+            alpha = 0.05
+            num_significant = _get_significant_eigenvalues(self.__eigenvalues, bootstrap_eigs, alpha)
+            title += f', (significant components (alpha {alpha}): {num_significant})'
+
+        plt.title(title, fontsize=14, fontweight="bold")
+        plt.legend()
         plt.grid()
+        
         return fig
 
 
@@ -181,3 +196,31 @@ class PCA:
         """
         p = x.shape[0]
         return np.mean(x, axis=1).reshape(p, 1)
+
+
+
+def _get_significant_eigenvalues(original_eig: np.ndarray, bootstrap_eig: list[np.ndarray], alpha: float=0.05) -> int:
+    p = original_eig.shape[0]
+    b = len(bootstrap_eig)
+    p_values = [None] * p
+
+    # Compute how many bootstrap eigenvalues are greater than the original ones (by chance)
+    for i in range(p):
+        count = np.sum(bootstrap_eig[i] > original_eig)
+        p_values[i] = (count + 1) / (b + 1)
+    
+    return np.sum(p_values < alpha)
+        
+
+def _bootstrap_pca(data: np.ndarray, b: int=100) -> list[np.ndarray]:
+    rng = np.random.default_rng()
+    all_eigenvalues = [None] * b
+    desc = '\nComputing PCA for permutation samples'
+
+    for i in tqdm(range(b), desc=desc):
+        permuted = rng.permuted(data, axis=0)
+        bootstrap_pca = PCA(permuted)
+        all_eigenvalues[i] = bootstrap_pca.eigenvalues
+    
+    
+    return all_eigenvalues

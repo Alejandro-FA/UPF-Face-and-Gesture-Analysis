@@ -1,17 +1,17 @@
 import os
 from eigenfaces.utils.visualizer import Visualizer
 from eigenfaces.utils.image import Image
-from eigenfaces.precomputations import load_precomputations
+from precomputations import load_precomputations
 
 
-RESULTS_PATH = 'assets'
 DATA_PATH = 'data'
+PICKLES_PATH = 'pickles'
 DOWNSAMPLE_SIZE = (1222, 859)
 
 
 if __name__ == '__main__':
     # Load data
-    precomputations = load_precomputations(DATA_PATH)
+    precomputations = load_precomputations(DATA_PATH, PICKLES_PATH)
     images = precomputations.images
     landmarks = precomputations.landmarks
     images_pca = precomputations.images_pca
@@ -21,12 +21,8 @@ if __name__ == '__main__':
     # image_visualizer.visualize(show_images=True, show_landmarks=True)
     # image_visualizer.show_all_landmarks()
 
-    # PCA results evaluation
-    fig = images_pca.scree_plot()
-    fig.savefig(os.path.join(RESULTS_PATH, 'scree_plot.png'))
-
     # Compute principal components
-    p = 500
+    p = 10
     image_data = images_pca.data
     
     print('Computing principal components...')
@@ -47,5 +43,25 @@ if __name__ == '__main__':
     mean_face = Image.from_vector(images_pca.mean, DOWNSAMPLE_SIZE)
     mean_face.show('Mean face')
 
+    # Visualize the first p eigenvectors
+    eigenvectors = images_pca.eigenvectors
+    for i in range(p):
+        image = Image.from_vector(eigenvectors[:, i], DOWNSAMPLE_SIZE)
+        image.show()
+        
+    # Visualize the last p eigenvectors
+    eigenvectors = images_pca.eigenvectors
+    for i in range(1, p + 1):
+        image = Image.from_vector(eigenvectors[:, -i], DOWNSAMPLE_SIZE)
+        image.show()
+    
+
+    # eigenvectors = [
+    #     Image.from_vector(eigenvectors[:, i], DOWNSAMPLE_SIZE)
+    #     for i in range(eigenvectors.shape[1])
+    # ]
+    # eigenvectors_visualizer = Visualizer(eigenvectors, landmarks)
+    # eigenvectors_visualizer.visualize(show_landmarks=False)
+    
     # # Show plots
     # plt.show()
