@@ -42,6 +42,8 @@ def load_precomputations(data_path: str, pickles_path: str) -> Precomputations:
             landmarks = pickle.load(f)
         with open(os.path.join(pickles_path, IMAGES_PCA_FILE), 'rb') as f:
             images_pca = pickle.load(f)
+            
+        print("Precomputations were found")
 
         return Precomputations(images, landmarks, images_pca)
     

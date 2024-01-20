@@ -2,13 +2,17 @@ import os
 from eigenfaces.utils.visualizer import Visualizer
 from eigenfaces.utils.image import Image
 from precomputations import load_precomputations
+import numpy as np
+import imageio
+import cv2
+
 
 
 RESULTS_PATH = 'assets'
 DATA_PATH = 'data'
 PICKLES_PATH = 'pickles'
 DOWNSAMPLE_SIZE = (1222, 859)
-COMPUTE_SCREE_PLOT = True
+COMPUTE_SCREE_PLOT = False
 
 
 if __name__ == '__main__':
@@ -32,7 +36,7 @@ if __name__ == '__main__':
     # image_visualizer.show_all_landmarks()
 
     # Compute principal components
-    p = 30
+    p = 10
     image_data = images_pca.data
     
     print('\nComputing principal components...')
@@ -53,25 +57,41 @@ if __name__ == '__main__':
     mean_face = Image.from_vector(images_pca.mean, DOWNSAMPLE_SIZE)
     mean_face.show(title='Mean face')
 
-    # Visualize the first p eigenvectors
     eigenvectors = images_pca.eigenvectors
     eigenvalues = images_pca.eigenvalues
-    for i in range(p):
-        e = eigenvectors[:, i] * eigenvalues[i] * 255
-        image = Image.from_vector(e, DOWNSAMPLE_SIZE)
-        # print(image.as_matrix())
-        image.show(title=f'Eigenvector {i}')
+    
+    # # Visualize the first p eigenvectors
+    # for i in range(p):
+    #     e = eigenvectors[:, i] * eigenvalues[i] * 255
+    #     image = Image.from_vector(e, DOWNSAMPLE_SIZE)
+    #     # print(image.as_matrix())
+    #     image.show(title=f'Eigenvector {i}')
         
-    # Visualize the last p eigenvectors
-    eigenvectors = images_pca.eigenvectors
-    for i in range(1, p + 1):
-        e = eigenvectors[:, -i - 100] * eigenvalues[-i - 100] * 255
-        image = Image.from_vector(e, DOWNSAMPLE_SIZE)
-        image.show(title=f'Eigenvector {len(e) - i}')
+    # # Visualize the last p eigenvectors
+    # eigenvectors = images_pca.eigenvectors
+    # for i in range(1, p + 1):
+    #     e = eigenvectors[:, -i - 100] * eigenvalues[-i - 100] * 255
+    #     image = Image.from_vector(e, DOWNSAMPLE_SIZE)
+    #     image.show(title=f'Eigenvector {len(e) - i}')
 
 
-    # mean_face + eigenvector * 1*sigma
+    
+    
+    for base_num in range(15):
+        base_path = f"assets/eigenvector_{base_num}/"
+        if not os.path.exists(base_path):
+            os.makedirs(base_path)
+        std = np.sqrt(np.sqrt(eigenvalues[base_num]))
         
+        width = images[0].width
+        height = images[0].height
+        output_imgs = []
+        
+        for idx, i in enumerate(np.arange(-10 * std, 10 * std, 20 * std / 30)):
+            varied_face = mean_face.as_vector() + eigenvectors[:, base_num] * i * 255
+            varied_face_img = Image.from_vector(varied_face, DOWNSAMPLE_SIZE, input_path=images[base_num].path)
+            cv2.imwrite(f"{base_path}{idx}.png", varied_face_img.as_matrix())
+    
     
 
     # eigenvectors = [
