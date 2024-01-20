@@ -21,6 +21,7 @@ class PCA:
         to_pca_space(x, num_components=None): Projects the input data into the PCA space.
         from_pca_space(x): Projects the data from the PCA space back to the original space.
         scree_plot(): Generates a scree plot to visualize the explained variance of each principal component.
+        get_significant_eigenvalues(bootstrap_eig, alpha=0.05): Computes the number of significant eigenvalues based on bootstrap analysis.
     """
 
     def __init__(self, data: np.ndarray) -> None:
@@ -71,6 +72,12 @@ class PCA:
         """
         Generates a scree plot to visualize the explained variance of each principal component.
 
+        Args:
+            max_eigenvalues (int, optional): The maximum number of eigenvalues to include in the plot. 
+                If not specified, all eigenvalues will be included. Defaults to None.
+            num_permutations (int, optional): The number of permutations to perform for bootstrap analysis. 
+                If set to 0, no bootstrap analysis will be performed. Defaults to 0.
+
         Returns:
             plt.Figure: The scree plot figure.
         """
@@ -103,7 +110,16 @@ class PCA:
     
 
     def get_significant_eigenvalues(self, bootstrap_eig: np.ndarray, alpha: float=0.05) -> int:
-        # Expects bootstrap_eig to be a 2D matrix, where the number of rows represents the number of dimensions of the data and the number of columns corresponds to the number of bootstrap samples.
+        """
+        Computes the number of significant eigenvalues based on bootstrap analysis.
+
+        Args:
+            bootstrap_eig (np.ndarray): The bootstrap eigenvalues.
+            alpha (float, optional): The significance level. Defaults to 0.05.
+
+        Returns:
+            int: The number of significant eigenvalues.
+        """
         p = self.eigenvalues.shape[0]
         b = len(bootstrap_eig)
         p_values = np.zeros(p)
