@@ -97,6 +97,14 @@ class Landmarks:
         self.__points = preprocessor.preprocess(points).astype(int)
         self.__path = file_path
 
+    def as_vector(self) -> np.ndarray:
+        """
+        Returns:
+            np.ndarray: The landmark points as a 1D vector.
+        """
+        return self.__points.flatten()
+    
+    
     def as_matrix(self) -> np.ndarray:
         """
         Returns the landmark points as a 2D matrix.
@@ -105,6 +113,7 @@ class Landmarks:
             np.ndarray: The landmark points as a 2D matrix (NUM_POINTS x 2).
         """
         return self.__points
+
 
     @property
     def path(self) -> str:

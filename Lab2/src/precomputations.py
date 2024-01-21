@@ -13,12 +13,14 @@ DOWNSAMPLE_SIZE = (1222, 859)
 IMAGES_FILE = 'images.pkl'
 LANDMARKS_FILE = 'landmarks.pkl'
 IMAGES_PCA_FILE = 'images_pca.pkl'
+LANDMARKS_PCA_FILE = 'landmarks_pca.pkl'
 
 
 class Precomputations(NamedTuple):
     images: list[Image]
     landmarks: list[Landmarks]
     images_pca: PCA
+    landmarks_pca: PCA
 
 
 # FIXME: Create pickles directory if it doesn't exist
@@ -42,10 +44,12 @@ def load_precomputations(data_path: str, pickles_path: str) -> Precomputations:
             landmarks = pickle.load(f)
         with open(os.path.join(pickles_path, IMAGES_PCA_FILE), 'rb') as f:
             images_pca = pickle.load(f)
+        with open(os.path.join(pickles_path, LANDMARKS_PCA_FILE), 'rb') as f:
+            landmarks_pca = pickle.load(f)
             
         print("Precomputations were found")
 
-        return Precomputations(images, landmarks, images_pca)
+        return Precomputations(images, landmarks, images_pca, landmarks_pca)
     
     except FileNotFoundError:
         print('\n---------------------------------------------')
@@ -65,9 +69,16 @@ def __do_precomputations(data_path: str, pickles_path: str) -> None:
         pickle.dump(landmarks, f)
     
     # Compute PCA
-    pca_result = __compute_pca(images)
+    pca_result_images = __compute_pca(images)
     with open(os.path.join(pickles_path, IMAGES_PCA_FILE), 'wb') as f:
-        pickle.dump(pca_result, f)
+        pickle.dump(pca_result_images, f)
+    print("PCA for images completed")
+    
+    pca_result_landmarks = __compute_pca(landmarks)
+    with open(os.path.join(pickles_path, LANDMARKS_PCA_FILE), 'wb') as f:
+        pickle.dump(pca_result_landmarks, f)
+    print("PCA for landmarks completed")
+    
     
 
 def __load_data(data_path: str) -> tuple[list[Image], list[Landmarks]]:
@@ -90,11 +101,11 @@ def __load_data(data_path: str) -> tuple[list[Image], list[Landmarks]]:
 
 
 # FIXME: Accept landmarks as well as images, the process is the same one
-def __compute_pca(images: list[Image]) -> PCA:
+def __compute_pca(data: list) -> PCA:
     print('\nCreating data matrix...')
-    image_data = np.stack([image.as_vector() for image in images], axis=1)
+    vectorized_data = np.stack([val.as_vector() for val in data], axis=1)
     print('Computing eigendecomposition...')
-    pca_result = PCA(image_data)
+    pca_result = PCA(vectorized_data)
     print('Done!')
 
     return pca_result
