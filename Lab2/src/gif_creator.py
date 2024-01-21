@@ -1,20 +1,50 @@
 from PIL import Image
 import os
+import argparse
+from tqdm import tqdm
 
-# Directory containing your PNG images
 
-for i in range(15):
-    image_dir = f'assets/eigenvector_{i}'
+def create_gif(path: str, output_path: str, eigenvec_num: int, delete_png=False):
+        
+    image_files = sorted(
+        [f for f in os.listdir(path) if f.endswith('.png')],
+        key=lambda x: int(x.split('.')[0])
+    )
 
-    # Get a list of all image files in the directory
-    image_files = sorted([f for f in os.listdir(image_dir) if f.endswith('.png')], key=lambda x: int(x.split('.')[0]))
+    
+    images = [Image.open(os.path.join(path, file)) for file in image_files]
 
-    # Read the images using Pillow
-    images = [Image.open(os.path.join(image_dir, file)) for file in image_files]
-
-    # Specify the output file name
-    output_file = os.path.join(image_dir, 'output.gif')
-
-    # Save the images as a GIF
+    
+    output_file = os.path.join(f"{output_path}/", f'output_{eigenvec_num}.gif')
 
     images[0].save(output_file, save_all=True, append_images=images[0:], duration=100, loop=0)
+    
+    if delete_png:
+        for file in image_files:
+            os.remove(os.path.join(path, file))
+    
+
+
+
+parser = argparse.ArgumentParser(description="Creates a GIF for each of the modes of variation for the significant eigenvectors")
+parser.add_argument("base_path", type=str, help="Base path where the files are stored")
+parser.add_argument("num_components", type=int, help="Number of components for which the GIF have to be created")
+parser.add_argument("--delete_png", action="store_true", help="Delete PNG files after creating the GIFs")
+
+args = parser.parse_args()
+
+if not os.path.exists(args.base_path):
+    print(f"Path {args.base_path} does not exist")
+    exit(-1)
+
+output_path = f"{args.base_path}/gifs"
+
+if not os.path.exists(output_path):
+    os.makedirs(output_path)
+
+for i in tqdm(range(args.num_components), total=args.num_components):
+    curr_path = f"{args.base_path}/eigenvector_{i}"
+    if os.path.exists(curr_path):
+        create_gif(curr_path, output_path, i, args.delete_png)
+    else:
+        print(f"Omitting {curr_path}. Path not found")
