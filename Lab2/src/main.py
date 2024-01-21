@@ -70,7 +70,6 @@ if __name__ == '__main__':
     
     
     # Show mean landmarks
-    print(landmarks[0].index_mapping)
     mean_landmarks = Landmarks.from_vector(landmarks_pca.mean, index_mapping=landmarks[0].index_mapping, joint_points=landmarks[0].joint_points)
     mean_landmarks.show(title="Mean landmarks", join_points=True)
     
@@ -82,20 +81,20 @@ if __name__ == '__main__':
     eigenvalues_landmarks = landmarks_pca.eigenvalues
     
     
-    # for base_num in range(15):
-    #     base_path = f"assets/eigenvector_{base_num}/"
-    #     if not os.path.exists(base_path):
-    #         os.makedirs(base_path)
-    #     std = np.sqrt(np.sqrt(eigenvalues[base_num]))
+    for base_num in range(15):
+        base_path = f"assets/landmark_eigenvector_{base_num}/"
+        if not os.path.exists(base_path):
+            os.makedirs(base_path)
+        std = np.sqrt(np.sqrt(eigenvalues_landmarks[base_num]))
         
-    #     width = images[0].width
-    #     height = images[0].height
-    #     output_imgs = []
+        width = images[0].width
+        height = images[0].height
+        output_imgs = []
         
-    #     for idx, i in enumerate(np.arange(-10 * std, 10 * std, 20 * std / 30)):
-    #         varied_face = mean_face.as_vector() + eigenvectors[:, base_num] * i * 255
-    #         varied_face_img = Image.from_vector(varied_face, DOWNSAMPLE_SIZE, input_path=images[base_num].path)
-    #         cv2.imwrite(f"{base_path}{idx}.png", varied_face_img.as_matrix())
+        for idx, i in enumerate(np.arange(-10 * std, 10 * std, 20 * std / 30)):
+            varied_face = mean_landmarks.as_vector() + eigenvectors_landmarks[:, base_num] * i# * 255
+            varied_face_img = Landmarks.from_vector(varied_face, index_mapping=landmarks[0].index_mapping, joint_points=landmarks[0].joint_points, input_path=images[base_num].path)
+            cv2.imwrite(f"{base_path}{idx}.png", varied_face_img.get_as_image(join_points=True))
     
     
 

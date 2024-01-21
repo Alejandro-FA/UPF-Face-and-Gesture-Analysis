@@ -180,6 +180,25 @@ class Landmarks:
         """
         return self.__points
 
+    def get_as_image(self, join_points=False):
+        background = np.ones((self.RESCALED_HEIGHT, self.RESCALED_WIDTH, 3), dtype=np.uint8) * 255
+        
+        for x, y in self.__points:
+            background = cv2.circle(background, (x, y), 2, (255, 0, 0), thickness=-1)
+            
+        if join_points:
+            for line in self.__joint_points:
+                for i in range(len(line) - 1):
+                    point1_idx = self.__index_mapping[line[i]]
+                    point2_idx = self.__index_mapping[line[i + 1]]
+                    x1 = self.__points[point1_idx, 0]
+                    y1 = self.__points[point1_idx, 1]
+                    x2 = self.__points[point2_idx, 0]
+                    y2 = self.__points[point2_idx, 1]
+                    
+                    background = cv2.line(background, (x1, y1), (x2, y2), (255, 0, 0), thickness=1)
+        
+        return background
 
     @property
     def path(self) -> str:
@@ -206,24 +225,8 @@ class Landmarks:
         Args:
             title (str, optional): The title of the image window. If no title is passed, the path of the image file will be used. Defaults to None.
         """
-        background = np.ones((self.RESCALED_HEIGHT, self.RESCALED_WIDTH, 3), dtype=np.uint8) * 255
+        background = self.get_as_image(join_points=join_points)
         
-        
-        for x, y in self.__points:
-            background = cv2.circle(background, (x, y), 2, (255, 0, 0), thickness=-1)
-            
-        if join_points:
-            for line in self.__joint_points:
-                for i in range(len(line) - 1):
-                    point1_idx = self.__index_mapping[line[i]]
-                    point2_idx = self.__index_mapping[line[i + 1]]
-                    x1 = self.__points[point1_idx, 0]
-                    y1 = self.__points[point1_idx, 1]
-                    x2 = self.__points[point2_idx, 0]
-                    y2 = self.__points[point2_idx, 1]
-                    
-                    background = cv2.line(background, (x1, y1), (x2, y2), (255, 0, 0), thickness=1)
-                    
         title = title if title else self.__path
         cv2.imshow(title, background)
         cv2.waitKey(0)

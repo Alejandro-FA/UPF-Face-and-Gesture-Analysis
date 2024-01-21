@@ -120,9 +120,9 @@ class CFDLoader:
             grouped = df.groupby('fname')
             landmarks_df = grouped.apply(lambda x: np.vstack((x['x'], x['y'])).T)
             all_paths = [f"{'/'.join(csv_path.split('/')[:-1])}/Templates/{file_path}" for file_path, _ in landmarks_df.items()]
-            joint_points = self.__process_tem_files(all_paths)
+            joint_points = self.__process_tem_file(all_paths[0])
             return [
-                Landmarks(points, file_path, preprocessor=self.__landmarks_preprocessor, joint_points=joint_points[i])
+                Landmarks(points, file_path, preprocessor=self.__landmarks_preprocessor, joint_points=joint_points)
                 for i, (file_path, points) in enumerate(landmarks_df.items())
             ]
         
@@ -130,15 +130,15 @@ class CFDLoader:
             print(f'Landmarks file not found: {csv_path}')
             exit(1)
 
-    def __process_tem_files(self, file_paths: list[str]):
-        joint_points = [[]] * len(file_paths)
-        for idx, file_name in enumerate(file_paths):
-            file_content = open(file_name).read().splitlines()
-            # First 190 lines contain the landmark coordinates
-            for line in file_content[190:325]:
-                nums = [int(elem) for elem in line.split(" ") if elem != ""]
-                if len(nums) > 0:
-                    joint_points[idx].append(nums)
+    def __process_tem_file(self, file_path: str):
+        joint_points = []        
+        file_content = open(file_path).read().splitlines()
+        
+        # First 190 lines contain the landmark coordinates
+        for line in file_content[190:325]:
+            nums = [int(elem) for elem in line.split(" ") if elem != ""]
+            if len(nums) > 1:
+                joint_points.append(nums)
         
         return joint_points
                 
