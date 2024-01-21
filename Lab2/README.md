@@ -35,6 +35,7 @@ To visualize the principal components, ensure not to have any negative value and
 
 Very important to explain modes of variation of the first principal directions.
 
+> File `CFD_WM-257-161-N.tem` has a corrupted byte. Change the corrupted byte in the last string by any integer number and add an extra line so the total lines of the file is 325.
 
 
 ## SUBMISSION INSTRUCTIONS

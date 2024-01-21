@@ -1,6 +1,7 @@
 import os
 from eigenfaces.utils.visualizer import Visualizer
 from eigenfaces.utils.image import Image
+from eigenfaces.utils.landmarks import Landmarks
 from precomputations import load_precomputations
 import numpy as np
 import imageio
@@ -32,34 +33,53 @@ if __name__ == '__main__':
         exit()
 
     # # Data exploration
-    # image_visualizer = Visualizer(images, landmarks)
-    # image_visualizer.visualize(show_images=True, show_landmarks=True)
+    image_visualizer = Visualizer(images, landmarks)
+    image_visualizer.visualize(show_images=True, show_landmarks=True, show_landmarks_idx=True)
     # image_visualizer.show_all_landmarks()
 
     # Compute principal components
     p = 10
     image_data = images_pca.data
+    landmark_data = landmarks_pca.data
     
     print('\nComputing principal components...')
-    pcs = images_pca.to_pca_space(image_data, num_components=p)
+    pcs_image = images_pca.to_pca_space(image_data, num_components=p)
+    pcs_data = landmarks_pca.to_pca_space(landmark_data, num_components=p)
     print('Reconstructing images to the original space...')
-    reconstruction = images_pca.from_pca_space(pcs)
+    reconstruction_image = images_pca.from_pca_space(pcs_image)
+    reconstruction_landmarks = landmarks_pca.from_pca_space(pcs_data)
     print('Done!')
     
-    # Visualize principal components
-    reconstructed_images = [
-        Image.from_vector(reconstruction[:, i], DOWNSAMPLE_SIZE, input_path=image.path)
-        for i, image in enumerate(images)
-    ]
-    pca_visualizer = Visualizer(reconstructed_images, landmarks)
-    pca_visualizer.visualize(show_landmarks=False)
+    # # Visualize principal components
+    # reconstructed_images = [
+    #     Image.from_vector(reconstruction_image[:, i], DOWNSAMPLE_SIZE, input_path=image.path)
+    #     for i, image in enumerate(images)
+    # ]
+    
+    # reconstructed_landmarks = [
+    #     Landmarks.from_vector(reconstruction_landmarks[:, i], input_path=landmark.path)
+    #     for i, landmark in enumerate(landmarks)
+    # ]
+    # print(reconstructed_landmarks[0].path)
+    # pca_visualizer = Visualizer(reconstructed_images, reconstructed_landmarks)
+    # pca_visualizer.visualize(show_landmarks=True)
 
     # Show mean face
     mean_face = Image.from_vector(images_pca.mean, DOWNSAMPLE_SIZE)
     mean_face.show(title='Mean face')
+    
+    
+    # Show mean landmarks
+    print(landmarks[0].index_mapping)
+    mean_landmarks = Landmarks.from_vector(landmarks_pca.mean, index_mapping=landmarks[0].index_mapping, joint_points=landmarks[0].joint_points)
+    mean_landmarks.show(title="Mean landmarks", join_points=True)
+    
 
-    eigenvectors = images_pca.eigenvectors
-    eigenvalues = images_pca.eigenvalues
+    eigenvectors_images = images_pca.eigenvectors
+    eigenvalues_images = images_pca.eigenvalues
+    
+    eigenvectors_landmarks = landmarks_pca.eigenvectors
+    eigenvalues_landmarks = landmarks_pca.eigenvalues
     
     
     # for base_num in range(15):
@@ -79,12 +99,23 @@ if __name__ == '__main__':
     
     
 
-    eigenvectors = [
-        Image.from_vector(eigenvectors[:, i] * eigenvalues[i] * 255, DOWNSAMPLE_SIZE, images[i].path)
-        for i in range(eigenvectors.shape[1])
-    ]
-    eigenvectors_visualizer = Visualizer(eigenvectors, landmarks)
-    eigenvectors_visualizer.visualize(show_landmarks=False)
+    # eigenvectors = [
+    #     Image.from_vector(eigenvectors_images[:, i] * eigenvalues_images[i] * 255, DOWNSAMPLE_SIZE, images[i].path)
+    #     for i in range(eigenvectors_images.shape[1])
+    # ]
+    # eigenvectors_img_visualizer = Visualizer(eigenvectors, landmarks)
+    # eigenvectors_img_visualizer.visualize(show_landmarks=False)
+    
+    # print(Landmarks.from_vector(eigenvectors_landmarks[:, 0] * eigenvalues_landmarks[0]).as_matrix())
+    # print(Landmarks.from_vector(eigenvectors_landmarks[:, 0] * eigenvalues_landmarks[0]).as_matrix() + np.array([859, 1222]))
+    # print(Landmarks.from_vector(eigenvectors_landmarks[:, 0] * eigenvalues_landmarks[0]).as_matrix().shape)
+    
+    # eigenvectors = [
+    #     Landmarks.from_vector(eigenvectors_landmarks[:, i] * eigenvalues_landmarks[i], landmarks[i].path)
+    #     for i in range(eigenvectors_landmarks.shape[1])
+    # ]
+    # eigenvectors_img_visualizer = Visualizer(eigenvectors, landmarks)
+    # eigenvectors_img_visualizer.visualize(show_landmarks=False)
     
     # # Show plots
     # plt.show()

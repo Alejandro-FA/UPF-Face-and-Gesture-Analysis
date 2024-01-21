@@ -163,7 +163,7 @@ class Visualizer:
                     for i, (x, y) in enumerate(curr_landmarks):
                         image_coords = cv2.circle(image_coords, (x, y), 2, (0, 0, 0), thickness=-1)
                         if show_landmarks_idx:
-                            image_coords = cv2.putText(image_coords, str(i), (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1, cv2.LINE_AA)
+                            image_coords = cv2.putText(image_coords, str(i), (x, y), cv2.FONT_HERSHEY_SIMPLEX, 0.25, (0, 0, 255), 1, cv2.LINE_AA)
                 
                 processed_images[curr_idx] = image_coords
             else:
