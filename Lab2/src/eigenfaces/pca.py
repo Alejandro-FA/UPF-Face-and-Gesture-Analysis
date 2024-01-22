@@ -207,12 +207,11 @@ class PCA:
         Returns:
             np.ndarray: The covariance or pseudocovariance matrix.
         """
-        p = x.shape[0]
         n = x.shape[1]
         mean = PCA.__get_mean(x)
 
         if use_pseudocovariance:
-            return 1/(p-1) * (x - mean).T @ (x - mean)
+            return 1/(n-1) * (x - mean).T @ (x - mean)
         else:
             return 1/(n-1) * (x - mean) @ (x - mean).T
 
