@@ -88,8 +88,9 @@ class PCA:
         fig = plt.figure(figsize=(10, 5))
         plt.plot(x, y, marker="*", linewidth=1.25, markersize=3, color="blue", label="Original eigenvalues")
         plt.xlabel("Eigenvalue index")
-        plt.ylabel("$\lambda_i$ (ratio of total variance))")
-        plt.xticks(x, x)
+        plt.ylabel("$\lambda_i$ (ratio of total variance)")
+        ax = plt.gca()  # get the current axes
+        ax.xaxis.set_major_locator(plt.MaxNLocator(integer=True))
         title = "Scree plot"
 
         if num_permutations > 0:
@@ -182,15 +183,13 @@ class PCA:
         cov_matrix = PCA.__get_cov_matrix(x, use_pseudocovariance)
         eigenvalues, eigenvectors = np.linalg.eig(cov_matrix)
 
-        if use_pseudocovariance:
-            eigenvectors = x @ eigenvectors
-            norm = np.linalg.norm(eigenvectors, axis=0)
-            eigenvectors = eigenvectors / norm # Eigenvectors should always be unit vectors
-            # eigenvalues = eigenvalues * norm**2 # FIXME: is this correct?
-
         idx = eigenvalues.argsort()[::-1]   
         eigenvalues = eigenvalues[idx]
         eigenvectors = eigenvectors[:, idx]
+
+        if use_pseudocovariance:
+            eigenvectors = x @ eigenvectors
+            eigenvectors = eigenvectors / np.linalg.norm(eigenvectors, axis=0) # Eigenvectors should always be unit vectors
         
         return eigenvalues, eigenvectors
     
