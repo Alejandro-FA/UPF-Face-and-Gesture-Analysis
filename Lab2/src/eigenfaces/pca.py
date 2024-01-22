@@ -31,10 +31,9 @@ class PCA:
         Args:
             data (np.ndarray): The input data matrix.
         """
-        use_pseudocovariance = data.shape[0] > data.shape[1]
         self.__data = data
         self.__mean = PCA.__get_mean(data)
-        self.__eigenvalues, self.__eigenvectors = PCA.__eig(data, use_pseudocovariance)
+        self.__eigenvalues, self.__eigenvectors = PCA.__eig(data)
     
 
     def to_pca_space(self, x: np.ndarray, num_components: int=None) -> np.ndarray:
@@ -82,19 +81,21 @@ class PCA:
             plt.Figure: The scree plot figure.
         """
         max_eigenvalues = max_eigenvalues if max_eigenvalues else len(self.__eigenvalues)
-        total_variance = np.sum(self.__eigenvalues)
+        original_total_variance = np.sum(self.__eigenvalues)
         x = np.arange(1, len(self.__eigenvalues[0:max_eigenvalues]) + 1, dtype=int)
-        y = self.__eigenvalues[0:max_eigenvalues] / total_variance
+        y = self.__eigenvalues[0:max_eigenvalues] / original_total_variance
 
         fig = plt.figure(figsize=(10, 5))
         plt.plot(x, y, marker="*", linewidth=1.25, markersize=3, color="blue", label="Original eigenvalues")
         plt.xlabel("Eigenvalue index")
         plt.ylabel("$\lambda_i$ (ratio of total variance))")
+        plt.xticks(x, x)
         title = "Scree plot"
 
         if num_permutations > 0:
             bootstrap_eigs = _bootstrap_pca(self.data, b=num_permutations)
             for i in range(bootstrap_eigs.shape[1]):
+                total_variance = np.sum(bootstrap_eigs[:, i])
                 y2 = bootstrap_eigs[0:max_eigenvalues, i] / total_variance
                 plt.plot(x, y2, color="red", linewidth=0.75, alpha=0.4, label=f"Bootstrap eigenvalues (b={num_permutations})" if i == 0 else None)
 
@@ -125,8 +126,10 @@ class PCA:
         p_values = np.zeros(p)
 
         # Compute how many bootstrap eigenvalues are greater than the original ones (by chance)
+        original_eigs = self.eigenvalues / np.sum(self.eigenvalues)
+        eigs = bootstrap_eig / np.sum(bootstrap_eig, axis=0)
         for i in range(p):
-            count = np.sum(bootstrap_eig[i, :] > self.eigenvalues[i])
+            count = np.sum(eigs[i, :] > original_eigs[i])
             p_values[i] = (count + 1) / (b + 1)
         
         return np.sum(p_values < alpha)
@@ -165,28 +168,29 @@ class PCA:
     
 
     @staticmethod
-    def __eig(x: np.ndarray, use_pseudocovariance: bool=False):
+    def __eig(x: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
         """
         Computes the eigenvalues and eigenvectors of the covariance or pseudocovariance matrix.
 
         Args:
             x (np.ndarray): The input data matrix.
-            use_pseudocovariance (bool, optional): Determines whether to compute the eigendecomposition of the
-                covariance matrix (False) or the pseudocovariance matrix (True). Default is False.
 
         Returns:
             Tuple[np.ndarray, np.ndarray]: The eigenvalues and eigenvectors (sorted).
         """
+        use_pseudocovariance = x.shape[0] > x.shape[1]
         cov_matrix = PCA.__get_cov_matrix(x, use_pseudocovariance)
         eigenvalues, eigenvectors = np.linalg.eig(cov_matrix)
+
+        if use_pseudocovariance:
+            eigenvectors = x @ eigenvectors
+            norm = np.linalg.norm(eigenvectors, axis=0)
+            eigenvectors = eigenvectors / norm # Eigenvectors should always be unit vectors
+            # eigenvalues = eigenvalues * norm**2 # FIXME: is this correct?
 
         idx = eigenvalues.argsort()[::-1]   
         eigenvalues = eigenvalues[idx]
         eigenvectors = eigenvectors[:, idx]
-
-        if use_pseudocovariance:
-            eigenvectors = x @ eigenvectors
-            eigenvectors = eigenvectors / np.linalg.norm(eigenvectors, axis=0) # Eigenvectors should always be unit vectors
         
         return eigenvalues, eigenvectors
     

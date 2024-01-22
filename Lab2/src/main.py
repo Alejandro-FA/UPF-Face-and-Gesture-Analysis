@@ -14,6 +14,7 @@ DATA_PATH = 'data'
 PICKLES_PATH = 'pickles'
 DOWNSAMPLE_SIZE = (1222, 859)
 
+DO_DATA_EXPLORATION = False
 COMPUTE_IMAGE_SCREE_PLOT = False
 COMPUTE_LANDMARKS_SCREE_PLOT = True
 
@@ -29,10 +30,11 @@ if __name__ == '__main__':
     landmarks_pca = precomputations.landmarks_pca
 
     # Data exploration
-    print('\nData exploration')
-    image_visualizer = Visualizer(images, landmarks)
-    image_visualizer.visualize(show_images=True, show_landmarks=True, show_landmarks_idx=True)
-    image_visualizer.show_all_landmarks()
+    if DO_DATA_EXPLORATION:
+        print('Data exploration...')
+        image_visualizer = Visualizer(images, landmarks)
+        image_visualizer.visualize(show_images=True, show_landmarks=True, show_landmarks_idx=True)
+        image_visualizer.show_all_landmarks()
 
 
     ###########################################################################
@@ -44,7 +46,7 @@ if __name__ == '__main__':
     # Compute scree plot
     if COMPUTE_IMAGE_SCREE_PLOT:
         print('\nComputing scree plot...')
-        fig = images_pca.scree_plot(max_eigenvalues=20, num_permutations=0) # WARNING: This takes a long time to compute!
+        fig = images_pca.scree_plot(max_eigenvalues=20, num_permutations=100) # WARNING: This takes a long time to compute!
         fig.savefig(os.path.join(RESULTS_PATH, 'images_scree_plot.png'), dpi=1000)
         print('Done!')
         plt.show()
@@ -85,7 +87,7 @@ if __name__ == '__main__':
         height = images[0].height
         output_imgs = []
         
-        for idx, a in enumerate(np.linspace(-2 * std, 2 * std, 30)):
+        for idx, a in enumerate(np.linspace(-3 * std, 3 * std, 30)):
             varied_face = mean_face.as_vector() + eigenvectors_images[:, base_num] * a
             varied_face_img = Image.from_vector(varied_face, DOWNSAMPLE_SIZE, input_path=images[base_num].path)
             # varied_face_img.show()
@@ -93,7 +95,6 @@ if __name__ == '__main__':
             cv2.imwrite(file_path, varied_face_img.as_matrix()) # FIXME: implement this as a method in Image class
     
     print('---------------------------------------------')
-    
     
     ###########################################################################
     # Point distribution model (landmarks)
@@ -104,7 +105,7 @@ if __name__ == '__main__':
     # Compute scree plot
     if COMPUTE_LANDMARKS_SCREE_PLOT:
         print('\nComputing scree plot...')
-        fig = landmarks_pca.scree_plot(num_permutations=100)
+        fig = landmarks_pca.scree_plot(max_eigenvalues=20, num_permutations=100)
         fig.savefig(os.path.join(RESULTS_PATH, 'landmarks_scree_plot.png'), dpi=1000)
         print('Done!')
         plt.show()
@@ -145,7 +146,7 @@ if __name__ == '__main__':
         height = images[0].height
         output_imgs = []
         
-        for idx, a in enumerate(np.linspace(-2 * std, 2 * std, 30)):
+        for idx, a in enumerate(np.linspace(-3 * std, 3 * std, 30)):
             varied_face = mean_landmarks.as_vector() + eigenvectors_landmarks[:, base_num] * a
             varied_face_img = Landmarks.from_vector(varied_face, index_mapping=landmarks[0].index_mapping, joint_points=landmarks[0].joint_points, input_path=images[base_num].path)
             file_path = os.path.join(base_path, f'{idx}.png')
