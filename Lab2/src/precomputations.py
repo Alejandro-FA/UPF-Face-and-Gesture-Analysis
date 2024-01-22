@@ -23,7 +23,6 @@ class Precomputations(NamedTuple):
     landmarks_pca: PCA
 
 
-# FIXME: Create pickles directory if it doesn't exist
 def load_precomputations(data_path: str, pickles_path: str) -> Precomputations:
     """
     Load precomputed data from files and return a Precomputations object.
@@ -47,8 +46,7 @@ def load_precomputations(data_path: str, pickles_path: str) -> Precomputations:
         with open(os.path.join(pickles_path, LANDMARKS_PCA_FILE), 'rb') as f:
             landmarks_pca = pickle.load(f)
             
-        print("Precomputations were found")
-
+        print('\nPrecomputations loaded')
         return Precomputations(images, landmarks, images_pca, landmarks_pca)
     
     except FileNotFoundError:
@@ -61,6 +59,10 @@ def load_precomputations(data_path: str, pickles_path: str) -> Precomputations:
 
 
 def __do_precomputations(data_path: str, pickles_path: str) -> None:
+    # Create pickles directory if it doesn't exist
+    if not os.path.exists(pickles_path):
+        os.makedirs(pickles_path)
+
     # Save loaded data
     images, landmarks = __load_data(data_path)
     with open(os.path.join(pickles_path, IMAGES_FILE), 'wb') as f:
@@ -100,8 +102,7 @@ def __load_data(data_path: str) -> tuple[list[Image], list[Landmarks]]:
     return images, landmarks
 
 
-# FIXME: Accept landmarks as well as images, the process is the same one
-def __compute_pca(data: list) -> PCA:
+def __compute_pca(data: list[Image | Landmarks]) -> PCA:
     print('\nCreating data matrix...')
     vectorized_data = np.stack([val.as_vector() for val in data], axis=1)
     print('Computing eigendecomposition...')

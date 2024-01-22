@@ -41,16 +41,16 @@ if not os.path.exists(args.base_path):
 if args.landmarks:
     output_path = f"{args.base_path}/landmarks_gifs"
 else:
-    output_path = f"{args.base_path}/gifs"
+    output_path = f"{args.base_path}/image_gifs"
     
 if not os.path.exists(output_path):
     os.makedirs(output_path)
 
 for i in tqdm(range(args.num_components), total=args.num_components):
     if args.landmarks:
-        curr_path = f"{args.base_path}/landmark_eigenvector_{i}"
+        curr_path = f"{args.base_path}/landmarks_eigenvector_{i}"
     else:
-        curr_path = f"{args.base_path}/eigenvector_{i}"
+        curr_path = f"{args.base_path}/image_eigenvector_{i}"
         
     if os.path.exists(curr_path):
         create_gif(curr_path, output_path, i, args.delete_png)

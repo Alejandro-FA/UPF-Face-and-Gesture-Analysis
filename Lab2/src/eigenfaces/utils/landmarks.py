@@ -226,8 +226,9 @@ class Landmarks:
             title (str, optional): The title of the image window. If no title is passed, the path of the image file will be used. Defaults to None.
         """
         background = self.get_as_image(join_points=join_points)
-        
-        title = title if title else self.__path
+        title = title if title else self.__path if self.__path else 'Landmarks'
         cv2.imshow(title, background)
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+        while cv2.getWindowProperty(title, cv2.WND_PROP_VISIBLE) >= 1:
+            if cv2.waitKey(100) > -1:
+                cv2.destroyAllWindows()
+                break

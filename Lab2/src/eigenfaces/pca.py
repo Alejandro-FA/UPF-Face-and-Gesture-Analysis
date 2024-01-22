@@ -186,7 +186,7 @@ class PCA:
 
         if use_pseudocovariance:
             eigenvectors = x @ eigenvectors
-            eigenvectors = eigenvectors / np.linalg.norm(eigenvectors, axis=0)
+            eigenvectors = eigenvectors / np.linalg.norm(eigenvectors, axis=0) # Eigenvectors should always be unit vectors
         
         return eigenvalues, eigenvectors
     
