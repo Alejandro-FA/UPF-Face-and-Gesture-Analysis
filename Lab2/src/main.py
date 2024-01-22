@@ -88,7 +88,7 @@ if __name__ == '__main__':
         output_imgs = []
         
         for idx, a in enumerate(np.linspace(-3 * std, 3 * std, 30)):
-            varied_face = mean_face.as_vector() + eigenvectors_images[:, base_num] * a #* 255 # FIXME:
+            varied_face = mean_face.as_vector() + eigenvectors_images[:, base_num] * a
             varied_face_img = Image.from_vector(varied_face, DOWNSAMPLE_SIZE, input_path=images[base_num].path)
             # varied_face_img.show()
             file_path = os.path.join(base_path, f'{idx}.png')
