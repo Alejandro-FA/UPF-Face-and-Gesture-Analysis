@@ -94,10 +94,15 @@ landmarks_dir = os.path.join(DATA_PATH, 'landmark_templates_01-29.22')
 
 # Usage:
 base_path = os.path.join('assets')
-image_files = [
-    'image_and_landmarks.png',
-    'old_landmarks.png',
-    'new_landmarks.png',
-]
-result = stitch_images([os.path.join(base_path, x) for x in image_files])
-result.save(os.path.join(RESULTS_PATH, 'original_vs_preprocessed_landmarks.jpg'))
+
+for i in range(3):
+    image_files = [
+        f'landmarks_eigenvector_{i}/0.png',
+        f'landmarks_eigenvector_{i}/6.png',
+        f'landmarks_eigenvector_{i}/12.png',
+        f'landmarks_eigenvector_{i}/18.png',
+        f'landmarks_eigenvector_{i}/24.png',
+        f'landmarks_eigenvector_{i}/29.png',
+    ]
+    result = stitch_images([os.path.join(base_path, x) for x in image_files])
+    result.save(os.path.join(RESULTS_PATH, f'mv_landmarks_eigenvector_{i}.jpg'))
