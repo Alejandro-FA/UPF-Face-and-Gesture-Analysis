@@ -46,7 +46,7 @@ if __name__ == '__main__':
     # Compute scree plot
     if COMPUTE_IMAGE_SCREE_PLOT:
         print('\nComputing scree plot...')
-        fig = images_pca.scree_plot(max_eigenvalues=20, num_permutations=100) # WARNING: This takes a long time to compute!
+        fig = images_pca.scree_plot(max_eigenvalues=40, num_permutations=100) # WARNING: This takes a long time to compute!
         fig.savefig(os.path.join(RESULTS_PATH, 'images_scree_plot.png'), dpi=1000)
         print('Done!')
         plt.show()
