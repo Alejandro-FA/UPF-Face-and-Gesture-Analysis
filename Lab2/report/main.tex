@@ -28,7 +28,7 @@ In this report, we are going to pay attention to one specific method introduced 
 \section{Dataset}\label{dataset_section}
 In the field of eigenfaces, a suitable dataset is often a key factor for obtaining useful and insightful results. Notably, for PCA to capture relevant features, removing undesired sources of variation from the images (like illumination changes, pose, facial expression, 2D rotations, translation, and background color) is essential. If the dataset does not satisfy these requirements, an additional preprocessing step is often needed, which is not trivial to get right and is often time-consuming.
 
-Given the above requirements, we have decided to develop our project with the Chicago Faces Dataset \cite{debbie-2015}. It contains 597 neutral faces (non-expressive) of people aged 18 to 40 from various races and genders, and it stands out because of its highly standardized photograph conditions. All images are 2444 pixels wide and 1718 pixels high.
+Given the above requirements, we have decided to develop our project with the Chicago Face Database (CFD) \cite{debbie-2015}. It contains 597 neutral faces (non-expressive) of people aged 18 to 40 from various races and genders, and it stands out because of its highly standardized photograph conditions. All images are 2444 pixels wide and 1718 pixels high.
 
 Figure \ref{fig:cfd} shows some examples of the images present in the dataset. All subjects are placed onto a plain white background and wear the same grey t-shirt. Other conditions like the illumination, the expression, and the framing are also carefully controlled.
 
@@ -168,7 +168,7 @@ For the images, it looks like the first component mainly captures the gender of 
         \centering
         \includegraphics[width=\linewidth]{images/mv_image_eigenvector_0.jpg}
         \caption{1st eigenvector.}
-        \label{fig:preprocessed_landmarks}
+        \label{fig:mv_eigenvector1_image}
     \end{subfigure}
 
     % \vspace{0.2in} % Adjust the vertical space between subfigures
@@ -177,7 +177,7 @@ For the images, it looks like the first component mainly captures the gender of 
         \centering
         \includegraphics[width=\linewidth]{images/mv_image_eigenvector_1.jpg}
         \caption{2nd eigenvector.}
-        \label{fig:second_repetition}
+        \label{fig:mv_eigenvector2_image}
     \end{subfigure}
 
     % \vspace{0.2in} % Adjust the vertical space between subfigures
@@ -186,7 +186,7 @@ For the images, it looks like the first component mainly captures the gender of 
         \centering
         \includegraphics[width=\linewidth]{images/mv_image_eigenvector_2.jpg}
         \caption{3rd eigenvector.}
-        \label{fig:third_repetition}
+        \label{fig:mv_eigenvector3_image}
     \end{subfigure}
 
     \caption{Images modes of variation}
@@ -202,7 +202,7 @@ Identifying the features captured by the eigenfaces corresponding to the landmar
         \centering
         \includegraphics[width=\linewidth]{images/mv_landmarks_eigenvector_0.jpg}
         \caption{1st eigenvector.}
-        \label{fig:preprocessed_landmarks}
+        \label{fig:mv_eigenvector1_landmarks}
     \end{subfigure}
 
     % \vspace{0.2in} % Adjust the vertical space between subfigures
@@ -211,7 +211,7 @@ Identifying the features captured by the eigenfaces corresponding to the landmar
         \centering
         \includegraphics[width=\linewidth]{images/mv_landmarks_eigenvector_1.jpg}
         \caption{2nd eigenvector.}
-        \label{fig:second_repetition}
+        \label{fig:mv_eigenvector2_landmarks}
     \end{subfigure}
 
     % \vspace{0.2in} % Adjust the vertical space between subfigures
@@ -220,7 +220,7 @@ Identifying the features captured by the eigenfaces corresponding to the landmar
         \centering
         \includegraphics[width=\linewidth]{images/mv_landmarks_eigenvector_2.jpg}
         \caption{3rd eigenvector.}
-        \label{fig:third_repetition}
+        \label{fig:mv_eigenvector3_landmarks}
     \end{subfigure}
 
     \caption{Landmarks modes of variation}
