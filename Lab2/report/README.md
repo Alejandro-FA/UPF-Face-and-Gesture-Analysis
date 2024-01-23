@@ -17,6 +17,16 @@ Follow the steps below to compile the TEX file:
 
 > **NOTE**: `latexmkrc` is a configuration file used by `latexmk`. We have downloaded the one [provided by Overleaf](https://www.overleaf.com/learn/how-to/How_does_Overleaf_compile_my_project%3F) to have a consistent output. 
 
+## Having a live preview of the pdf file
+
+If you want Latexmk to continuously check all input files for changes and re-compile the whole thing if needed and always display the result, type
+
+```bash
+latexmk -pdf -pvc main.tex
+```
+
+Then, whenever you change something in any of your source files and save your changes, the preview is automagically updated. But: This doesn't work with all viewers, especially not with *Adobe Reader*. For more information about this feature check the [official documentation](https://mg.readthedocs.io/latexmk.html#running-latexmk).
+
 ## Cleaning temporary files
 
 To clean temporary files generated during the compilation process, you can use the `latexmk` command with the `-c` option.
