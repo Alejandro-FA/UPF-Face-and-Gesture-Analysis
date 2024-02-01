@@ -25,5 +25,15 @@ if __name__ == '__main__':
     # print(f'Eigenvalues: {eigenvalues}')
     # print(f'Eigenvectors: {eigenvectors}')
 
-    fig = mds.scree_plot(num_resamples=1000)
+    # fig = mds.scree_plot(num_resamples=1000)
+    # plt.show()
+    emotions = ["angry", "boredom", "disgusted", "friendly", "happiness", "laughter", "sadness", "surprised"]
+    colors = ["red", "gray", "green", "pink", "yellow", "cyan", "black", "orange"]
+    
+    mds_distances = mds.to_mds_space(2)
+    
+    for i in np.arange(0, 24, 3):
+        plt.scatter(mds_distances[0, i:i+3], mds_distances[1, i:i+3], color=colors[i // 3], label=emotions[i // 3])
+        
+    plt.legend()
     plt.show()

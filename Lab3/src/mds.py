@@ -10,11 +10,18 @@ class MDS:
         self.__distances = distances
         B = MDS.__get_B(distances)
         self.__eigenvalues, self.__eigenvectors = MDS.__eig(B)
+        self.significant_components = 0
     
 
     def to_mds_space(self, n: int) -> np.ndarray:
         # TODO: Return principal coordinates in MDS space
-        pass
+        y = np.zeros((self.__eigenvectors.shape[0], n))
+        print(y.shape)
+        for i in range(n):
+            print(self.__eigenvalues[i])
+            y[:, i] = self.__eigenvectors[:, n] * np.sqrt(self.__eigenvalues[i])
+        
+        return y.T
 
 
     def from_mds_space(self) -> np.ndarray:
@@ -45,6 +52,7 @@ class MDS:
 
             alpha = 0.05
             num_significant = self.get_significant_eigenvalues(bootstrap_eigs, alpha)
+            self.significant_components = num_significant
             title += f', (significant components (alpha {alpha}): {num_significant})'
 
         plt.title(title, fontsize=14, fontweight="bold")
