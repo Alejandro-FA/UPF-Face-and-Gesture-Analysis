@@ -23,12 +23,13 @@ class MDS:
 
 
     def scree_plot(self, max_eigenvalues: int=None, num_resamples: int=0) -> plt.Figure:
+        max_eigenvalues = max_eigenvalues if max_eigenvalues else len(self.__eigenvalues)
         original_total_variance = np.sum(self.__eigenvalues)
         x = np.arange(1, len(self.__eigenvalues[0:max_eigenvalues]) + 1, dtype=int)
         y = self.__eigenvalues[0:max_eigenvalues] / original_total_variance
 
         fig = plt.figure(figsize=(10, 5))
-        plt.plot(x, y, marker="*", linewidth=1.25, markersize=3, color="blue", label="Original eigenvalues")
+        
         plt.xlabel("Eigenvalue index")
         plt.ylabel("$\lambda_i$ (ratio of total variance)")
         ax = plt.gca()  # get the current axes
@@ -37,17 +38,18 @@ class MDS:
 
         if num_resamples > 0:
             bootstrap_eigs = _bootstrap_mds(self.__distances, b=num_resamples)
-            for i in range(len(bootstrap_eigs)):
-                max_eigenvalues = len(bootstrap_eigs[i])
-                x = np.arange(1, len(bootstrap_eigs[i][0:max_eigenvalues]) + 1, dtype=int)
-                
-                total_variance = np.sum(bootstrap_eigs[i])
-                y2 = bootstrap_eigs[i][0:max_eigenvalues] / total_variance
-                plt.plot(x, y2, color="red", linewidth=0.75, alpha=0.4, label=f"Bootstrap eigenvalues (b={num_resamples})" if i == 0 else None)
+            mean_bootstrap_eigs = np.mean(bootstrap_eigs, axis=1)
+            for i in range(bootstrap_eigs.shape[1]):
+                total_variance = np.sum(bootstrap_eigs[:, i])
+                y2 = bootstrap_eigs[0:max_eigenvalues, i] / total_variance
+                plt.plot(x, y2, color="red", linewidth=0.25, alpha=0.4, label=f"Bootstrap eigenvalues (b={num_resamples})" if i == 0 else None)
 
             alpha = 0.05
             num_significant = self.get_significant_eigenvalues(bootstrap_eigs, alpha)
             title += f', (significant components (alpha {alpha}): {num_significant})'
+            plt.plot(x, mean_bootstrap_eigs[0:max_eigenvalues] / np.sum(mean_bootstrap_eigs), linewidth=1 , color="green", label="Mean bootstap eigenvalues")
+        
+        plt.plot(x, y, marker="*", linewidth=1.25, markersize=3, color="blue", label="Original eigenvalues")
 
         plt.title(title, fontsize=14, fontweight="bold")
         plt.legend()
@@ -64,22 +66,11 @@ class MDS:
 
         # Compute how many bootstrap eigenvalues are greater than the original ones (by chance)
         original_eigs = self.eigenvalues / np.sum(self.eigenvalues)
-        # eigs = bootstrap_eig / np.sum(bootstrap_eig, axis=0)
-        print(len(original_eigs))
-        eigs = [[]] * b
-        for i in range(b):
-            total_sum = np.sum(bootstrap_eig[i])
-            eigs[i] = bootstrap_eig[i] / total_sum
-        
-        print([len(eig) for eig in eigs])
+        eigs = bootstrap_eig / np.sum(bootstrap_eig, axis=0)
         for i in range(p):
-            count = 0
-            for j in range(b):
-                for k in range(len(eigs[j])):
-                    if eigs[j][k] > original_eigs[i]:
-                        count += 1
-                    
+            count = np.sum(eigs[i, :] > original_eigs[i])
             p_values[i] = (count + 1) / (b + 1)
+        
         return np.sum(p_values < alpha)
     
 
@@ -159,8 +150,8 @@ def _bootstrap_mds(distances: np.ndarray, b: int=1000) -> list[np.ndarray]:
         bootstrap_sample = np.random.choice(flat_distances, size=distances.shape, replace=True)
         bootstrap_sample = bootstrap_sample.reshape(original_shape)
         bootstrap_mds = MDS(bootstrap_sample)
-        all_eigenvalues[i] = np.real(bootstrap_mds.eigenvalues)
+        all_eigenvalues[i] = np.pad(np.real(bootstrap_mds.eigenvalues), (0, original_shape[0] - len(bootstrap_mds.eigenvalues)))
         
-    # np.stack cannot be used as each bootstrap resample may not have the same number of eigenvalues (as we are removing the negative ones)
-    return all_eigenvalues
+    
+    return np.stack(all_eigenvalues, axis=1)
 
