@@ -23,7 +23,6 @@ class MDS:
 
 
     def scree_plot(self, max_eigenvalues: int=None, num_resamples: int=0) -> plt.Figure:
-        max_eigenvalues = max_eigenvalues if max_eigenvalues else len(self.__eigenvalues)
         original_total_variance = np.sum(self.__eigenvalues)
         x = np.arange(1, len(self.__eigenvalues[0:max_eigenvalues]) + 1, dtype=int)
         y = self.__eigenvalues[0:max_eigenvalues] / original_total_variance
@@ -38,9 +37,12 @@ class MDS:
 
         if num_resamples > 0:
             bootstrap_eigs = _bootstrap_mds(self.__distances, b=num_resamples)
-            for i in range(bootstrap_eigs.shape[1]):
-                total_variance = np.sum(bootstrap_eigs[:, i])
-                y2 = bootstrap_eigs[0:max_eigenvalues, i] / total_variance
+            for i in range(len(bootstrap_eigs)):
+                max_eigenvalues = len(bootstrap_eigs[i])
+                x = np.arange(1, len(bootstrap_eigs[i][0:max_eigenvalues]) + 1, dtype=int)
+                
+                total_variance = np.sum(bootstrap_eigs[i])
+                y2 = bootstrap_eigs[i][0:max_eigenvalues] / total_variance
                 plt.plot(x, y2, color="red", linewidth=0.75, alpha=0.4, label=f"Bootstrap eigenvalues (b={num_resamples})" if i == 0 else None)
 
             alpha = 0.05
@@ -55,18 +57,29 @@ class MDS:
     
     
 
-    def get_significant_eigenvalues(self, bootstrap_eig: np.ndarray, alpha: float=0.05) -> int:
+    def get_significant_eigenvalues(self, bootstrap_eig: list[np.ndarray], alpha: float=0.05) -> int:
         p = self.eigenvalues.shape[0]
         b = len(bootstrap_eig)
         p_values = np.zeros(p)
 
         # Compute how many bootstrap eigenvalues are greater than the original ones (by chance)
         original_eigs = self.eigenvalues / np.sum(self.eigenvalues)
-        eigs = bootstrap_eig / np.sum(bootstrap_eig, axis=0)
-        for i in range(p):
-            count = np.sum(eigs[i, :] > original_eigs[i])
-            p_values[i] = (count + 1) / (b + 1)
+        # eigs = bootstrap_eig / np.sum(bootstrap_eig, axis=0)
+        print(len(original_eigs))
+        eigs = [[]] * b
+        for i in range(b):
+            total_sum = np.sum(bootstrap_eig[i])
+            eigs[i] = bootstrap_eig[i] / total_sum
         
+        print([len(eig) for eig in eigs])
+        for i in range(p):
+            count = 0
+            for j in range(b):
+                for k in range(len(eigs[j])):
+                    if eigs[j][k] > original_eigs[i]:
+                        count += 1
+                    
+            p_values[i] = (count + 1) / (b + 1)
         return np.sum(p_values < alpha)
     
 
@@ -98,8 +111,17 @@ class MDS:
         eigenvalues = eigenvalues[idx]
         eigenvectors = eigenvectors[:, idx]
         
+        # return eigenvalues, eigenvectors
+        
         #TODO: remove negative eigenvalues (if any)
-        return eigenvalues, eigenvectors
+        non_negative_eigenvalues = []
+        non_negative_eigenvectors = []
+        for i, eig in enumerate(eigenvalues):
+            if eig > 0:
+                non_negative_eigenvalues.append(eig)
+                non_negative_eigenvectors.append(eigenvectors[:, i])
+                
+        return np.asarray(non_negative_eigenvalues), np.asarray(non_negative_eigenvectors)
     
 
     @staticmethod
@@ -113,16 +135,32 @@ class MDS:
         return B
     
 
-def _bootstrap_mds(distances: np.ndarray, b: int=1000) -> np.ndarray:
+def _bootstrap_mds(distances: np.ndarray, b: int=1000) -> list[np.ndarray]:
     all_eigenvalues = [None] * b
     original_shape = distances.shape
     flat_distances = distances.flatten()
     
+    row_idx, col_idx = np.triu_indices(distances.shape[0], 1)
+  
     for i in range(b):
+        # FIXME: This yields to complex eigenvalues. I believe that the correct resample has to be built as follows:
+        #       - permute the upper triangular part
+        #       - make the matrix symmetric by copying the data from the upper triangle to the lower triangle
+        # https://search.r-project.org/CRAN/refmans/MultBiplotR/html/BootstrapSmacof.html
+        # new_i = np.random.choice(row_idx, len(row_idx))
+        # new_j = np.random.choice(col_idx, len(col_idx))
+        # bootstrap_sample = np.zeros(distances.shape)
+        # for row in range(distances.shape[0] - 1):
+        #     for col in range(row, distances.shape[1]):
+        #         bootstrap_sample[row, col] = distances[new_i[row], new_j[col]]
+        #         bootstrap_sample[col, row] = bootstrap_sample[row, col]
+                
+        # assert np.array_equal(bootstrap_sample, bootstrap_sample.T), "Bootstrap resample is not symmetric"
         bootstrap_sample = np.random.choice(flat_distances, size=distances.shape, replace=True)
         bootstrap_sample = bootstrap_sample.reshape(original_shape)
         bootstrap_mds = MDS(bootstrap_sample)
+        all_eigenvalues[i] = np.real(bootstrap_mds.eigenvalues)
         
-        all_eigenvalues[i] = bootstrap_mds.eigenvalues
-    
-    return np.stack(all_eigenvalues, axis=1)
+    # np.stack cannot be used as each bootstrap resample may not have the same number of eigenvalues (as we are removing the negative ones)
+    return all_eigenvalues
+
