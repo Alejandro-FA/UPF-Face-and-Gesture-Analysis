@@ -3,6 +3,7 @@ from scipy.io import loadmat
 import numpy as np
 from realiability import reliability
 from mds import MDS
+from utils import dissimilarity_matrix
 
 if __name__ == '__main__':
     data = loadmat("output.mat")
@@ -16,10 +17,13 @@ if __name__ == '__main__':
     print(f'P value: {p_value}')
     print(f'Error: {error}')
 
-    # CCompute MDS
-    mds = MDS(similarity_matrix)
+    # Compute MDS
+    dissimilar_matrix = dissimilarity_matrix(similarity_matrix)
+    mds = MDS(dissimilar_matrix)
     eigenvalues, eigenvectors = mds.eigenvalues, mds.eigenvectors
-    print(f'Eigenvalues: {eigenvalues}')
+    
+    # print(f'Eigenvalues: {eigenvalues}')
+    # print(f'Eigenvectors: {eigenvectors}')
 
-    fig = mds.scree_plot()
+    fig = mds.scree_plot(num_resamples=1000)
     plt.show()
