@@ -159,14 +159,8 @@ class PCA:
         """
         return self.__mean.flatten()
     
-    
-    @property
-    def data(self) -> np.ndarray:
-        """
-        np.ndarray: The input data matrix.
-        """
-        return self.__data
-    
+            
+            y_coords = np.flip(y_coords)
 
     @staticmethod
     def __eig(x: np.ndarray) -> tuple[np.ndarray, np.ndarray]:

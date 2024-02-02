@@ -9,6 +9,6 @@ def dissimilarity_matrix(sim_matrix: np.ndarray):
             dissimilar_matrix[i, j] = np.sqrt(sim_matrix[i, i] - 2 * sim_matrix[i, j] + sim_matrix[j, j])
     
     return dissimilar_matrix
-    
+
     
     

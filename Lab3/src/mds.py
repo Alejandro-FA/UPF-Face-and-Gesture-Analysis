@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from tqdm import tqdm
+from matplotlib.patches import Ellipse
+from scipy.stats import f
 
 
 class MDS:
@@ -10,16 +11,14 @@ class MDS:
         self.__distances = distances
         B = MDS.__get_B(distances)
         self.__eigenvalues, self.__eigenvectors = MDS.__eig(B)
-        self.significant_components = 0
     
 
-    def to_mds_space(self, n: int) -> np.ndarray:
+    def to_mds_space(self, n: int=None) -> np.ndarray:
         # TODO: Return principal coordinates in MDS space
+        n = n if n else np.sum(self.__eigenvalues > 0)
         y = np.zeros((self.__eigenvectors.shape[0], n))
-        print(y.shape)
         for i in range(n):
-            print(self.__eigenvalues[i])
-            y[:, i] = self.__eigenvectors[:, n] * np.sqrt(self.__eigenvalues[i])
+            y[:, i] = self.__eigenvectors[:, i] * np.sqrt(self.__eigenvalues[i])
         
         return y.T
 
@@ -28,14 +27,66 @@ class MDS:
         # TODO: Return the distances in the mds space
         pass
 
+    
+    def __confidence_region(self, alpha: float=0.05) -> Ellipse:
+        # # Define the parameters for the F distribution
+        # p = 2  # number of dimensions
+        # n = self.__distances.shape[1]  # number of samples
+
+        # # Get the inverse of the cumulative distribution function of F
+        # x = f.ppf(alpha, p, n-p)
+        # c = ((n - 1) * p / (n - p)) * x
+
+        # # Compute the confidence region
+        # semi_major = np.sqrt(self.__eigenvalues[0] / n) * np.sqrt(c)
+        # semi_minor = np.sqrt(self.__eigenvalues[1] / n) * np.sqrt(c)
+        # Compute the confidence region
+        semi_major = np.sqrt(self.__eigenvalues[0])
+        semi_minor = np.sqrt(self.__eigenvalues[1])
+        center = (0.0, 0.0)
+        return Ellipse(center, 2 * semi_major, 2 * semi_minor, edgecolor='r', fc='None', lw=2)
+    
+
+    def space_plot(self, colors: list[str], emotions: list[str], flip_x: bool=False, flip_y: bool=False) -> plt.Figure:
+        assert len(colors) == len(emotions), "The number of colors should be the same as the number of emotions"
+        mds_coordinates = self.to_mds_space(n=2)
+        x_coords = mds_coordinates[0, :] * -1 if flip_x else mds_coordinates[0, :]
+        y_coords = mds_coordinates[1, :] * -1 if flip_y else mds_coordinates[1, :]
+        
+        # Create a figure and plot the points in MDS coordinates
+        fig = plt.figure(figsize=(10, 5), num="MDS space")
+        plt.title("Emotions in the MDS space")
+        group_every = self.eigenvalues.shape[0] // len(colors)
+        for i in np.arange(0, self.eigenvalues.shape[0], group_every):
+            plt.scatter(
+                x_coords[i:i+group_every],
+                y_coords[i:i+group_every],
+                color=colors[i // group_every] if colors is not None else None,
+                label=emotions[i // group_every] if emotions is not None else None
+            )
+        
+        # Plot the confidence ellipse
+        ellipse = self.__confidence_region()        
+        
+        plt.gca().add_patch(ellipse)
+        plt.gca().set_aspect("equal")
+        plt.grid()
+        plt.xlabel("Valence")
+        plt.ylabel("Arousal")
+        if emotions is not None:
+            plt.legend()
+        
+        return fig
+        
 
     def scree_plot(self, max_eigenvalues: int=None, num_resamples: int=0) -> plt.Figure:
+        #TODO: perhaps avoid plotting eigenvalues that are 0
         max_eigenvalues = max_eigenvalues if max_eigenvalues else self.__eigenvalues.shape[0]
         original_total_variance = np.sum(self.__eigenvalues)
         x = np.arange(1, len(self.__eigenvalues[0:max_eigenvalues]) + 1, dtype=int)
         y = self.__eigenvalues[0:max_eigenvalues] / original_total_variance
 
-        fig = plt.figure(figsize=(10, 5))
+        fig = plt.figure(figsize=(10, 5), num="Scree plot")
         
         plt.xlabel("Eigenvalue index")
         plt.ylabel("$\lambda_i$ (ratio of total variance)")
@@ -54,7 +105,6 @@ class MDS:
 
             alpha = 0.1 # We use significance level of 0.1 because the number of samples is very low
             num_significant = self.get_significant_eigenvalues(bootstrap_eigs, alpha)
-            self.significant_components = num_significant
             title += f', (significant components (alpha {alpha}): {num_significant})'
             plt.plot(x, mean_bootstrap_eigs[0:max_eigenvalues] / np.sum(mean_bootstrap_eigs), linewidth=1 , color="green", label="Mean bootstap eigenvalues")
         
@@ -119,7 +169,7 @@ class MDS:
         eigenvalues = eigenvalues[idx]
         eigenvectors = eigenvectors[:, idx]
 
-        return eigenvalues, eigenvalues
+        return eigenvalues, eigenvectors
     
 
     @staticmethod
