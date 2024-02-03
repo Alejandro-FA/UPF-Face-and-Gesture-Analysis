@@ -2,6 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Ellipse
 from scipy.stats import f
+from scipy.spatial import distance
+import utils
+
 
 
 class MDS:
@@ -14,7 +17,6 @@ class MDS:
     
 
     def to_mds_space(self, n: int=None) -> np.ndarray:
-        # TODO: Return principal coordinates in MDS space
         n = n if n else np.sum(self.__eigenvalues > 0)
         y = np.zeros((self.__eigenvectors.shape[0], n))
         for i in range(n):
@@ -47,34 +49,46 @@ class MDS:
         return Ellipse(center, 2 * semi_major, 2 * semi_minor, edgecolor='r', fc='None', lw=2)
     
 
-    def space_plot(self, colors: list[str], emotions: list[str], flip_x: bool=False, flip_y: bool=False) -> plt.Figure:
+    def circumplex_model_plot(self, colors: list[str], emotions: list[str], flip_x: bool=False, flip_y: bool=False) -> plt.Figure:
         assert len(colors) == len(emotions), "The number of colors should be the same as the number of emotions"
         mds_coordinates = self.to_mds_space(n=2)
-        x_coords = mds_coordinates[0, :] * -1 if flip_x else mds_coordinates[0, :]
-        y_coords = mds_coordinates[1, :] * -1 if flip_y else mds_coordinates[1, :]
+        mds_coordinates[0, :] = mds_coordinates[0, :] * -1 if flip_x else mds_coordinates[0, :]
+        mds_coordinates[1, :] = mds_coordinates[1, :] * -1 if flip_y else mds_coordinates[1, :]
+        
+        polar_coords = utils.cart2pol(mds_coordinates)
         
         # Create a figure and plot the points in MDS coordinates
-        fig = plt.figure(figsize=(10, 5), num="MDS space")
-        plt.title("Emotions in the MDS space")
+        fig, ax = plt.subplots(subplot_kw={'projection': 'polar'}, num="MDS space", figsize=(10, 7))
+        plt.title("Emotions in the MDS space", fontsize=14, fontweight="bold")
         group_every = self.eigenvalues.shape[0] // len(colors)
         for i in np.arange(0, self.eigenvalues.shape[0], group_every):
-            plt.scatter(
-                x_coords[i:i+group_every],
-                y_coords[i:i+group_every],
+            # https://matplotlib.org/stable/gallery/pie_and_polar_charts/polar_demo.html
+            # https://matplotlib.org/stable/gallery/misc/transoffset.html#sphx-glr-gallery-misc-transoffset-py
+            ax.scatter(
+                polar_coords[1, i:i+group_every],
+                polar_coords[0, i:i+group_every],
                 color=colors[i // group_every] if colors is not None else None,
-                label=emotions[i // group_every] if emotions is not None else None
+                label=emotions[i // group_every] if emotions is not None else None,
+                marker="o",
             )
         
-        # Plot the confidence ellipse
-        ellipse = self.__confidence_region()        
-        
-        plt.gca().add_patch(ellipse)
-        plt.gca().set_aspect("equal")
-        plt.grid()
-        plt.xlabel("Valence")
-        plt.ylabel("Arousal")
+        # plt.gca().add_patch(ellipse)
+        # plt.gca().set_aspect("equal")
+        ax.set_rgrids(np.linspace(0, ax.get_rmax(), 5))
         if emotions is not None:
-            plt.legend()
+            angle = np.deg2rad(10)
+            ax.legend(loc="lower left", bbox_to_anchor=(0.6 + np.cos(angle)/2, 0.5 + np.sin(angle)/2))
+        
+        
+        xlabels = ["Pleasure", "Excitement", "Arousal", "Distress", "Misery", "Depression", "Sleepiness", "Contentment"]
+        ax.set_xticks(np.linspace(0, 2*np.pi, len(xlabels), endpoint=False))
+        
+        ax.tick_params(axis="x", pad=15) 
+        ax.set_xticklabels(xlabels)
+        ax.set_yticklabels([])
+        ax.set_rlabel_position(90)
+
+        #https://matplotlib.org/stable/api/_as_gen/matplotlib.axis.Axis.set_label_coords.html
         
         return fig
         
@@ -118,6 +132,30 @@ class MDS:
     
     
 
+    def distance_distance_plot(self, p: int=None) -> plt.Figure:
+        p = p if p is not None else np.sum(self.__eigenvalues > 0)
+        mds_coordinates = self.to_mds_space(p)
+        
+        # Scipy documentation on how to compute pairwise distances
+        # https://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.pdist.html
+        new_distances = distance.pdist(mds_coordinates.T, 'euclidean') # Compute pairwise distances
+        new_distances = distance.squareform(new_distances) # Convert to a square distance matrix
+        
+        fig = plt.figure(figsize=(10, 5), num=f"Distance-distance plot ({p})")
+        
+        for i in range(0, self.__distances.shape[0]):
+            for j in range(i + 1, self.__distances.shape[1]):
+                plt.scatter(self.__distances[i, j], new_distances[i, j], color="blue")
+            
+        plt.title(f"Distance-distance plot for {p} components", fontsize=14, fontweight="bold")
+        plt.xlabel("Observed distances")
+        plt.ylabel("MDS distances (Euclidean)")
+        plt.grid()
+        plt.gca().set_aspect("equal")
+        return fig
+    
+        
+
     def get_significant_eigenvalues(self, bootstrap_eig: list[np.ndarray], alpha: float=0.05) -> int:
         p = self.eigenvalues.shape[0]
         b = len(bootstrap_eig)
@@ -137,11 +175,6 @@ class MDS:
         
         return significant
     
-
-    # TODO: do distance distance plot
-    def distance_distance_plot(self) -> plt.Figure:
-        pass
-
 
     @property
     def eigenvalues(self) -> np.ndarray:

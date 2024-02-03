@@ -5,6 +5,8 @@ from realiability import reliability
 from mds import MDS
 from utils import dissimilarity_matrix
 
+RESULTS_FOLDER = 'assets'
+
 if __name__ == '__main__':
     data = loadmat("output.mat")
 
@@ -25,11 +27,19 @@ if __name__ == '__main__':
     # print(f'Eigenvalues: {eigenvalues}')
     # print(f'Eigenvectors: {eigenvectors}')
 
-    fig_bootstrap = mds.scree_plot(num_resamples=1000)
+    # Compute plots
+    scree_plot = mds.scree_plot(num_resamples=1000)
+    scree_plot.savefig(f"{RESULTS_FOLDER}/scree_plot.png", dpi=500)
     
     emotions = ["angry", "boredom", "disgusted", "friendly", "happiness", "laughter", "sadness", "surprised"]
     colors = ["red", "gray", "green", "pink", "yellow", "cyan", "black", "orange"]
     
-    fig_mds_space = mds.space_plot(colors=colors, emotions=emotions, flip_x=True)
+    circumplex_model_plot = mds.circumplex_model_plot(colors=colors, emotions=emotions, flip_x=True)
+    circumplex_model_plot.savefig(f"{RESULTS_FOLDER}/circumplex_model_plot.png", dpi=500)
+
+    dist_dist_plot_2 = mds.distance_distance_plot(p=2)
+    dist_dist_plot_2.savefig(f"{RESULTS_FOLDER}/distance_distance_plot_2.png", dpi=500)
+    dist_dist_plot_all = mds.distance_distance_plot()
+    dist_dist_plot_all.savefig(f"{RESULTS_FOLDER}/distance_distance_plot_all.png", dpi=500)
     
     plt.show()

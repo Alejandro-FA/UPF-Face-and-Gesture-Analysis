@@ -11,4 +11,10 @@ def dissimilarity_matrix(sim_matrix: np.ndarray):
     return dissimilar_matrix
 
     
+def cart2pol(data: np.ndarray):
+    x = data[0, :]
+    y = data[1, :]
+    r = np.sqrt(x ** 2 + y ** 2)
+    phi = np.arctan2(y, x)
     
+    return np.array([r, phi])
