@@ -26,18 +26,12 @@ def stitch_images(image_paths):
 
 
 # Usage:
-base_path = os.path.join('data')
+base_path = os.path.join('assets')
 
 
 image_files = [
-    'angry_3.jpg',
-    'boredom_1.jpg',
-    'disgusted_4.jpg',
-    'friendly_2.jpg',
-    'happiness_3.jpg',
-    'laughter_4.jpg',
-    'sadness_3.jpg',
-    'surprised_6.jpg',
+    'distance_distance_plot_2.png',
+    'distance_distance_plot_all.png',
 ]
 result = stitch_images([os.path.join(base_path, x) for x in image_files])
-result.save(os.path.join(RESULTS_PATH, "sample_images.png"), quality=1)
+result.save(os.path.join(RESULTS_PATH, "two_dist_dist_plot.png"), quality=1)

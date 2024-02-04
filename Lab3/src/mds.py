@@ -28,7 +28,12 @@ class MDS:
     def from_mds_space(self) -> np.ndarray:
         # TODO: Return the distances in the mds space
         pass
-
+    
+    def prop_of_variance(self, n: int) -> float:
+        max_allowed_n = np.sum(self.__eigenvalues > 0)
+        assert n >= 0 and n <= max_allowed_n, f"n has to be between 1 and {max_allowed_n}"
+        
+        return np.sum(self.__eigenvalues[:n]) / np.sum(self.__eigenvalues)
     
     def __confidence_region(self, alpha: float=0.05) -> Ellipse:
         # # Define the parameters for the F distribution
