@@ -3,19 +3,26 @@ from scipy.io import loadmat
 import numpy as np
 from realiability import reliability
 from mds import MDS
-from utils import dissimilarity_matrix, visualize_similarity_matrix
+from utils import *
 
 RESULTS_FOLDER = 'assets'
 
 if __name__ == '__main__':
     data = loadmat("output.mat")
     emotions = ["angry", "boredom", "disgusted", "friendly", "happiness", "laughter", "sadness", "surprised"]
+    emotions_sorted = ["angry", "sadness", "boredom", "disgusted", "surprised", "friendly", "laughter", "happiness"]
+    
     colors = ["red", "gray", "green", "pink", "yellow", "cyan", "black", "orange"]
 
     # FIXME: use np.sequeeze or more elegant alternative to load the data
     fake = np.random.randint(0, 9, size=(24, 24))
     similarity_matrix: np.ndarray = data["simScores"][0][0][0]
     consistency_matrix: np.ndarray = data["simScores"][0][0][1]
+    
+    sorted_sim_matrix = similarity_matrix_sort_emotions(similarity_matrix, emotions, emotions_sorted)
+    sorted_sim_matrix_fig = visualize_similarity_matrix(sorted_sim_matrix, emotions_sorted, title="Similarity matrix with emotions sorted")
+    sorted_sim_matrix_fig.savefig(f"{RESULTS_FOLDER}/sim_matrix_sorted.png", dpi=500)
+    
     
     sim_matrix_fig = visualize_similarity_matrix(similarity_matrix, emotions)
     sim_matrix_fig.savefig(f"{RESULTS_FOLDER}/sim_matrix.png", dpi=500)
