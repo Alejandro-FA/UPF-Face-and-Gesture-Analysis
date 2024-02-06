@@ -50,7 +50,7 @@ Multidimensional Scaling (MDS) is a statistical technique for analyzing the pair
 
 There exist different methods for MDS. The one that we have applied and the one that we will explain is known as classical scaling, which is equivalent to principal component analysis (PCA) if the distance metric used is the Euclidean distance.
 
-In order to be able to apply MDS, we need a distance matrix that holds the distance between every pair of samples of our data. These distances do not need to be Euclidean distances, but for the moment we will assume so. If we define $d_{ij}$ as the Euclidean distance between sample $i$ and sample $j$, we can build a matrix of distances with the following equation:
+In order to be able to apply MDS, we need a distance matrix that holds the distance between every pair of samples of our data. These distances do not need to be Euclidean distances, but for the moment, we will assume so. If we define $d_{ij}$ as the Euclidean distance between sample $i$ and sample $j$, we can build a matrix of distances with the following equation:
 
 \begin{equation}\label{eq:dist_square}
 d{i j}^2=\left\|\mathbf{X}_i\right\|^2+\left\|\mathbf{X}_j\right\|^2-2 \mathbf{X}_i^T \mathbf{X}_j
@@ -78,20 +78,20 @@ with $\mathbf{\Lambda} = \text{diag}\{\lambda_1, \dots, \lambda_t\}$ the first $
 
 \subsection{Multidimensional Scaling for non-Euclidean distances}
 
-As mentioned previously, MDS can also be applied for other distance metrics besides the Euclidean distance, and the same procedure can be followed. However, matrix $B$ might no longer be positive definite, which will cause negative eigenvalues to appear. Consequently, the corresponding eigenvectors will have complex coordinates, and complex coordinates do not have any meaningful interpretation in the realm of MDS. One common approach is to discard negative eigenvalues. Recall that a matrix $M$ is positive definite whenever $\langle x, Mx \rangle > 0, \space \forall x \in \mathbb{R}^n$.
+As mentioned previously, MDS can also be applied to other distance metrics besides the Euclidean distance, and the same procedure can be followed. However, matrix $B$ might no longer be positive definite, which will cause negative eigenvalues to appear. Consequently, the corresponding eigenvectors will have complex coordinates, and complex coordinates do not have any meaningful interpretation in the realm of MDS. One common approach is to discard negative eigenvalues. Recall that a matrix $M$ is positive definite whenever $\langle x, Mx \rangle > 0, \space \forall x \in \mathbb{R}^n$.
 
 
 \section{Results}\label{analysis}
 
 \subsection{Creating a similarity matrix}\label{sim_matrix_section}
 
-Our dataset consists of 24 images distributed in 8 different categories: \textit{anger, boredom, disgust, friendliness, happiness, laughter} and \textit{surprise}. Figure \ref{fig:sample_images} shows some of the images used. In order to build the similarity matrix, we have compared each possible combination of two images and granted them a similarity score between 0 and 9 based on the criterion from Table \ref{tab:rank_criterion}. Figure \ref{fig:sim_matrix} shows the resulting similarity matrix. We will give more details on its interpretation in section \ref{analysis}.
+Our dataset consists of 24 images distributed in 8 different categories: \textit{anger, boredom, disgust, friendliness, happiness, laughter, sadness} and \textit{surprise}. Figure \ref{fig:sample_images} shows some of the images used. In order to build the similarity matrix, we have compared each possible combination of two images and granted them a similarity score between 0 and 9 based on the criterion from Table \ref{tab:rank_criterion}. Figure \ref{fig:sim_matrix} shows the resulting similarity matrix. We will give more details on its interpretation in section \ref{analysis_sim_matrix}.
 
 \begin{figure}[h]
     \centering
     \vspace{0in}
     \includegraphics[width=0.8\textwidth]{images/sample_images.png}
-    \caption{Sample images for each emotion. From left to right, the emotions are anger, boredom, disgust, friendliness, happiness, laughter, and surprise.}
+    \caption{Sample images for each emotion. From left to right, the emotions are anger, boredom, disgust, friendliness, happiness, laughter, sadness and surprise.}
     \label{fig:sample_images}
 \end{figure}
 
@@ -129,7 +129,7 @@ To apply MDS, explained in section \ref{sect:mds_explanation}, we need to conver
 where $c_{ij}$ is the similarity score between pictures $i$ and $j$, and $d_{ij}$ are the resulting distances between pictures $i$ and $j$.
 
 
-\subsubsection{Verifying the reliability of the similarity matrix}
+\subsubsection{Verifying the reliability of the similarity matrix}\label{analysis_sim_matrix}
 
 Apart from a similarity matrix, we also have a consistency matrix, which we will use to determine the reliability of our results. The consistency matrix is a partially filled similarity matrix. While labeling the similarity between each pair of images, we were presented with some repeated pairs. The result of labeling the repeated pairs is stored in the consistency matrix, which we can then compare with the similarity matrix to ensure that the same pair of facial expressions is evaluated similarly at different points in time.
 
@@ -139,7 +139,7 @@ We have used the mean absolute error to determine the reliability of our consist
     E = \frac{1}{n^2} \sum_i^n\sum_j^n |{X_{ij} - Y_{ij}}|
 \end{equation}
 
-Since the consistency matrix has no value for all its elements, we only compute the mean absolute error for the filled entries. The error obtained can be seen in table \ref{tab:similarity_reliability}.
+Since the consistency matrix has no value for all its elements, we only compute the mean absolute error for the filled entries. The error obtained can be seen in Table \ref{tab:similarity_reliability}.
 
 In order to determine the quality of the error obtained, we performed a bootstrap analysis. The null hypothesis is that the values of the consistency matrix are not correlated with the values of the similarity matrix, and the alternative hypothesis is that they are positively correlated. In order to see if we can reject the null hypothesis, we have compared the error between our consistency matrix and the similarity matrix with the error of 1000 randomly generated consistency matrices. More precisely, we have only resampled the non-empty entries of our consistency matrix (we still ignore other elements). With this analysis, we obtained a p-value of less than 0.001, so we can confidently reject the null hypothesis and say that our consistency matrix is positively correlated with the similarity matrix.
 
