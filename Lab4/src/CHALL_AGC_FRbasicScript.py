@@ -6,6 +6,8 @@ from scipy.io import loadmat
 import random
 import time
 import itertools
+from tqdm import tqdm
+import pandas as pd
 
 
 def CHALL_AGC_ComputeRecognScores(auto_ids, true_ids):
@@ -49,7 +51,7 @@ def CHALL_AGC_ComputeRecognScores(auto_ids, true_ids):
 
 def my_face_recognition_function(A, my_FRmodel):
     # Function to implement
-    print()
+    return
 
 
 # Basic script for Face Recognition Challenge
@@ -58,9 +60,23 @@ def my_face_recognition_function(A, my_FRmodel):
 # Universitat Pompeu Fabra
 
 # Load challenge Training data
-dir_challenge3 = " "
+dir_challenge3 = "data/"
 AGC_Challenge3_TRAINING = loadmat(dir_challenge3 + "AGC_Challenge3_Training.mat")
 AGC_Challenge3_TRAINING = np.squeeze(AGC_Challenge3_TRAINING['AGC_Challenge3_TRAINING'])
+
+# Convert to dataframe (if needed)
+AGC_Challenge3_TRAINING_df = [[row.flat[0] if row.size == 1 else row for row in line] for line in AGC_Challenge3_TRAINING]
+columns = ['id', 'imageName', 'faceBox']
+AGC_Challenge3_TRAINING_df = pd.DataFrame(AGC_Challenge3_TRAINING_df, columns=columns)
+
+
+grouped = AGC_Challenge3_TRAINING_df.groupby(by=["id"])
+
+# for id, data in grouped:
+#     print(id[0])
+#     for name in data["imageName"]:
+#         print(f"\t{name}")
+
 
 imageName = AGC_Challenge3_TRAINING['imageName']
 imageName = list(itertools.chain.from_iterable(imageName))
@@ -71,18 +87,19 @@ ids = np.concatenate(ids).ravel().tolist()
 faceBox = AGC_Challenge3_TRAINING['faceBox']
 faceBox = list(itertools.chain.from_iterable(faceBox))
 
-imgPath = " "
+imgPath = dir_challenge3 + "TRAINING/"
 
 # Initialize results structure
 AutoRecognSTR = []
 
-# Initialize timer accumulator
-total_time = 0
 
 # Load your FRModel
 my_FRmodel = " "
 
-for idx, im in enumerate(imageName):
+# Initialize timer accumulator
+total_images = len(imageName)
+total_time = 0
+for idx, im in tqdm(enumerate(imageName), total=total_images):
 
     A = imread(imgPath + im)
 
@@ -104,7 +121,9 @@ for idx, im in enumerate(imageName):
 
         tt = time.time() - ti
         total_time = total_time + tt
-    except:
+    except Exception as e:
+        print("Problematic image:", im) #FIXME: remove before submitting
+        raise e #FIXME: remove before submitting
         # If the face recognition function fails, it will be assumed that no user was detected for his input image
         autom_id = random.randint(-1, 80)
 
