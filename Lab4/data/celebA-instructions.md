@@ -17,11 +17,11 @@ unzip 'CelebA/Img/img_align_celeba.zip'
 ## Unzip Align&Cropped Images in PNG format
 
 ```bash
-7z 'CelebA/Img/img_align_celeba_png.7z'
+7z x 'CelebA/Img/img_align_celeba_png.7z'
 ```
 
 ## Unzip In-The-Wild Images
 
 ```bash
-7z 'CelebA/Img/img_celeba.7z'
+7z x 'CelebA/Img/img_celeba.7z'
 ```
