@@ -46,3 +46,22 @@ Transfer learning will probably not pass the layer-parameter limitation.
 
 
 - Create an id downloader. Keep each id in a separate folder
+
+# Preprocessing models
+
+- [MTCNN face detector](https://github.com/kpzhang93/MTCNN_face_detection_alignment): recommended in VGGFace2 paper.
+
+# Datasets
+
+- [DigiFace1M](https://github.com/microsoft/DigiFace1M?tab=readme-ov-file): 720K images with 10K identities (72 images per identity). For each identity, 4 different sets of accessories are sampled and 18 images are rendered for each set.
+500K images with 100K identities (5 images per identity). For each identity, only one set of accessories is sampled. Problem: images are synthetic.
+- [CelebA](https://mmlab.ie.cuhk.edu.hk/projects/CelebA.html). 200K celebrity image with 10k identities. Faces can be downloaded in the wild, or aligned and cropped.
+- [MillionCelebs](https://buptzyb.github.io/MillionCelebs): 22.8M images with 719K identities, downloadable with OneDrive. Faces are already cropped.
+
+- [IMDB-Face](https://github.com/fwang91/IMDb-Face): 1.7M faces, 59K identities
+
+- [Labelled Faces in the Wild](http://vis-www.cs.umass.edu/lfw/#download)
+
+
+
+

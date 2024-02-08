@@ -232,3 +232,6 @@ pyrightconfig.json
 
 *.zip
 *.pkl
+
+# Datasets
+Lab4/data/datasets
