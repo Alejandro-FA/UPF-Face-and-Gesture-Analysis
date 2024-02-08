@@ -6,22 +6,24 @@ Once you have downloaded the zip files from https://mmlab.ie.cuhk.edu.hk/project
 
 ```bash
 unzip 'CelebA-*.zip'
+cd CelebA/Img
 ```
 
 ## Unzip Align&Cropped Images in JPG format
 
 ```bash
-unzip 'CelebA/Img/img_align_celeba.zip'
+unzip 'img_align_celeba.zip'
 ```
 
 ## Unzip Align&Cropped Images in PNG format
 
 ```bash
-7z x 'CelebA/Img/img_align_celeba_png.7z'
+cd 
+7z x 'img_align_celeba_png.7z'
 ```
 
 ## Unzip In-The-Wild Images
 
 ```bash
-7z x 'CelebA/Img/img_celeba.7z'
+7z x 'img_celeba.7z'
 ```
