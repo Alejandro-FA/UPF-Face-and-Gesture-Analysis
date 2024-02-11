@@ -4,8 +4,16 @@ class BoundingBox:
         self.y1 = y
         self.width = w
         self.height = h
+
+    @property
+    def x2(self):
+        return self.x1 + self.width
     
-    def get_resized(self, max_x2, max_y2, margin):
+    @property
+    def y2(self):
+        return self.y1 + self.height
+    
+    def get_resized(self, max_x2, max_y2, margin) -> 'BoundingBox':
         x1 = max(self.x1 - int(margin * self.width), 0)
         y1 = max(self.y1 - int(margin * self.height), 0)
         x2 = min(self.x1 + int((1 + margin) * self.width), max_x2)
@@ -15,10 +23,10 @@ class BoundingBox:
         height = y2 - y1
         return BoundingBox(x1, y1, width, height)
     
-    def get_coords(self) -> list[int, int, int, int]:
-        return [self.x1, self.y1, self.x1 + self.width, self.y1 + self.height]
+    def get_coords(self) -> tuple[int, int, int, int]:
+        return (self.x1, self.y1, self.x2, self.y2)
 
-    def get_area(self):
+    def get_area(self) -> int:
         return self.width * self.height
 
     def overlap(self, bbox2: 'BoundingBox') -> float:
@@ -33,4 +41,4 @@ class BoundingBox:
         # total_Area = self.get_area() + bbox2.get_area() - int_Area
         # return int_Area / total_Area > threshold
         smallest_area = min(self.get_area(), bbox2.get_area())
-        return int_Area / smallest_area # NOTE: We only consider smallest bounding box
+        return int_Area / smallest_area # NOTE: We only consider smallest bounding box

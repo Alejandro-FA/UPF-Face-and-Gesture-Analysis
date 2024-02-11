@@ -1,0 +1,650 @@
+data/TRAINING/image_A0003.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0003.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0006.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0006.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0007.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0007.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0011.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0011.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0014.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0014.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0016.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0022.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0022.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0028.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0028.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0030.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0030.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0032.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0032.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0033.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0033.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0034.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0034.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0035.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0035.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0038.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0038.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0038.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0040.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0040.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0041.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0041.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0042.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0042.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0045.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0045.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0046.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0046.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0047.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0051.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0051.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0054.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0054.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0055.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0055.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0056.jpg: Checkpoint 5. rotation added
+data/TRAINING/image_A0058.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0058.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0060.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0060.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0060.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0062.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0062.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0062.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0068.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0068.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0069.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0069.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0069.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0070.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0070.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0070.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0074.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0074.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0076.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0076.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0076.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0077.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0077.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0078.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0078.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0080.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0080.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0081.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0081.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0086.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0086.jpg: Checkpoint 5. rotation added
+data/TRAINING/image_A0089.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0089.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0089.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0091.jpg: Checkpoint 5. rotation added
+data/TRAINING/image_A0092.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0092.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0092.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0096.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0096.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0098.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0098.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0099.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0099.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0100.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0100.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0100.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0101.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0101.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0103.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0103.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0105.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0105.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0107.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0107.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0111.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0112.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0112.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0113.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0113.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0115.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0115.jpg: Checkpoint 5. rotation added
+data/TRAINING/image_A0119.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0119.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0120.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0120.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0121.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0121.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0123.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0123.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0127.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0127.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0128.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0128.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0129.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0129.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0131.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0131.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0133.jpg: Checkpoint 5. rotation added
+data/TRAINING/image_A0134.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0134.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0135.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0135.jpg: Checkpoint 5. rotation added
+data/TRAINING/image_A0136.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0136.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0136.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0140.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0140.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0140.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0143.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0143.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0145.jpg: Checkpoint 3. lbp cascade and some other elements
+data/TRAINING/image_A0145.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0146.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0146.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0147.jpg: Checkpoint 3. lbp cascade and some other elements
+data/TRAINING/image_A0147.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0148.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0148.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0149.jpg: Checkpoint 5. rotation added
+data/TRAINING/image_A0150.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0150.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0150.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0151.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0151.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0152.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0152.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0155.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0155.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0155.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0156.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0156.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0156.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0157.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0157.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0159.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0159.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0160.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0160.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0162.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0162.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0163.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0163.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0164.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0164.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0164.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0165.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0165.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0166.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0166.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0170.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0170.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0170.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0171.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0171.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0172.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0172.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0172.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0174.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0174.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0175.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0175.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0176.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0176.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0180.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0180.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0182.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0182.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0184.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0186.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0186.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0187.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0187.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0190.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0190.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0190.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0193.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0193.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0193.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0194.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0194.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0195.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0195.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0196.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0196.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0202.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0202.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0205.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0205.jpg: Checkpoint 5. rotation added
+data/TRAINING/image_A0206.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0211.jpg: Checkpoint 5. rotation added
+data/TRAINING/image_A0212.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0212.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0213.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0213.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0214.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0214.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0216.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0216.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0217.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0217.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0217.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0218.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0218.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0219.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0219.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0219.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0220.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0220.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0221.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0221.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0221.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0223.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0223.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0224.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0224.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0227.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0227.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0228.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0228.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0229.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0229.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0229.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0230.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0230.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0232.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0232.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0235.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0235.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0236.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0236.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0236.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0237.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0237.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0238.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0238.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0238.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0239.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0239.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0239.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0241.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0241.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0242.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0242.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0244.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0244.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0247.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0247.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0249.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0249.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0250.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0250.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0253.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0253.jpg: Checkpoint 5. rotation added
+data/TRAINING/image_A0254.jpg: Checkpoint 5. rotation added
+data/TRAINING/image_A0255.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0255.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0258.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0258.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0259.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0259.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0261.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0261.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0265.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0265.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0266.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0266.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0267.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0267.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0267.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0269.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0269.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0269.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0271.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0271.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0273.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0273.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0276.jpg: Checkpoint 5. rotation added
+data/TRAINING/image_A0278.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0278.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0280.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0280.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0280.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0281.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0281.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0283.jpg: Checkpoint 5. rotation added
+data/TRAINING/image_A0284.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0284.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0285.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0291.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0291.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0292.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0292.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0294.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0294.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0295.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0295.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0296.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0296.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0297.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0300.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0300.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0301.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0301.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0303.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0303.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0303.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0304.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0304.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0306.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0306.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0310.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0310.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0316.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0316.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0317.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0317.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0317.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0319.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0319.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0320.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0320.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0321.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0321.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0322.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0322.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0325.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0325.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0325.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0326.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0326.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0328.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0328.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0331.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0331.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0332.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0333.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0333.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0333.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0335.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0335.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0336.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0336.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0336.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0337.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0337.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0338.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0338.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0339.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0339.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0339.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0340.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0340.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0343.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0343.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0345.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0345.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0346.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0346.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0349.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0349.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0349.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0351.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0351.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0357.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0358.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0358.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0360.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0360.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0361.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0361.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0365.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0366.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0366.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0367.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0367.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0368.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0369.jpg: Checkpoint 5. rotation added
+data/TRAINING/image_A0372.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0372.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0373.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0373.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0374.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0374.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0374.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0375.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0375.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0376.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0376.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0376.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0378.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0378.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0379.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0379.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0379.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0381.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0381.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0381.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0381.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0381.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0382.jpg: Checkpoint 5. rotation added
+data/TRAINING/image_A0384.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0384.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0386.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0386.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0388.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0388.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0390.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0390.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0394.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0394.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0394.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0396.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0396.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0396.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0397.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0397.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0397.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0398.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0398.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0399.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0399.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0400.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0400.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0401.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0401.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0401.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0402.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0402.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0404.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0404.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0408.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0408.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0409.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0409.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0410.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0410.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0413.jpg: Checkpoint 5. rotation added
+data/TRAINING/image_A0418.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0418.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0418.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0419.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0419.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0422.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0422.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0422.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0423.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0423.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0423.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0424.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0424.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0425.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0425.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0426.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0426.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0426.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0427.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0427.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0429.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0429.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0435.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0437.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0437.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0440.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0440.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0441.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0441.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0442.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0442.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0445.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0445.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0448.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0448.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0450.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0450.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0452.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0452.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0453.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0453.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0454.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0455.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0455.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0457.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0457.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0459.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0459.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0460.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0460.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0461.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0461.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0463.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0463.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0464.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0464.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0465.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0465.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0465.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0467.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0467.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0469.jpg: Checkpoint 5. rotation added
+data/TRAINING/image_A0471.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0471.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0473.jpg: Checkpoint 5. rotation added
+data/TRAINING/image_A0475.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0475.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0479.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0479.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0485.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0485.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0487.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0487.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0488.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0488.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0490.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0490.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0491.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0491.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0494.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0494.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0494.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0496.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0496.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0499.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0499.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0504.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0504.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0505.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0505.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0506.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0506.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0509.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0509.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0517.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0517.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0518.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0518.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0518.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0519.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0519.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0520.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0521.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0521.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0521.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0522.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0522.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0523.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0523.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0529.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0529.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0530.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0530.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0532.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0532.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0532.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0536.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0536.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0537.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0537.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0541.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0541.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0542.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0544.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0544.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0545.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0545.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0547.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0547.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0548.jpg: Checkpoint 5. rotation added
+data/TRAINING/image_A0550.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0552.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0552.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0555.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0555.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0556.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0556.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0556.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0557.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0557.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0558.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0558.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0559.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0559.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0560.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0560.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0562.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0562.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0564.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0564.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0564.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0566.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0566.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0566.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0569.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0569.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0570.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0570.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0573.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0573.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0575.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0575.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0578.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0578.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0581.jpg: Checkpoint 5. rotation added
+data/TRAINING/image_A0584.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0584.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0584.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0585.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0585.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0586.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0586.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0590.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0590.jpg: Checkpoint 5. rotation added
+data/TRAINING/image_A0592.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0592.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0593.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0593.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0594.jpg: Checkpoint 5. rotation added
+data/TRAINING/image_A0597.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0597.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0599.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0599.jpg: Checkpoint 4. DNN after lbp cascade
+data/TRAINING/image_A0600.jpg: Checkpoint 1. profile and eyes detected
+data/TRAINING/image_A0600.jpg: Checkpoint 2. lbp cascade and haar face detected
+data/TRAINING/image_A0600.jpg: Checkpoint 4. DNN after lbp cascade

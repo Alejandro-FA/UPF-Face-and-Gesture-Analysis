@@ -18,6 +18,7 @@ dependencies:
   - torchvision
   - torchaudio
   - tensorflow
+  - pyarrow
   - pip
   - pip:
       - mediapipe

@@ -35,9 +35,10 @@ def CHALL_AGC_ComputeDetScores(DetectionSTR, AGC_Challenge1_STR, show_figures):
     #   AGC Challenge
     #   Universitat Pompeu Fabra
     #
-    feature_list = ['F1', 'Fmatrix']
-    values = np.zeros((len(AGC_Challenge1_STR), 2), dtype='float')
+    feature_list = ['F1', 'Fmatrix', 'FNR']
+    values = np.zeros((len(AGC_Challenge1_STR), 3), dtype='float')
     scoresSTR = pd.DataFrame(values, index=np.arange(len(AGC_Challenge1_STR)), columns=feature_list, dtype='object')
+    
     for i in range(0, len(AGC_Challenge1_STR)):
         if show_figures:
             A = imread(AGC_Challenge1_STR['imageName'][i])
@@ -95,6 +96,10 @@ def CHALL_AGC_ComputeDetScores(DetectionSTR, AGC_Challenge1_STR, show_figures):
                         scoresSTR['F1'][i][k3] = max_F
                         scoresSTR['Fmatrix'][i][max_ind[0], :] = 0
                         scoresSTR['Fmatrix'][i][:, max_ind[1]] = 0
+
+        false_negatives = n_actualFaces - np.count_nonzero(scoresSTR['F1'][i])
+        scoresSTR['FNR'][i] = false_negatives / n_actualFaces if n_actualFaces else 0
+        
         if show_figures:
             try:
                 plt.title("%.2f" % scoresSTR['F1'][i])
@@ -106,7 +111,8 @@ def CHALL_AGC_ComputeDetScores(DetectionSTR, AGC_Challenge1_STR, show_figures):
             plt.close()
 
     FD_score = np.mean(np.hstack(np.array(scoresSTR['F1'][:])))
-    return FD_score, scoresSTR['F1']
+    FNR_score = np.mean(np.hstack(np.array(scoresSTR['FNR'][:])))
+    return FD_score, scoresSTR['F1'], FNR_score, scoresSTR['FNR']
 
 
 def MyFaceDetectionFunction(A, model: FaceDetectionModel, im):
@@ -195,10 +201,11 @@ if __name__ == '__main__':
 
         DetectionSTR.append(det_faces)
 
-    FD_score, f1_scores = CHALL_AGC_ComputeDetScores(DetectionSTR, AGC_Challenge1_TRAINING, show_figures=SHOW_FIGURES)
+    FD_score, f1_scores, FNR_score, fnr_scores = CHALL_AGC_ComputeDetScores(DetectionSTR, AGC_Challenge1_TRAINING, show_figures=SHOW_FIGURES)
     _, rem = divmod(total_time, 3600)
     minutes, seconds = divmod(rem, 60)
     print('F1-score: %.2f, Total time: %2d m %.2f s' % (100 * FD_score, int(minutes), seconds))
+    print('FNR-score: %.2f' % (100 * FNR_score))
 
     if OUTPUT_FILE:
         save_scores(OUTPUT_FILE, bounding_boxes=DetectionSTR, FD_score=FD_score, f1_scores=f1_scores)
