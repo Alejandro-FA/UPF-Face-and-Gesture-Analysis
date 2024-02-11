@@ -1,17 +1,23 @@
 name: face_analysis
 channels:
+  - pytorch
   - conda-forge
   - defaults
 dependencies:
   - python=3.11
   - imageio
   - matplotlib
+  - mtcnn
   - numpy
   - pandas
   - scipy
   - opencv
   - tqdm
   - scikit-learn
+  - pytorch:pytorch
+  - torchvision
+  - torchaudio
+  - tensorflow
   - pip
   - pip:
       - mediapipe
