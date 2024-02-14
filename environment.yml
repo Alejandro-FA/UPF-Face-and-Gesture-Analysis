@@ -20,5 +20,6 @@ dependencies:
   - tensorflow
   - pyarrow
   - pip
+  - seaborn
   - pip:
       - mediapipe

@@ -13,3 +13,4 @@ torchaudio
 mtcnn
 tensorflow
 pyarrow
+seaborn
