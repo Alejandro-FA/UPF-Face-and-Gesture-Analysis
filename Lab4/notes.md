@@ -59,6 +59,8 @@ Transfer learning will probably not pass the layer-parameter limitation.
 
 -   [Labelled Faces in the Wild](http://vis-www.cs.umass.edu/lfw/#download)
 
+-   [MS-Celeb-1](https://github.com/EB-Dodo/C-MS-Celeb) 6M images with 95K identities
+
 # Identities
 
 In this section we include the identities of each of the 80 individuals that are present in the training dataset that we have been given
