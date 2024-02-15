@@ -10,7 +10,7 @@ class MTCNNDetector(FaceDetector):
         super().__init__()
         self.detector = MTCNN()
 
-    def __call__(self, image: imageio.v2.Array) -> list[DetectionResult]:
+    def __detect_faces(self, image: imageio.v2.Array) -> list[DetectionResult]:
         results = []
         # Convert the image from BGR to RGB
         img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)

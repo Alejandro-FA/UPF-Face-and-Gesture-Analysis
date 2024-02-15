@@ -22,7 +22,7 @@ class MediaPipeDetector(FaceDetector):
         self.detector = vision.FaceDetector.create_from_options(options)
 
 
-    def __call__(self, image: imageio.v2.Array) -> list[DetectionResult]:
+    def __detect_faces(self, image: imageio.v2.Array) -> list[DetectionResult]:
         results = []
         # Convert the image from BGR to RGB
         # https://developers.google.com/mediapipe/api/solutions/python/mp/Image

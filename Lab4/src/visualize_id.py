@@ -55,8 +55,6 @@ def display_images_in_grid(image_paths: list[str], id: int) -> plt.figure:
 
 
 
-
-
 if __name__ == "__main__":
     args = get_args()
     

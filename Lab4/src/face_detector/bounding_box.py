@@ -12,6 +12,10 @@ class BoundingBox:
     @property
     def y2(self):
         return self.y1 + self.height
+
+    @property
+    def center(self) -> tuple[int, int]:
+        return (self.x1 + self.width // 2, self.y1 + self.height // 2)
     
     def get_resized(self, max_x2, max_y2, margin) -> 'BoundingBox':
         x1 = max(self.x1 - int(margin * self.width), 0)

@@ -19,15 +19,21 @@ class DetectionResult:
 
 
 class FaceDetector(ABC):
-    @abstractmethod
     def __call__(self, image: imageio.v2.Array) -> list[DetectionResult]:
-        raise NotImplementedError("Implement in the subclass.")
+        det_results = self.__detect_faces(image)
+        return self.__get_largest_images(det_results)
     
     @abstractmethod
     def save(file_path: str) -> None:
         raise NotImplementedError("Implement in the subclass.")
 
+    @abstractmethod
+    def __detect_faces(self, det_results: list[DetectionResult], min_probability: float) -> list[DetectionResult]:
+        raise NotImplementedError("Implement in the subclass.")
 
+
+    def __get_largest_images(self, det_results: list[DetectionResult]) -> list[DetectionResult]:
+        return sorted(det_results, key=lambda res: res.bounding_box.get_area(), reverse=True)
 
 
 
