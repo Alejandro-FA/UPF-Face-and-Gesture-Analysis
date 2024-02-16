@@ -12,6 +12,7 @@ class FeatureExtractorPreprocessor:
         self.output_width = new_size
         self.output_height = new_size
         self.grayscale = grayscale
+        self.torch_transform = transforms.Compose([transforms.ToTensor()])
     
 
     def __call__(self, image: imageio.v2.Array, bbox: BoundingBox) -> torch.Tensor:
@@ -32,9 +33,7 @@ class FeatureExtractorPreprocessor:
         """
         Change the image format to the one used in the rest of the project.
         """
-        # transform = transforms.Compose([transforms.ToTensor()])
-        # return transform(image)
-        return image
+        return self.torch_transform(image)
     
 
     def __square_crop(self, image: imageio.v2.Array, bbox: BoundingBox) -> imageio.v2.Array:

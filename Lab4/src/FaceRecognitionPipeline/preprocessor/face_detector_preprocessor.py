@@ -1,5 +1,6 @@
 import imageio.v2
 import cv2
+import numpy as np
 
 class FaceDetectorPreprocessor:
     def __init__(self, grayscale: bool = False) -> None:
@@ -11,5 +12,5 @@ class FaceDetectorPreprocessor:
         if not self.grayscale and len(image.shape) == 2:
             image = cv2.cvtColor(image, cv2.COLOR_GRAY2RGB)
             
-        return image
+        return image.astype(np.uint8)
     
