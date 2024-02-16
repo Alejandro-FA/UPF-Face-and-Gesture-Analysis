@@ -12,13 +12,11 @@ class MTCNNDetector(FaceDetector):
 
     def detect_faces(self, image: imageio.v2.Array) -> list[DetectionResult]:
         results = []
-        # Convert the image from BGR to RGB
-        img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
         # Suppress output
         with open(os.devnull, 'w') as f:
             with contextlib.redirect_stdout(f):
-                detection_result = self.detector.detect_faces(img)
+                detection_result = self.detector.detect_faces(image)
 
         for detection in detection_result:
             confidence = detection["confidence"]

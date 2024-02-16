@@ -21,6 +21,8 @@ class DetectionResult:
 class FaceDetector(ABC):
     def __call__(self, image: imageio.v2.Array) -> list[DetectionResult]:
         det_results = self.detect_faces(image)
+        for res in det_results:
+            res.bounding_box.fit_to_image(image)
         return self.__get_largest_images(det_results, 2)
     
     @abstractmethod

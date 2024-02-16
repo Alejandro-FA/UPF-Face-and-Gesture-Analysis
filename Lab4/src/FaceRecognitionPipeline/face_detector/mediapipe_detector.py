@@ -27,7 +27,6 @@ class MediaPipeDetector(FaceDetector):
         results = []
         # Convert the image from BGR to RGB
         # https://developers.google.com/mediapipe/api/solutions/python/mp/Image
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         rgb_frame = mp.Image(image_format=mp.ImageFormat.SRGB, data=np.asarray(image))
 
         # image = np.asarray(image)

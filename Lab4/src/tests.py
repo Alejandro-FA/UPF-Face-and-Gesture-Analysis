@@ -2,29 +2,33 @@ from imageio.v2 import imread
 from pathlib import Path
 import cv2
 import FaceRecognitionPipeline as frp
+import os
 
 # path = "data/datasets/CelebA/Img/img_celeba/000001.jpg"
 
-
-prep = frp.FeatureExtractorPreprocessor(new_size=128, change_to_grayscale=True)
+prep1 = frp.FaceDetectorPreprocessor(grayscale=False)
+prep2 = frp.FeatureExtractorPreprocessor(new_size=128, grayscale=True)
 # path = "data/TRAINING/image_A0017.jpg"
-path = "data/TRAINING/image_A0135.jpg"
-
-
-test_image = imread(path)
-print(test_image.shape)
-# cv_image = cv2.imread(path)
+path = "data/TRAINING"
+# path = "data/TRAINING/image_A0134.jpg"
+# path = "data/TRAINING/image_A0003.jpg"
 
 mp_detector = frp.MediaPipeDetector("model/detector.tflite")
 mtcnn_detector = frp.MTCNNDetector()
 
+for image in os.listdir(path):
+    print(image)
+    test_image = imread(f"{path}/{image}")
+    mt_cnn_res = mtcnn_detector(prep1(test_image))
+    for res in mt_cnn_res:
+        tensor = prep2(test_image, res.bounding_box)
+        # print(tensor.shape)
+
+
+
+
 # mp_res = mp_detector(test_image)
 # print("Mediapipe detected")
-mt_cnn_res = mtcnn_detector(test_image)
-print("MTCNN detected")
-
-tensor = prep(test_image, mt_cnn_res[0].bounding_box)
-print(tensor.shape)
 
 # def plot_bboxes(image, results, color):
 #     for res in results:

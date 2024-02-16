@@ -1,3 +1,5 @@
+import imageio.v2
+
 class BoundingBox:
     def __init__(self, x: int, y: int, w: int, h: int):
         self.x1 = x
@@ -27,6 +29,23 @@ class BoundingBox:
         height = y2 - y1
         return BoundingBox(x1, y1, width, height)
     
+    def fit_to_image(self, image: imageio.v2.Array) -> None:
+        image_width = image.shape[1]
+        image_height = image.shape[0]
+
+        if self.x1 < 0: self.x1 = 0
+        if self.y1 < 0: self.y1 = 0
+        if self.x2 >= image_width: self.width -= self.x2 - image_width + 1
+        if self.y2 >= image_height: self.height -= self.y2 - image_height + 1
+
+        assert self.x1 >= 0, f"{self.x1} < 0"
+        assert self.y1 >= 0, f"{self.y1} < 0"
+        assert self.x2 < image.shape[1], f"{self.x2} >= {image.shape[1]}"
+        assert self.y2 < image.shape[0], f"{self.y2} >= {image.shape[0]}"
+        assert self.width > 0, "width <= 0"
+        assert self.height > 0, "height <= 0"
+
+        
     def get_coords(self) -> tuple[int, int, int, int]:
         return (self.x1, self.y1, self.x2, self.y2)
 
@@ -46,3 +65,6 @@ class BoundingBox:
         # return int_Area / total_Area > threshold
         smallest_area = min(self.get_area(), bbox2.get_area())
         return int_Area / smallest_area # NOTE: We only consider smallest bounding box
+    
+    def copy(self) -> 'BoundingBox':
+        return BoundingBox(self.x1, self.y1, self.width, self.height)
