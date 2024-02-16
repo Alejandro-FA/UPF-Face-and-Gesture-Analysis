@@ -4,12 +4,13 @@ import cv2
 import FaceRecognitionPipeline as frp
 import os
 
+# os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 # path = "data/datasets/CelebA/Img/img_celeba/000001.jpg"
 
 prep1 = frp.FaceDetectorPreprocessor(grayscale=False)
 prep2 = frp.FeatureExtractorPreprocessor(new_size=128, grayscale=True)
 # path = "data/TRAINING/image_A0017.jpg"
-path = "data/TRAINING"
+path = "data/datasets/CelebA/Img/img_align_celeba"
 # path = "data/TRAINING/image_A0134.jpg"
 # path = "data/TRAINING/image_A0003.jpg"
 
@@ -20,6 +21,7 @@ for image in os.listdir(path):
     print(image)
     test_image = imread(f"{path}/{image}")
     mt_cnn_res = mtcnn_detector(prep1(test_image))
+    print(len(mt_cnn_res))
     for res in mt_cnn_res:
         tensor = prep2(test_image, res.bounding_box)
         # print(tensor.shape)

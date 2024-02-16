@@ -1,9 +1,10 @@
 from .face_detector import FaceDetector, DetectionResult
-from mtcnn import MTCNN
 import imageio.v2
-import cv2
-import os
 import contextlib
+import os
+import tensorflow as tf
+from mtcnn import MTCNN
+
 
 class MTCNNDetector(FaceDetector):
     def __init__(self) -> None:
@@ -16,7 +17,8 @@ class MTCNNDetector(FaceDetector):
         # Suppress output
         with open(os.devnull, 'w') as f:
             with contextlib.redirect_stdout(f):
-                detection_result = self.detector.detect_faces(image)
+                with tf.device('/CPU:0'):
+                    detection_result = self.detector.detect_faces(image)
 
         for detection in detection_result:
             confidence = detection["confidence"]

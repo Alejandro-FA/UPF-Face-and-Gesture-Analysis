@@ -1,7 +1,6 @@
 from torch.utils.data import Dataset, DataLoader
 import torchvision.transforms
 from torchvision.io import read_image, ImageReadMode
-import torch
 import torchvision.transforms as transforms
 
 
@@ -63,16 +62,3 @@ class CelebA(Dataset):
         return len(self.labels)
 
 
-
-# Custom crop to ensure that images have the same size
-celeb_transforms = transforms.Compose([
-    transforms.CenterCrop(100)
-])
-
-celeba_train = CelebA(transform=celeb_transforms)
-
-train_loader = DataLoader(dataset=celeba_train, batch_size=256, shuffle=True, pin_memory=True)
-print(len(train_loader))
-
-for i, (features, labels) in enumerate(train_loader):
-    print(f"{i}: id: {len(labels)}")

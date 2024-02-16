@@ -32,8 +32,9 @@ class FeatureExtractorPreprocessor:
         """
         Change the image format to the one used in the rest of the project.
         """
-        transform = transforms.Compose([transforms.ToTensor()])
-        return transform(image)
+        # transform = transforms.Compose([transforms.ToTensor()])
+        # return transform(image)
+        return image
     
 
     def __square_crop(self, image: imageio.v2.Array, bbox: BoundingBox) -> imageio.v2.Array:

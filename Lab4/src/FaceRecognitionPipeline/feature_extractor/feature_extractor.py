@@ -1,10 +1,10 @@
 from typing import Any
 from abc import ABC, abstractmethod
-
+import torch
 
 class FeatureExtractor(ABC):
     @abstractmethod
-    def __call__(self, *args: Any, **kwds: Any) -> Any:
+    def __call__(self, image: torch.Tensor) -> int:
         raise NotImplementedError("Implement in the subclass.")
 
     @abstractmethod
