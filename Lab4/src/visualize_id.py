@@ -6,6 +6,7 @@ import os
 import math
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+from imageio.v2 import imwrite, imread
 
 def get_args():
     parser = argparse.ArgumentParser(description="ID visualizer")
@@ -81,6 +82,15 @@ if __name__ == "__main__":
 
     grouped = df.groupby(by=["id"])
     names = grouped.get_group(id)["imageName"].tolist()
+    
+    OUTPUT_DIR = "data/TRAINING_no_id"
+    for image_name in names:
+        if not os.path.exists(OUTPUT_DIR):
+            os.makedirs(OUTPUT_DIR)
+            
+        image = imread(image_path + f"/{image_name}")
+        imwrite(f"{OUTPUT_DIR}/{image_name}", image)
+    # print(names)
     
     
     # Process images
