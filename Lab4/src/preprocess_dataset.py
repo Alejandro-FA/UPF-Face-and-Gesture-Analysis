@@ -42,7 +42,7 @@ def save_image(tensor: torch.Tensor, file_name: str, ids: dict[str, int], test_i
     id = ids[image_name]
     
     img_count = test_ids_count[id]
-    if img_count > THRESHOLD:
+    if img_count >= THRESHOLD:
         # Train image
         train_ids_count[id] += 1
         torch.save(tensor, f"{TENSORS_TRAIN_PATH}/{image_name}.pt")

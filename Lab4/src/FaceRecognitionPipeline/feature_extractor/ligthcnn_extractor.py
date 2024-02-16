@@ -42,10 +42,10 @@ class resblock(nn.Module):
         return out
 
 class network_9layers(nn.Module):
-    def __init__(self, num_classes=79077):
+    def __init__(self, num_classes=79077, input_channels=1):
         super(network_9layers, self).__init__()
         self.features = nn.Sequential(
-            mfm(1, 48, 5, 1, 2), 
+            mfm(input_channels, 48, 5, 1, 2), 
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True), 
             group(48, 96, 3, 1, 1), 
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),

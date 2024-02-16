@@ -19,6 +19,7 @@ dependencies:
   # - pytorch-cuda=12.1 # Uncomment this if you have an Nvidia GPU
   - torchvision
   - torchaudio
+  - torchinfo
   - tensorflow
   - pyarrow
   - pip

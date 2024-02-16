@@ -7,9 +7,7 @@ import time
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 import pickle
-from face_detector.face_detector import FaceDetector
-from face_detector.mtcnn_detector import MTCNNDetector
-from face_detector.mediapipe_detector import MediaPipeDetector
+from FaceRecognitionPipeline import FaceDetector, MTCNNDetector, MediaPipeDetector
 from tqdm import tqdm
 import argparse
 
