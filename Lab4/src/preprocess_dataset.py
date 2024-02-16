@@ -27,7 +27,7 @@ def get_ids(ids_path: str) -> dict[str, int]:
     return ids
     
 
-def save_image(tensor: torch.Tensor, file_name: str, ids: dict[str, int], test_ids_count: dict[int, int]):
+def save_image(tensor: torch.Tensor, file_name: str, ids: dict[str, int], test_ids_count: dict[int, int], train_ids_count: dict[int, int]):
     THRESHOLD = 3
     TENSORS_TRAIN_PATH = "data/datasets/CelebA/Img/img_align_celeba_train"
     TENSORS_TEST_PATH = "data/datasets/CelebA/Img/img_align_celeba_test"
@@ -41,20 +41,30 @@ def save_image(tensor: torch.Tensor, file_name: str, ids: dict[str, int], test_i
     image_name = file_name.split(".")[0]
     id = ids[image_name]
     
-    if id not in test_ids_count:
-        test_ids_count[id] = 1
-
     img_count = test_ids_count[id]
     if img_count > THRESHOLD:
         # Train image
-        imwrite(f"{TENSORS_TRAIN_PATH}/{file_name}", tensor)
-        # torch.save(tensor, f"{TENSORS_TRAIN_PATH}/{image_name}.pt")
+        train_ids_count[id] += 1
+        torch.save(tensor, f"{TENSORS_TRAIN_PATH}/{image_name}.pt")
     else:
         # Test image
-        imwrite(f"{TENSORS_TEST_PATH}/{file_name}", tensor)
-        # torch.save(tensor, f"{TENSORS_TEST_PATH}/{image_name}.pt")
+        test_ids_count[id] += 1
+        torch.save(tensor, f"{TENSORS_TEST_PATH}/{image_name}.pt")
 
 
+def print_stats(test_ids_count: dict[int, int], train_ids_count: dict[int, int]):
+    LOG_PATH = "data/datasets/CelebA/log.txt"
+
+    with open(LOG_PATH, "w") as file:
+        unique_test_ids = [id for id, count in test_ids_count.items() if count > 0]
+        unique_train_ids = [id for id, count in train_ids_count.items() if count > 0]
+        file.write(f"Unique test ids: {len(unique_test_ids)}\n")
+        file.write(f"Unique train ids: {len(unique_train_ids)}\n")
+
+        for id, count in test_ids_count.items():
+            file.write(f"ID: {id}, test count: {count}, train count: {train_ids_count[id]}\n")
+
+        
 
 
 if __name__ == '__main__':
@@ -67,21 +77,28 @@ if __name__ == '__main__':
 
     mp_detector = frp.MediaPipeDetector("model/detector.tflite")
     mtcnn_detector = frp.MTCNNDetector()
+
     test_ids_count = {}
+    train_ids_count = {}
+    for id in ids.values():
+        test_ids_count[id] = 0
+        train_ids_count[id] = 0
 
     max = None
     file_list = sorted(os.listdir(IMAGES_PATH))
     for count, image_path in tqdm(enumerate(file_list), total=len(file_list)):
+        if max is not None and count >= max:
+            break
 
         image = imread(f"{IMAGES_PATH}/{image_path}")
         mt_cnn_res = mtcnn_detector(prep1(image))
         
         for res in mt_cnn_res:
             tensor = prep2(image, res.bounding_box)
-            save_image(tensor, image_path, ids, test_ids_count)
+            save_image(tensor, image_path, ids, test_ids_count, train_ids_count)
 
-        if max is not None and count >= max:
-            break
+        if count % 1000 == 0:
+            print_stats(test_ids_count, train_ids_count)
 
 
 
