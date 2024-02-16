@@ -9,6 +9,9 @@ To **replicate the development environment** simply run the following commands (
 ```bash
 conda env create --name face_analysis --file environment.yml
 conda activate face_analysis
+conda config --env --add channels conda-forge
+conda config --env --add channels pytorch
+conda config --env --add channels nvidia # Only needed if you have an Nvidia GPU
 ```
 
 ### pip

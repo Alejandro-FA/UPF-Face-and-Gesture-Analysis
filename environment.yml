@@ -1,5 +1,6 @@
 name: face_analysis
 channels:
+  # - nvidia # Uncomment this if you have an Nvidia GPU
   - pytorch
   - conda-forge
   - defaults
@@ -15,6 +16,7 @@ dependencies:
   - tqdm
   - scikit-learn
   - pytorch:pytorch
+  # - pytorch-cuda=12.1 # Uncomment this if you have an Nvidia GPU
   - torchvision
   - torchaudio
   - tensorflow

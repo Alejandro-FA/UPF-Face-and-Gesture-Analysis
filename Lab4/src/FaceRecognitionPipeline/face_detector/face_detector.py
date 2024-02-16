@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from .bounding_box import BoundingBox
 import imageio.v2
+from ..utils import BoundingBox
 
 
 
@@ -20,20 +20,20 @@ class DetectionResult:
 
 class FaceDetector(ABC):
     def __call__(self, image: imageio.v2.Array) -> list[DetectionResult]:
-        det_results = self.__detect_faces(image)
-        return self.__get_largest_images(det_results)
+        det_results = self.detect_faces(image)
+        return self.__get_largest_images(det_results, 2)
     
     @abstractmethod
     def save(file_path: str) -> None:
         raise NotImplementedError("Implement in the subclass.")
 
     @abstractmethod
-    def __detect_faces(self, det_results: list[DetectionResult], min_probability: float) -> list[DetectionResult]:
+    def detect_faces(self, image: imageio.v2.Array) -> list[DetectionResult]:
         raise NotImplementedError("Implement in the subclass.")
 
 
-    def __get_largest_images(self, det_results: list[DetectionResult]) -> list[DetectionResult]:
-        return sorted(det_results, key=lambda res: res.bounding_box.get_area(), reverse=True)
+    def __get_largest_images(self, det_results: list[DetectionResult], n: int) -> list[DetectionResult]:
+        return sorted(det_results, key=lambda res: res.bounding_box.get_area(), reverse=True)[0:n]
 
 
 

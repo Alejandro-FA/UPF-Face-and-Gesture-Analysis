@@ -1,10 +1,11 @@
 from typing import Any
 import imageio.v2
 import torchvision.transforms as transforms
-from face_detector.face_detector import BoundingBox
 import numpy as np
 import torch
 import cv2
+from ..utils import BoundingBox
+
 
 class FeatureExtractorPreprocessor:
     def __init__(self, new_size: int, change_to_grayscale: bool = False) -> None:
@@ -75,7 +76,6 @@ class FeatureExtractorPreprocessor:
         return cv2.resize(image, (self.output_width, self.output_height), interpolation=cv2.INTER_AREA)
         
     
-    #TODO: perhaps change for a better upscaler?
     def __upscale(self, image: imageio.v2.Array) -> imageio.v2.Array:
         """
         Downscale the image to a size of width x height.

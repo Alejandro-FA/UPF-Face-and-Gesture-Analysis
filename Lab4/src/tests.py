@@ -1,23 +1,22 @@
-from preprocessor.preprocess import Preprocessor
-from face_detector.mediapipe_detector import MediaPipeDetector
-from face_detector.mtcnn_detector import MTCNNDetector
-from face_detector.bounding_box import BoundingBox
 from imageio.v2 import imread
 from pathlib import Path
 import cv2
+import FaceRecognitionPipeline as frp
 
 # path = "data/datasets/CelebA/Img/img_celeba/000001.jpg"
 
 
-prep = Preprocessor(new_size=128, change_to_grayscale=True)
-path = "data/TRAINING/image_A0017.jpg"
+prep = frp.FeatureExtractorPreprocessor(new_size=128, change_to_grayscale=True)
+# path = "data/TRAINING/image_A0017.jpg"
+path = "data/TRAINING/image_A0135.jpg"
+
 
 test_image = imread(path)
 print(test_image.shape)
 # cv_image = cv2.imread(path)
 
-mp_detector = MediaPipeDetector("model/detector.tflite")
-mtcnn_detector = MTCNNDetector()
+mp_detector = frp.MediaPipeDetector("model/detector.tflite")
+mtcnn_detector = frp.MTCNNDetector()
 
 # mp_res = mp_detector(test_image)
 # print("Mediapipe detected")

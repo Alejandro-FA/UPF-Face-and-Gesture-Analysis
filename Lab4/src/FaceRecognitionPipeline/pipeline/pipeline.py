@@ -1,7 +1,6 @@
-from face_detector.face_detector import FaceDetector
-from preprocessor.face_detector_preprocessor import FaceDetectorPreprocessor
-from preprocessor.feature_extractor_preprocessor import FeatureExtractorPreprocessor
-from feature_extractor.feature_extractor import FeatureExtractor
+from ..face_detector import FaceDetector
+from ..preprocessor import FaceDetectorPreprocessor, FeatureExtractorPreprocessor
+from ..feature_extractor import FeatureExtractor
 import imageio.v2
 from typing import Any
 
