@@ -26,4 +26,4 @@ dependencies:
   - pip
   - pip:
       - mediapipe
-      - facenet_pytorch
+      - facenet-pytorch

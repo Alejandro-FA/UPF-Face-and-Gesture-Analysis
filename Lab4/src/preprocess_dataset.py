@@ -3,6 +3,10 @@ import FaceRecognitionPipeline as frp
 import os
 import torch
 from tqdm import tqdm
+from facenet_pytorch import MTCNN
+import MyTorchWrapper as mtw
+import numpy as np
+from PIL import Image
 
 
 def get_ids(ids_path: str) -> dict[str, int]:
@@ -28,9 +32,9 @@ def get_ids(ids_path: str) -> dict[str, int]:
     
 
 def save_image(tensor: torch.Tensor, file_name: str, ids: dict[str, int], test_ids_count: dict[int, int], train_ids_count: dict[int, int]):
-    THRESHOLD = 3
-    TENSORS_TRAIN_PATH = "data/datasets/CelebA/Img/img_align_celeba_train"
-    TENSORS_TEST_PATH = "data/datasets/CelebA/Img/img_align_celeba_test"
+    THRESHOLD = 1
+    TENSORS_TRAIN_PATH = "data/datasets/CelebA/Img/img_align_celeba_train_2"
+    TENSORS_TEST_PATH = "data/datasets/CelebA/Img/img_align_celeba_test_2"
 
     if os.path.exists(TENSORS_TRAIN_PATH) == False:
         os.makedirs(TENSORS_TRAIN_PATH)
@@ -73,29 +77,43 @@ if __name__ == '__main__':
     ids = get_ids(ANNOTATIONS_PATH)
 
     prep1 = frp.FaceDetectorPreprocessor(grayscale=False)
-    prep2 = frp.FeatureExtractorPreprocessor(new_size=128, grayscale=False)
-
-    mp_detector = frp.MediaPipeDetector("model/detector.tflite")
-    mtcnn_detector = frp.MTCNNDetector()
 
     test_ids_count = {}
     train_ids_count = {}
     for id in ids.values():
         test_ids_count[id] = 0
         train_ids_count[id] = 0
-
+    
+    device = mtw.get_torch_device(use_gpu=True, debug=True)
+    mtcnn = MTCNN(image_size=128, device=device, keep_all=False, post_process=True, thresholds=[0.4, 0.5, 0.5])
     max = None
     file_list = sorted(os.listdir(IMAGES_PATH))
+    batch_size = 1024
+    buffer = []
+    faces = []
+    paths = []
     for count, image_path in tqdm(enumerate(file_list), total=len(file_list)):
         if max is not None and count >= max:
             break
-
-        image = imread(f"{IMAGES_PATH}/{image_path}")
-        mt_cnn_res = mtcnn_detector(prep1(image))
         
-        for res in mt_cnn_res:
-            tensor = prep2(image, res.bounding_box)
-            save_image(tensor, image_path, ids, test_ids_count, train_ids_count)
+        image = imread(f"{IMAGES_PATH}/{image_path}")
+        image = prep1(image)
+        buffer.append(image)
+        paths.append(image_path)
+        
+        if len(buffer) >= batch_size:
+            try:
+                tensors = mtcnn(buffer)
+                for i in range(len(paths)):            
+                    save_image(tensors[i, :, :, :], paths[i], ids, test_ids_count, train_ids_count)
+            except:
+                for im, path in zip(buffer, paths):
+                    tensor = mtcnn(im)
+                    if tensor is None: continue
+                    save_image(tensor, path, ids, test_ids_count, train_ids_count)
+            finally:
+                buffer = []
+                paths = []
 
         if count % 1000 == 0:
             print_stats(test_ids_count, train_ids_count)

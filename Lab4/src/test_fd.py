@@ -7,7 +7,7 @@ import time
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 import pickle
-from FaceRecognitionPipeline import FaceDetector, MTCNNDetector, MediaPipeDetector
+from FaceRecognitionPipeline import MTCNNDetector, MediaPipeDetector, FaceDetector, FaceDetectorPreprocessor
 from tqdm import tqdm
 import argparse
 
@@ -116,6 +116,8 @@ def CHALL_AGC_ComputeDetScores(DetectionSTR, AGC_Challenge1_STR, show_figures):
 
 
 def MyFaceDetectionFunction(A, model: FaceDetector):
+    prep = FaceDetectorPreprocessor(grayscale=False)
+    A = prep(A)
     return [m.bounding_box.get_coords() for m in model(A)]
 
 
@@ -202,12 +204,11 @@ if __name__ == '__main__':
             # separate row in det_faces
 
             det_faces = MyFaceDetectionFunction(A, model)
-
             tt = time.time() - ti
             total_time = total_time + tt
         except Exception as e:
-            # print('Problematic image:', im) # FIXME: remove this for submission
-            # raise e # FIXME: remove this for submission
+            print('Problematic image:', im) # FIXME: remove this for submission
+            raise e # FIXME: remove this for submission
             # If the face detection function fails, it will be assumed that no
             # face was detected for this input image
             det_faces = []

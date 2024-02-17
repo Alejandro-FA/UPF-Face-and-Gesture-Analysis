@@ -3,6 +3,8 @@ from pathlib import Path
 import cv2
 import FaceRecognitionPipeline as frp
 import os
+from facenet_pytorch import MTCNN
+import MyTorchWrapper as mtw
 
 # os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 # path = "data/datasets/CelebA/Img/img_celeba/000001.jpg"
@@ -10,23 +12,35 @@ import os
 prep1 = frp.FaceDetectorPreprocessor(grayscale=False)
 prep2 = frp.FeatureExtractorPreprocessor(new_size=128, grayscale=True)
 # path = "data/TRAINING/image_A0017.jpg"
-path = "data/datasets/CelebA/Img/img_align_celeba"
-# path = "data/TRAINING/image_A0134.jpg"
+path = "data/TRAINING"
+# path = "data/TRAINING/image_A0134.jpg"f
 # path = "data/TRAINING/image_A0003.jpg"
 
 mp_detector = frp.MediaPipeDetector("model/detector.tflite")
-mtcnn_detector = frp.MTCNNDetector()
+# mtcnn_detector = frp.MTCNNDetector()
+device = mtw.get_torch_device(debug=True, use_gpu=True)
+mtcnn_detector = MTCNN(image_size=128, post_process=True, keep_all=True, device=device)
 
-for image in os.listdir(path):
+buffer = []
+batch_size = 128
+faces = []
+for image in sorted(os.listdir(path)):
     print(image)
     test_image = imread(f"{path}/{image}")
-    mt_cnn_res = mtcnn_detector(prep1(test_image))
-    print(len(mt_cnn_res))
-    for res in mt_cnn_res:
-        tensor = prep2(test_image, res.bounding_box)
+    buffer.append(prep1(test_image))
+
+    if len(buffer) >= batch_size:
+        faces.extend(mtcnn_detector(buffer), save_path=f"assets/{image}", return_prob=False)
+        buffer = []
+    # print(len(mt_cnn_res))
+    # for res in mt_cnn_res:
+    #     pass
+        # tensor = prep2(test_image, res.bounding_box)
         # print(tensor.shape)
 
 
+# print(type(mt_cnn_res))
+# print(mt_cnn_res.shape)
 
 
 # mp_res = mp_detector(test_image)
