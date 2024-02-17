@@ -2,6 +2,8 @@ from .feature_extractor import FeatureExtractor
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import torchvision.transforms as transforms
+import imageio.v2
 
 class mfm(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size=3, stride=1, padding=1, type=1):
@@ -71,12 +73,12 @@ class network_9layers(nn.Module):
 class LightCNN(FeatureExtractor):
     def __init__(self) -> None:
         super().__init__()
-        # Load the model from the file
+        self.torch_transform = transforms.Compose([transforms.ToTensor()])
     
 
-    def __call__(self, image: torch.Tensor) -> int:
-        # Run inference on the image
-        pass
+    def __call__(self, image: imageio.v2.Array) -> int:
+        tensor: torch.Tensor = self.torch_transform(image)
+        return -1 # TODO: Implement this method
 
 
     def save(file_path: str) -> None:

@@ -8,6 +8,7 @@ import time
 import itertools
 from tqdm import tqdm
 import pandas as pd
+import FaceRecognitionPipeline as frp
 
 
 def CHALL_AGC_ComputeRecognScores(auto_ids, true_ids):
@@ -49,9 +50,18 @@ def CHALL_AGC_ComputeRecognScores(auto_ids, true_ids):
     return FR_score
 
 
+def load_model() -> frp.Pipeline:
+    pipeline = frp.Pipeline(
+        frp.FaceDetectorPreprocessor(output_channels=3),
+        frp.MTCNNDetector(use_gpu=False, output_size=128, thresholds=[0.6, 0.7, 0.7]),
+        # frp.MediaPipeDetector(model_asset_path="model/detector.tflite"),
+        frp.FeatureExtractorPreprocessor(new_size=128, output_channels=3),
+        frp.LightCNN()
+    )
+    return pipeline
+
 def my_face_recognition_function(A, my_FRmodel):
-    # Function to implement
-    return
+    return my_FRmodel(A)
 
 
 # Basic script for Face Recognition Challenge
@@ -94,7 +104,7 @@ AutoRecognSTR = []
 
 
 # Load your FRModel
-my_FRmodel = " "
+my_FRmodel = load_model()
 
 # Initialize timer accumulator
 total_images = len(imageName)

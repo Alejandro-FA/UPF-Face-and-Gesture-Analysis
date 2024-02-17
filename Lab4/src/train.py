@@ -106,7 +106,7 @@ if __name__ == "__main__":
     ###############################################################################
     # Test
     ###############################################################################
-    celeba_test = frp.CelebA(path="data/datasets/CelebA/Img/img_align_celeba_test", ids_file=DATASET_BASE_PATH + "/Anno/identity_CelebA_test.txt") # FIXME: create test dataset
+    celeba_test = frp.CelebA(path=DATASET_BASE_PATH + "/img_align_celeba_test", ids_file=DATASET_BASE_PATH + "/Anno/identity_CelebA_test.txt") # FIXME: create test dataset
     test_loader = torch.utils.data.DataLoader(dataset=celeba_test, batch_size=256, pin_memory=True)
 
     # Test the model with the test dataset
