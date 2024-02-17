@@ -41,7 +41,7 @@ if __name__ == "__main__":
     TEST_PATH = "data/datasets/CelebA/Img/img_align_celeba_test"
     
     ids = get_ids(ANNOTATIONS_PATH)
-    unique_ids = list(np.unique(list(ids.values())))
+    unique_ids = set(ids.values())
     
     percentage_no_id = 0.15
     removed_ids = random.sample(unique_ids, round(len(unique_ids) * percentage_no_id))
@@ -49,6 +49,9 @@ if __name__ == "__main__":
     ids_not_in_train = [id for id in unique_ids if id not in train_ids]
     print("Ids present in test dataset but not in train:", len(ids_not_in_train))
     removed_ids.extend(ids_not_in_train)
+
+    new_unique_ids = unique_ids - set(removed_ids)
+    ids_map = {id: i+1 for i, id in enumerate(new_unique_ids)}
     
     modified_images = 0
     with open(MODIFIED_ANNOTATIONS, "w") as output_file:
@@ -57,6 +60,11 @@ if __name__ == "__main__":
                 output_file.write(f"{img_name}.jpg 0\n")
                 modified_images += 1
             else:
-                output_file.write(f"{img_name}.jpg {id}\n")
+                output_file.write(f"{img_name}.jpg {ids_map[id]}\n")
     
     print(f"The label of [{modified_images}/{len(ids)}] ({round(modified_images/len(ids) * 100, 2)} %) images have been set to 0")
+    new_unique_ids = set(get_ids(MODIFIED_ANNOTATIONS).values())
+    
+    print("Current number of unique ids:", len(new_unique_ids))
+    print("Max id:", max(new_unique_ids), ". Min ids:", min(new_unique_ids))
+    print("Ids sample:", sorted(new_unique_ids)[:20])
