@@ -62,9 +62,9 @@ class network_9layers(nn.Module):
         x = self.features(x)
         x = x.view(x.size(0), -1)
         x = self.fc1(x)
-        x = F.dropout(x, training=self.training)
+        x = F.dropout(x, training=self.training) # x is the feature vector before the softmax layer
         out = self.fc2(x)
-        return out, x
+        return out#, x
     
 
 

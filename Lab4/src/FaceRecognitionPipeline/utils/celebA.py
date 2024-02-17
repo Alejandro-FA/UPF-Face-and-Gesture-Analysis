@@ -4,6 +4,7 @@ from torchvision.io import read_image, ImageReadMode
 import torchvision.transforms as transforms
 import os
 import torch
+import numpy as np
 
 
 class CelebA(Dataset):
@@ -23,7 +24,7 @@ class CelebA(Dataset):
         self.transform = transform
         self.labels: dict[str, int] = self.__load_ids()
         self.labels_tensors = torch.tensor(list(self.labels.values()))
-        print(f"Created dataset with {len(self)} images")
+        print(f"Created dataset with {len(self)} images and {len(self.get_unique_labels())} unique labels.")
     
     
     def __load_ids(self) -> dict[str, int]:
@@ -34,7 +35,7 @@ class CelebA(Dataset):
         where XXXXXX represents the image number, and <id> represents the id of the person in that image.
         """
         
-        print("Loading ids...")
+        # print("Loading ids...")
         try:
             # Annotations file contains the annotations for both the training and testing dataset.
             file = open(self.ids_file, "r").read().strip()
@@ -48,7 +49,7 @@ class CelebA(Dataset):
             id = int(splited_line[1])
             labels[img_num] = id
         
-        print("Ids loaded!")
+        # print("Ids loaded!")
         return labels
 
     

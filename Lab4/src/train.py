@@ -75,8 +75,10 @@ if __name__ == "__main__":
     evaluation = mtw.AccuracyEvaluation(loss_criterion=nn.CrossEntropyLoss())
 
     # Create an instance of the model
-    num_classes = len(celeba_train.get_unique_labels())
-    model = frp.network_9layers(num_classes=num_classes, input_channels=3)
+    num_classes_train = len(celeba_train.get_unique_labels())
+    num_classes_validation = len(celeba_validation.get_unique_labels())
+    assert num_classes_train == num_classes_validation, "The number of classes in the training and validation datasets must be the same"
+    model = frp.network_9layers(num_classes=num_classes_train, input_channels=3)
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, betas=(0.9, 0.999), eps=1e-08)
 
     # Train the model
