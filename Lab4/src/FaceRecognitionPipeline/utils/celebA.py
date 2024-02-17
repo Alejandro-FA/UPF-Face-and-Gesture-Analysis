@@ -11,7 +11,7 @@ class CelebA(Dataset):
     """
     Required class to load the CelebA dataset
     """
-    def __init__(self, path: str, ids_file: str = None, transform: torchvision.transforms = None) -> None:
+    def __init__(self, path: str, ids_file: str, transform: torchvision.transforms = None) -> None:
         
         self.path = path
         if not self.path.endswith("/"): self.path += "/"

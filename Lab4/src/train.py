@@ -70,7 +70,7 @@ if __name__ == "__main__":
     validation_loader = torch.utils.data.DataLoader(dataset=celeba_validation, batch_size=256, pin_memory=True)
 
     # Training parameters
-    num_epochs = 5
+    num_epochs = 1
     learning_rate = .001
     evaluation = mtw.AccuracyEvaluation(loss_criterion=nn.CrossEntropyLoss())
 
@@ -97,7 +97,7 @@ if __name__ == "__main__":
     plot_acc_loss(fig2, axes, initial_train_accuracies, initial_train_losses, num_epochs, save_figure, plot_mode="both")
     if save_figure:
         plt.savefig(f"{RESULTS_PATH}/fig2.png", dpi=500)
-    plt.show()
+    # plt.show()
 
     # Save the model checkpoint
     iomanager.save(model=model, model_id=model_id)
@@ -106,12 +106,12 @@ if __name__ == "__main__":
     ###############################################################################
     # Test
     ###############################################################################
-    celeba_test = frp.CelebA(path="/data/datasets/CelebA/Img/img_align_celeba_test") # FIXME: create test dataset
+    celeba_test = frp.CelebA(path="data/datasets/CelebA/Img/img_align_celeba_test", ids_file=DATASET_BASE_PATH + "/Anno/identity_CelebA_test.txt") # FIXME: create test dataset
     test_loader = torch.utils.data.DataLoader(dataset=celeba_test, batch_size=256, pin_memory=True)
 
     # Test the model with the test dataset
     tester = mtw.Tester(evaluation=evaluation, data_loader=test_loader, device=device)
-    test_results = tester.test(model=model, verbose=True)
+    test_results = tester.test(model=model)
     initial_test_acc = test_results["accuracy"]
     print(f'Test Accuracy of the model on the {len(celeba_test)} test images: {initial_test_acc} %')
 
