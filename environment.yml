@@ -1,6 +1,6 @@
 name: face_analysis
 channels:
-  # - nvidia # Uncomment this if you have an Nvidia GPU
+  - nvidia # Uncomment this if you have an Nvidia GPU
   - pytorch
   - conda-forge
   - defaults
@@ -10,19 +10,20 @@ dependencies:
   - matplotlib
   - mtcnn
   - numpy
-  - pandas
-  - scipy
   - opencv
-  - tqdm
+  - pandas
+  - pyarrow
   - scikit-learn
+  - scipy
+  - seaborn
   - pytorch:pytorch
-  # - pytorch-cuda=12.1 # Uncomment this if you have an Nvidia GPU
+  - pytorch-cuda=12.1 # Uncomment this if you have an Nvidia GPU
   - torchvision
   - torchaudio
   - torchinfo
   - tensorflow
-  - pyarrow
+  - tqdm
   - pip
-  - seaborn
   - pip:
       - mediapipe
+      - facenet_pytorch
