@@ -8,7 +8,6 @@ dependencies:
   - python=3.11
   - imageio
   - matplotlib
-  - mtcnn
   - numpy
   - opencv
   - pandas
@@ -21,7 +20,6 @@ dependencies:
   - torchvision
   - torchaudio
   - torchinfo
-  - tensorflow
   - tqdm
   - pip
   - pip:

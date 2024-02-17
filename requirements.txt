@@ -11,8 +11,6 @@ torch
 torchvision
 torchaudio
 torchinfo
-mtcnn
-tensorflow
 pyarrow
 seaborn
 facenet-pytorch
