@@ -1,3 +1,8 @@
+"""
+This script has to be used after downloading the images of the famous people with the web scraper.
+It generates another directory with the same structure and images, but cropped.
+"""
+
 import Datasets as ds
 import FaceRecognitionPipeline as frp
 import Datasets as ds
