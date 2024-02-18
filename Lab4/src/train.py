@@ -13,7 +13,7 @@ def plot_acc_loss(fig, axes, accuracies, losses, epochs, save_figure, plot_mode=
         print("plot_mode options: both, smooth or both")
         return
     
-    window = 100
+    window = min(100, len(accuracies))
     # smoothed_accuracies = np.convolve(train_accuracies, np.ones(window)[::-1], mode="same")
     
     epoch_range = np.arange(epochs + 1)
@@ -93,6 +93,8 @@ if __name__ == "__main__":
     initial_train_losses = train_results['loss']
     initial_train_accuracies = train_results['accuracy']
 
+    # Save the model checkpoint
+    iomanager.save(model=model, model_id=model_id)
 
     # Plot loss and accuracy evolution with the training dataset
     fig2, axes = plt.subplots(1, 2, figsize=(10, 5))
@@ -102,8 +104,6 @@ if __name__ == "__main__":
         plt.savefig(f"{RESULTS_PATH}/fig2.png", dpi=500)
     # plt.show()
 
-    # Save the model checkpoint
-    iomanager.save(model=model, model_id=model_id)
 
 
     ###############################################################################
