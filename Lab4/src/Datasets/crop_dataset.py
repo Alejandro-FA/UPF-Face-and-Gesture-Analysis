@@ -51,10 +51,14 @@ class FaceCropper:
         batch = []
         image_paths = []
         for image_path in tqdm(os.listdir(input_dir), desc="Cropping images"):
-            image = imread(f"{input_dir}/{image_path}")
-            image = self.preprocessor(image)
-            batch.append(image)
-            image_paths.append(image_path)
+            if os.path.isdir(f"{input_dir}/{image_path}"): continue # Avoid processing any directory in the input directory
+            try:
+                image = imread(f"{input_dir}/{image_path}")
+                image = self.preprocessor(image)
+                batch.append(image)
+                image_paths.append(image_path)
+            except:
+                print(f"Omitting {image_path} as it cannot be opened")
 
             if len(batch) == self.batch_size:
                 self.__process_batch(batch, image_paths, output_dir, output_format, log_path)
@@ -77,6 +81,8 @@ class FaceCropper:
             None
         """
         results = self.face_detector(batch)
+        if results == []: # Batch with no detections
+            return
         if not isinstance(results[0], list):
             results = [results]
 
