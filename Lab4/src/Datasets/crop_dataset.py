@@ -80,7 +80,10 @@ class FaceCropper:
         Returns:
             None
         """
-        results = self.face_detector(batch)
+        try:
+            results = self.face_detector(batch)
+        except:
+            return
         if results == []: # Batch with no detections
             return
         if not isinstance(results[0], list):

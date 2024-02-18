@@ -4,12 +4,6 @@ import Datasets as ds
 import os
 
 
-
-            
-
-
-
-
 if __name__ == "__main__":
     INPUT_DIR = "data/ids_img"
     cropper = ds.FaceCropper(
@@ -27,5 +21,5 @@ if __name__ == "__main__":
         if dir == ".DS_Store": continue
         dir_path = INPUT_DIR + f"/{dir}"
         print(f"[{i + 1} / {len(all_dirs)}]. Processing images of {dir}...")
-        cropper.crop(dir_path, INPUT_DIR + f"/{dir} cropped", output_format="jpg") # Pass "pt" to save the images as pytorch tensors
+        cropper.crop(dir_path, f"{INPUT_DIR}_cropped/{dir}", output_format="jpg") # Pass "pt" to save the images as pytorch tensors
     
