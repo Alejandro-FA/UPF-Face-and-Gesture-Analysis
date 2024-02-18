@@ -57,6 +57,7 @@ if __name__ == "__main__":
     seed_value = 42
     device = mtw.get_torch_device(use_gpu=True, debug=True)
     iomanager = mtw.IOManager(storage_dir="model/")
+    model_id = iomanager.next_id_available()
     save_figure = True
     batch_size = 256
     RESULTS_PATH = "assets"
@@ -68,7 +69,7 @@ if __name__ == "__main__":
     # Load the dataset
     ids_file = DATASET_BASE_PATH + "/Anno/identity_CelebA_relabeled.txt"
     celeba_train = ds.CelebA(path=DATASET_BASE_PATH + "/Img/img_align_celeba_cropped/train", ids_file_path=ids_file, input_format="jpg")
-    celeba_validation = ds.CelebA(path=DATASET_BASE_PATH + "/Img/img_align_celeba_cropped/test", ids_file_path=ids_file, input_format="jpg")
+    celeba_validation = ds.CelebA(path=DATASET_BASE_PATH + "/Img/img_align_celeba_cropped/test", ids_file_path=ids_file, input_format="jpg") # FIXME: Rename path to validation
     train_loader = torch.utils.data.DataLoader(dataset=celeba_train, batch_size=batch_size, shuffle=True, pin_memory=True)
     validation_loader = torch.utils.data.DataLoader(dataset=celeba_validation, batch_size=batch_size, pin_memory=True)
 
@@ -85,16 +86,10 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, betas=(0.9, 0.999), eps=1e-08)
 
     # Train the model
-    model_id = iomanager.next_id_available()
-    print(f"Training model {model_id} with {len(celeba_train)} images...")
-
-    trainer = mtw.Trainer(evaluation=evaluation, epochs=num_epochs, data_loader=train_loader, device=device)
-    train_results = trainer.train(model, optimizer, verbose=True)
+    trainer = mtw.Trainer(evaluation=evaluation, epochs=num_epochs, train_data_loader=train_loader, validation_loader=validation_loader, io_manager=iomanager, device=device)
+    train_results, validation_results = trainer.train(model, optimizer, verbose=True) # TODO: Use validation_results
     initial_train_losses = train_results['loss']
     initial_train_accuracies = train_results['accuracy']
-
-    # Save the model checkpoint
-    iomanager.save(model=model, model_id=model_id)
 
     # Plot loss and accuracy evolution with the training dataset
     fig2, axes = plt.subplots(1, 2, figsize=(10, 5))
@@ -103,7 +98,6 @@ if __name__ == "__main__":
     if save_figure:
         plt.savefig(f"{RESULTS_PATH}/fig2.png", dpi=500)
     # plt.show()
-
 
 
     ###############################################################################

@@ -26,7 +26,7 @@ class BasicResults:
         """Adds a batch size to the history.
 
         Args:
-            batch_size (int): Size of the batch fto log.
+            batch_size (int): Size of the batch to log.
             Used to accurately average the results.
         """        
         self.batch_sizes.append(batch_size)
@@ -51,6 +51,16 @@ class BasicResults:
             Dict[str, Union[float, List[float]]]: Dictionary representation of the results.
         """        
         return {'loss': self.loss_avg if averaged else self.loss}
+    
+
+    def append(self, results: 'BasicResults') -> None:
+        """Appends the results of another BasicResults instance to this one.
+
+        Args:
+            results (BasicResults): Results to append.
+        """        
+        self.loss += results.loss
+        self.batch_sizes += results.batch_sizes
 
 
 
