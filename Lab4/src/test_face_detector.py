@@ -7,7 +7,7 @@ import time
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 import pickle
-from FaceRecognitionPipeline import MTCNNDetector, MediaPipeDetector, FaceDetector, FaceDetectorPreprocessor
+import FaceRecognitionPipeline as frp
 from tqdm import tqdm
 import argparse
 
@@ -115,10 +115,10 @@ def CHALL_AGC_ComputeDetScores(DetectionSTR, AGC_Challenge1_STR, show_figures):
     return FD_score, scoresSTR['F1'], FNR_score, scoresSTR['FNR']
 
 
-def MyFaceDetectionFunction(A, model: FaceDetector):
-    prep = FaceDetectorPreprocessor(grayscale=False)
+def MyFaceDetectionFunction(A, model: frp.FaceDetector):
+    prep = frp.FaceDetectorPreprocessor(output_channels=3)
     A = prep(A)
-    return [m.bounding_box.get_coords() for m in model(A)]
+    return [res.bounding_box.get_coords() for res in model(A)]
 
 
 def save_scores(output_path: str, bounding_boxes, FD_score, f1_scores):
@@ -145,12 +145,12 @@ def get_args():
     return parser.parse_args() 
 
 
-def load_model(model_name: str) -> FaceDetector:
+def load_model(model_name: str) -> frp.FaceDetector:
     valid_names = ["mtcnn", "mediapipe"]
     if model_name == valid_names[0]:
-        return MTCNNDetector()
+        return frp.MTCNNDetector(use_gpu=False, thresholds=[0.6, 0.7, 0.7])
     elif model_name == valid_names[1]:
-        return MediaPipeDetector("model/detector.tflite")
+        return frp.MediaPipeDetector("model/detector.tflite")
     else:
         raise RuntimeError(f"Invalid model name {model_name}. Valid names: {valid_names}")
 

@@ -53,7 +53,7 @@ def CHALL_AGC_ComputeRecognScores(auto_ids, true_ids):
 def load_model() -> frp.Pipeline:
     pipeline = frp.Pipeline(
         frp.FaceDetectorPreprocessor(output_channels=3),
-        frp.MTCNNDetector(use_gpu=False, output_size=128, thresholds=[0.6, 0.7, 0.7]),
+        frp.MTCNNDetector(use_gpu=True, thresholds=[0.6, 0.7, 0.7]),
         # frp.MediaPipeDetector(model_asset_path="model/detector.tflite"),
         frp.FeatureExtractorPreprocessor(new_size=128, output_channels=3),
         frp.LightCNN()

@@ -1,119 +1,31 @@
-from imageio.v2 import imread, imwrite
+import Datasets as ds
 import FaceRecognitionPipeline as frp
-import os
-import torch
-from tqdm import tqdm
-from facenet_pytorch import MTCNN
-import MyTorchWrapper as mtw
-import numpy as np
-from PIL import Image
-
-
-def get_ids(ids_path: str) -> dict[str, int]:
-    """
-    Loads the information from the ids file.
-    A line has the following format:
-        XXXXXX.jpg <id>
-    where XXXXXX represents the image number, and <id> represents the id of the person in that image.
-    """
-    ids = {}
-    try:
-        file = open(ids_path, "r").read().strip()
-    except:
-        raise FileNotFoundError(f"Filt {ids_path} could not be found")
-
-    for line in file.splitlines():
-        splited_line = line.split(" ")
-        img_num = splited_line[0].split(".")[0]
-        id = int(splited_line[1])
-        ids[img_num] = id
-    
-    return ids
-    
-
-def save_image(tensor: torch.Tensor, file_name: str, ids: dict[str, int], test_ids_count: dict[int, int], train_ids_count: dict[int, int]):
-    THRESHOLD = 1
-    TENSORS_TRAIN_PATH = "data/datasets/CelebA/Img/img_align_celeba_train_2"
-    TENSORS_TEST_PATH = "data/datasets/CelebA/Img/img_align_celeba_test_2"
-
-    if os.path.exists(TENSORS_TRAIN_PATH) == False:
-        os.makedirs(TENSORS_TRAIN_PATH)
-
-    if os.path.exists(TENSORS_TEST_PATH) == False:
-        os.makedirs(TENSORS_TEST_PATH)
-    
-    image_name = file_name.split(".")[0]
-    id = ids[image_name]
-    
-    img_count = test_ids_count[id]
-    if img_count >= THRESHOLD:
-        # Train image
-        train_ids_count[id] += 1
-        torch.save(tensor, f"{TENSORS_TRAIN_PATH}/{image_name}.pt")
-    else:
-        # Test image
-        test_ids_count[id] += 1
-        torch.save(tensor, f"{TENSORS_TEST_PATH}/{image_name}.pt")
-
-
-def print_stats(test_ids_count: dict[int, int], train_ids_count: dict[int, int]):
-    LOG_PATH = "data/datasets/CelebA/log.txt"
-
-    with open(LOG_PATH, "w") as file:
-        unique_test_ids = [id for id, count in test_ids_count.items() if count > 0]
-        unique_train_ids = [id for id, count in train_ids_count.items() if count > 0]
-        file.write(f"Unique test ids: {len(unique_test_ids)}\n")
-        file.write(f"Unique train ids: {len(unique_train_ids)}\n")
-
-        for id, count in test_ids_count.items():
-            file.write(f"ID: {id}, test count: {count}, train count: {train_ids_count[id]}\n")
-
-        
-
+import Datasets as ds
 
 if __name__ == '__main__':
-    IMAGES_PATH = "data/datasets/CelebA/Img/img_align_celeba"
-    ANNOTATIONS_PATH = "data/datasets/CelebA/Anno/identity_CelebA.txt"
-    ids = get_ids(ANNOTATIONS_PATH)
+    BASE_PATH = "data/datasets/CelebA"
+    INPUT_DIR = BASE_PATH + "/Img/img_align_celeba"
+    OUTPUT_DIR = BASE_PATH + "/Img/img_align_celeba_cropped"
 
-    prep1 = frp.FaceDetectorPreprocessor(grayscale=False)
+    # Crop the images around the faces
+    cropper = ds.FaceCropper(
+        frp.MTCNNDetector(use_gpu=True, thresholds=(0.6, 0.7, 0.7)),
+        # frp.MediaPipeDetector(model_asset_path="model/detector.tflite"),
+        frp.FaceDetectorPreprocessor(output_channels=3),
+        frp.FeatureExtractorPreprocessor(new_size=128, output_channels=3),
+        max_faces_per_image=1,
+        log_warnings=True,
+        batch_size=1024,
+    )
+    cropper.crop(INPUT_DIR, OUTPUT_DIR, output_format="jpg") # Pass "pt" to save the images as pytorch tensors
 
-    test_ids_count = {}
-    train_ids_count = {}
-    for id in ids.values():
-        test_ids_count[id] = 0
-        train_ids_count[id] = 0
-    
-    device = mtw.get_torch_device(use_gpu=True, debug=True)
-    mtcnn = MTCNN(image_size=128, device=device, keep_all=False, post_process=True, thresholds=[0.4, 0.5, 0.5])
-    max = None
-    file_list = sorted(os.listdir(IMAGES_PATH))
-    batch_size = 1024
-    buffer = []
-    faces = []
-    paths = []
-    for count, image_path in tqdm(enumerate(file_list), total=len(file_list)):
-        if max is not None and count >= max:
-            break
-        
-        image = imread(f"{IMAGES_PATH}/{image_path}")
-        image = prep1(image)
-        buffer.append(image)
-        paths.append(image_path)
-        
-        if len(buffer) >= batch_size:
-            try:
-                tensors = mtcnn(buffer)
-                for i in range(len(paths)):            
-                    save_image(tensors[i, :, :, :], paths[i], ids, test_ids_count, train_ids_count)
-            except:
-                for im, path in zip(buffer, paths):
-                    tensor = mtcnn(im)
-                    if tensor is None: continue
-                    save_image(tensor, path, ids, test_ids_count, train_ids_count)
-            finally:
-                buffer = []
-                paths = []
+    # Separate the images into train and test splits
+    ANNOTATIONS_PATH = BASE_PATH + "/Anno/identity_CelebA.txt"
+    img2id_map = ds.celeb_a.get_ids(ANNOTATIONS_PATH)
+    ds.train_test_split(img2id_map, input_dir=OUTPUT_DIR, imgs_per_id_in_test=1)
 
-        if count % 1000 == 0:
-            print_stats(test_ids_count, train_ids_count)
+    # Relabel the ids of the images
+    MODIFIED_ANNOTATIONS = BASE_PATH + "/Anno/identity_CelebA_relabeled.txt"
+    TRAIN_PATH = OUTPUT_DIR + "/train"
+    TEST_PATH = OUTPUT_DIR + "/test"
+    ds.celeb_a.relabel_ids(ANNOTATIONS_PATH, MODIFIED_ANNOTATIONS, TRAIN_PATH, TEST_PATH, percentage_no_id=0.15)

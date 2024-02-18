@@ -25,13 +25,25 @@ class MediaPipeDetector(FaceDetector):
 
 
 
-    def detect_faces(self, image: imageio.v2.Array) -> list[DetectionResult]:
+    def detect_faces(self, images: list[imageio.v2.Array]) -> list[list[DetectionResult]]:
+        global_results = []
+        for im in images:
+            # https://developers.google.com/mediapipe/api/solutions/python/mp/Image
+            rgb_frame = mp.Image(image_format=mp.ImageFormat.SRGB, data=np.asarray(im))
+            detection = self.detector.detect(rgb_frame) # TODO: Process multiple images at once if possible
+            results = self.__get_detection_results(detection)
+            global_results.append(results)
+            
+        return global_results
+    
+
+    def save(file_path: str) -> None:
+        return NotImplementedError()
+
+
+    def __get_detection_results(self, detection) -> list[DetectionResult]:
         results = []
-        # https://developers.google.com/mediapipe/api/solutions/python/mp/Image
-        rgb_frame = mp.Image(image_format=mp.ImageFormat.SRGB, data=np.asarray(image))
-        detection_result = self.detector.detect(rgb_frame)
-        
-        for detection in detection_result.detections:
+        for detection in detection.detections:
             category = detection.categories[0]
             probability = round(category.score, 2)
 
@@ -44,11 +56,5 @@ class MediaPipeDetector(FaceDetector):
                 int(bbox.height),
             )
             results.append(DetectionResult(probability, bbox))
-            
+        
         return results
-    
-
-    def save(file_path: str) -> None:
-        return NotImplementedError()
-
-

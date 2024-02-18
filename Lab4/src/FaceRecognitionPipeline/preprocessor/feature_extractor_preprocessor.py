@@ -32,8 +32,6 @@ class FeatureExtractorPreprocessor:
         Crop the image to a square around the bounding box. We avoid resizing
         the image to avoid losing information / distorting the image.
         """
-        bbox = bbox.fit_to_image(image)
-
         if bbox.width == bbox.height:
             return image[bbox.y0:bbox.y1, bbox.x0:bbox.x1]
         

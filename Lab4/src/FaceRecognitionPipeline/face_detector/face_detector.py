@@ -88,18 +88,49 @@ class DetectionResult:
 
 
 class FaceDetector(ABC):
-    def __call__(self, image: imageio.v2.Array) -> list[DetectionResult]:
+    def __call__(self, image: imageio.v2.Array | list[imageio.v2.Array]) -> list[DetectionResult] | list[list[DetectionResult]]:
+        """
+        Detects faces in a single image or a batch of images.
+
+        Args:
+            image (imageio.v2.Array | list[imageio.v2.Array]): A single image or a batch of images.
+
+        Returns:
+            list[DetectionResult] | list[list[DetectionResult]]: A list of DetectionResult objects if a single image is provided,
+            or a list of lists of DetectionResult objects if a batch of images is provided.
+        """
+
+        if not isinstance(image, list):
+            image = [image]
+
         det_results = self.detect_faces(image)
-        return self.__get_largest_images(det_results, 2)
+        self.__fit_to_image(det_results, image)
+        largest = self.__get_largest_images(det_results, 2)
+
+        if len(largest) == 1:
+            return largest[0]
+        return largest
     
+
     @abstractmethod
     def save(file_path: str) -> None:
         raise NotImplementedError("Implement in the subclass.")
 
+
     @abstractmethod
-    def detect_faces(self, image: imageio.v2.Array) -> list[DetectionResult]:
+    def detect_faces(self, images: list[imageio.v2.Array]) -> list[list[DetectionResult]]:
         raise NotImplementedError("Implement in the subclass.")
+    
 
-
-    def __get_largest_images(self, det_results: list[DetectionResult], n: int) -> list[DetectionResult]:
-        return sorted(det_results, key=lambda res: res.bounding_box.get_area(), reverse=True)[0:n]
+    def __get_largest_images(self, det_results: list[list[DetectionResult]], n: int) -> list[list[DetectionResult]]:
+        largest_results = []
+        for results in det_results:
+            largest = sorted(results, key=lambda res: res.bounding_box.get_area(), reverse=True)[0:n]
+            largest_results.append(largest)
+        return largest_results
+    
+    
+    def __fit_to_image(self, det_results: list[list[DetectionResult]], images: list[imageio.v2.Array]) -> None:
+        for results, img in zip(det_results, images):
+            for res in results:
+                res.bounding_box = res.bounding_box.fit_to_image(img)

@@ -1,5 +1,6 @@
 import FaceRecognitionPipeline as frp
 import MyTorchWrapper as mtw
+import Datasets as ds
 import torch
 import torch.nn as nn
 import matplotlib.pyplot as plt
@@ -57,6 +58,7 @@ if __name__ == "__main__":
     device = mtw.get_torch_device(use_gpu=True, debug=True)
     iomanager = mtw.IOManager(storage_dir="model/")
     save_figure = True
+    batch_size = 256
     RESULTS_PATH = "assets"
     DATASET_BASE_PATH = "data/datasets/CelebA"
 
@@ -64,10 +66,11 @@ if __name__ == "__main__":
     # Train
     ###############################################################################
     # Load the dataset
-    celeba_train = frp.CelebA(path=DATASET_BASE_PATH + "/Img/img_align_celeba_train", ids_file=DATASET_BASE_PATH + "/Anno/identity_CelebA_train.txt")
-    celeba_validation = frp.CelebA(path=DATASET_BASE_PATH + "/Img/img_align_celeba_test", ids_file=DATASET_BASE_PATH + "/Anno/identity_CelebA_test.txt") # FIXME: Rename this to validation
-    train_loader = torch.utils.data.DataLoader(dataset=celeba_train, batch_size=256, shuffle=True, pin_memory=True)
-    validation_loader = torch.utils.data.DataLoader(dataset=celeba_validation, batch_size=256, pin_memory=True)
+    ids_file = DATASET_BASE_PATH + "/Anno/identity_CelebA_relabeled.txt"
+    celeba_train = ds.CelebA(path=DATASET_BASE_PATH + "/Img/img_align_celeba_cropped/train", ids_file_path=ids_file, input_format="jpg")
+    celeba_validation = ds.CelebA(path=DATASET_BASE_PATH + "/Img/img_align_celeba_cropped/test", ids_file_path=ids_file, input_format="jpg")
+    train_loader = torch.utils.data.DataLoader(dataset=celeba_train, batch_size=batch_size, shuffle=True, pin_memory=True)
+    validation_loader = torch.utils.data.DataLoader(dataset=celeba_validation, batch_size=batch_size, pin_memory=True)
 
     # Training parameters
     num_epochs = 1
@@ -75,8 +78,8 @@ if __name__ == "__main__":
     evaluation = mtw.AccuracyEvaluation(loss_criterion=nn.CrossEntropyLoss())
 
     # Create an instance of the model
-    num_classes_train = len(celeba_train.get_unique_labels())
-    num_classes_validation = len(celeba_validation.get_unique_labels())
+    num_classes_train = celeba_train.num_unique_labels()
+    num_classes_validation = celeba_validation.num_unique_labels()
     assert num_classes_train == num_classes_validation, "The number of classes in the training and validation datasets must be the same"
     model = frp.network_9layers(num_classes=num_classes_train, input_channels=3)
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, betas=(0.9, 0.999), eps=1e-08)
@@ -106,8 +109,8 @@ if __name__ == "__main__":
     ###############################################################################
     # Test
     ###############################################################################
-    celeba_test = frp.CelebA(path=DATASET_BASE_PATH + "/img_align_celeba_test", ids_file=DATASET_BASE_PATH + "/Anno/identity_CelebA_test.txt") # FIXME: create test dataset
-    test_loader = torch.utils.data.DataLoader(dataset=celeba_test, batch_size=256, pin_memory=True)
+    celeba_test = frp.CelebA(path=DATASET_BASE_PATH + "/img_align_celeba_cropped/test", ids_file_path=ids_file, input_format="jpg") # FIXME: create test dataset
+    test_loader = torch.utils.data.DataLoader(dataset=celeba_test, batch_size=batch_size, pin_memory=True)
 
     # Test the model with the test dataset
     tester = mtw.Tester(evaluation=evaluation, data_loader=test_loader, device=device)
@@ -121,5 +124,3 @@ if __name__ == "__main__":
 
     # Compute model paramters
     print("Number of parameters of the model:", mtw.get_model_params(model))
-
-    
