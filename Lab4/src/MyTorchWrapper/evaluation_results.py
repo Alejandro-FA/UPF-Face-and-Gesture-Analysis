@@ -1,5 +1,22 @@
 import numpy as np
-from typing import List, Dict, Union
+
+
+def _average_results(results: list[float], batch_sizes: list[int], num_epochs: int = 1) -> list[float]:
+    results_per_epoch = len(results) // num_epochs
+    if results_per_epoch % num_epochs != 0:
+        raise ValueError(f"Length of results ({results_per_epoch}) is not a multiple of num_epochs ({num_epochs}).")
+    
+
+    averages = []
+    for i in range(num_epochs):
+        partial_results = results[i * results_per_epoch:(i + 1) * results_per_epoch]
+        partial_batch_sizes = batch_sizes[i * results_per_epoch:(i + 1) * results_per_epoch]
+        a = np.sum(np.multiply(partial_results, partial_batch_sizes))
+        b = np.sum(partial_batch_sizes)
+        averages.append(a / b)
+
+    return averages
+
 
 
 class BasicResults:
@@ -26,31 +43,45 @@ class BasicResults:
         """Adds a batch size to the history.
 
         Args:
-            batch_size (int): Size of the batch fto log.
+            batch_size (int): Size of the batch to log.
             Used to accurately average the results.
         """        
         self.batch_sizes.append(batch_size)
-
-    @property
-    def loss_avg(self) -> float:
-        """Returns an average of the loss history. Uses the batch size of each
-        result to ponderate each contribution appropriately.
-        """        
-        a = np.sum(np.multiply(self.loss, self.batch_sizes))
-        b = np.sum(self.batch_sizes)
-        return a / b
     
 
-    def as_dict(self, averaged=True) -> Dict[str, Union[float, List[float]]]:
+    def as_dict(self) -> dict[str, float | list[float]]:
         """Create a dictionary representation of all the results.
-
-        Args:
-            averaged (bool, optional): Whether to average the results or not. Defaults to True.
 
         Returns:
             Dict[str, Union[float, List[float]]]: Dictionary representation of the results.
+        """
+        return {'loss': self.loss if len(self.loss) > 1 else self.loss[0]}
+
+    
+    def average(self, num_epochs: int = 1) -> 'BasicResults':
+        """Averages the results over a given number of epochs.
+
+        Args:
+            num_epochs (int): Number of epochs to average over.
+
+        Returns:
+            BasicResults: A new BasicResults instance with the averaged results.
         """        
-        return {'loss': self.loss_avg if averaged else self.loss}
+        results = self.__class__()
+        results.loss = _average_results(self.loss, self.batch_sizes, num_epochs)
+        samples_per_epoch = len(self.loss) // num_epochs
+        results.batch_sizes = [np.sum(self.batch_sizes[i * samples_per_epoch:(i + 1) * samples_per_epoch]) for i in range(num_epochs)]
+        return results
+    
+
+    def append(self, results: 'BasicResults') -> None:
+        """Appends the results of another BasicResults instance to this one.
+
+        Args:
+            results (BasicResults): Results to append.
+        """
+        self.loss += results.loss
+        self.batch_sizes += results.batch_sizes
 
 
 
@@ -69,14 +100,19 @@ class AccuracyResults(BasicResults):
         self.accuracy.append(accuracy)
 
 
-    @property
-    def accuracy_avg(self) -> float:
-        a = np.sum(np.multiply(self.accuracy, self.batch_sizes))
-        b = np.sum(self.batch_sizes)
-        return a / b
-    
+    def average(self, num_epochs: int = 1) -> BasicResults:
+        results = super().average(num_epochs)
+        results.accuracy = _average_results(self.accuracy, self.batch_sizes, num_epochs)
+        return results
 
-    def as_dict(self, averaged=True) -> Dict[str, Union[float, List[float]]]:
-        dict = super().as_dict(averaged)
-        dict['accuracy'] = self.accuracy_avg if averaged else self.accuracy
+
+    def as_dict(self) -> dict[str, float | list[float]]:
+        dict = super().as_dict()
+        dict['accuracy'] = self.accuracy if len(self.accuracy) > 1 else self.accuracy[0]
         return dict
+
+
+    def append(self, results: 'AccuracyResults') -> None:
+        super().append(results)
+        self.accuracy += results.accuracy
+

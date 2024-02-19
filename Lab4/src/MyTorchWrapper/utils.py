@@ -24,7 +24,7 @@ def training_summary(
         str: Summary content. Usually used for printing it to screen or
         writing it to a file.
     """
-    batch, _ = next(iter(trainer.data_loader))
+    batch, _ = next(iter(trainer.train_data_loader))
     model_stats = torchinfo.summary(model, input_size=batch.shape, device=trainer.device, verbose=0)
 
     summary = (

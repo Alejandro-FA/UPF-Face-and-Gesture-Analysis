@@ -2,10 +2,12 @@ import torch
 from torch import nn
 from torch.utils.data.dataloader import DataLoader
 from .evaluation import BasicEvaluation
-from typing import Dict
+from .evaluation_results import BasicResults
 
 class Tester:
-    """Class to evaluate the performance of a trained model."""
+    """
+    Class to evaluate the performance of a trained model.
+    """
 
     def __init__(
         self,
@@ -26,14 +28,14 @@ class Tester:
         self.device = device
 
 
-    def test(self, model: nn.Module) -> Dict[str, float]:
+    def test(self, model: nn.Module) -> BasicResults:
         """Test the performance of a model with a given dataset.
 
         Args:
             model (nn.Module): the model to test
 
         Returns:
-            Dict[str, float]: Aggregated performance results.
+            BasicResults: Aggregated performance results.
         """
         model.eval()
         model.to(self.device)
@@ -50,5 +52,5 @@ class Tester:
 
                 # Evaluate performance of the model
                 self.evaluation(outputs, labels, results)
-
-        return results.as_dict(averaged=True)
+        
+        return results
