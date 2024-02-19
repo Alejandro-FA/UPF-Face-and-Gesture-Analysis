@@ -1,0 +1,64 @@
+"""
+This script has to be used after downloading the images of the famous people with the web scraper.
+It generates another directory with the same structure and images, but cropped.
+"""
+
+import Datasets as ds
+import FaceRecognitionPipeline as frp
+import Datasets as ds
+import os
+from Datasets.original import OriginalDatasetSplitter
+import argparse
+
+
+def parse_arguments() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description='Preprocess images from the original dataset.')
+    parser.add_argument('--crop', '-c', action='store_true', default=False, help='Crop the images')
+    parser.add_argument('--expand', '-e', action='store_true', default=False, help='Expand the images')
+    parser.add_argument('--split', '-s', action='store_true', default=False, help='Split the images into train-test splits')
+    args = parser.parse_args()
+
+    if not args.crop and not args.expand and not args.split:
+        args.expand = True
+        args.split = True
+
+    return args
+
+
+
+if __name__ == "__main__":
+    args = parse_arguments()
+    ANNOTATIONS_PATH = "data/expanded_annotations.txt"
+    OUTPUT_DIR = "data/EXPANDED"
+
+    if args.crop:
+        INPUT_DIR = "data/ids_img"
+        cropper = ds.FaceCropper(
+            frp.MTCNNDetector(use_gpu=False, thresholds=(0.6, 0.7, 0.7)),
+            # frp.MediaPipeDetector(model_asset_path="model/detector.tflite"),
+            frp.FaceDetectorPreprocessor(output_channels=3), 
+            frp.FeatureExtractorPreprocessor(new_size=128, output_channels=3),
+            max_faces_per_image=4,
+            log_warnings=False,
+            batch_size=1,
+        )
+        
+        all_dirs = os.listdir(INPUT_DIR)
+        for i, dir in enumerate(all_dirs):
+            if dir == ".DS_Store": continue
+            dir_path = INPUT_DIR + f"/{dir}"
+            print(f"[{i + 1} / {len(all_dirs)}]. Processing images of {dir}...")
+            cropper.crop(dir_path, f"{INPUT_DIR}_cropped/{dir}", output_format="jpg") # Pass "pt" to save the images as pytorch tensors
+
+    # Manual step required here to remove the faces that do not belong to the
+    # appropriate person.
+
+    if args.expand:
+        original_dataset = OriginalDatasetSplitter(cropped_imgs_path="data/ids_img_cropped", target_dataset_path=OUTPUT_DIR, annotations_path=ANNOTATIONS_PATH)
+        ids_count = original_dataset.from_cropped_to_dataset()
+
+
+    if args.split: # Separate the images into train and test splits
+        img2id_map = ds.get_ids(ANNOTATIONS_PATH)
+        ds.train_test_split(img2id_map, input_dir=OUTPUT_DIR, imgs_per_id_in_test=2)
+    
