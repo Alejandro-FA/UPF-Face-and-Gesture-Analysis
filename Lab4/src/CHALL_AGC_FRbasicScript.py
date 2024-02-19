@@ -57,7 +57,7 @@ def load_model() -> frp.Pipeline:
         frp.MTCNNDetector(use_gpu=True, thresholds=[0.6, 0.7, 0.7]),
         # frp.MediaPipeDetector(model_asset_path="model/detector.tflite"),
         frp.FeatureExtractorPreprocessor(new_size=128, output_channels=3),
-        frp.LightCNN(model_path="model/transfer_learning/model_1-8.ckpt", threshold=0.2, num_classes=80, input_channels=3),
+        frp.DeepLearningExtractor(model_path="model/transfer_learning/model_1-8.ckpt", threshold=0.2, num_classes=80, input_channels=3),
     )
     return pipeline
 

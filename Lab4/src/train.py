@@ -6,7 +6,7 @@ import torch.nn as nn
 import matplotlib.pyplot as plt
 import scipy
 import numpy as np
-import time
+from torchvision import transforms
 
 
 def plot_acc_loss(fig, axes, accuracies, losses, epochs, save_figure, plot_mode="both"):
@@ -66,15 +66,24 @@ if __name__ == "__main__":
     ###########################################################################
     # Train
     ###########################################################################
+    # Transformations
+    # transform = transforms.ToTensor() # Uncomment this for LightCNN
+    transform = transforms.Compose([ # Uncomment this for SqueezeNet
+        transforms.Resize(256),
+        transforms.CenterCrop(224),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+    ])
+
     # Load the dataset
     ids_file = DATASET_BASE_PATH + "/Anno/identity_CelebA_relabeled.txt"
-    celeba_train = ds.CelebA(images_dir=DATASET_BASE_PATH + "/Img/img_align_celeba_cropped/train", ids_file_path=ids_file)
-    celeba_validation = ds.CelebA(images_dir=DATASET_BASE_PATH + "/Img/img_align_celeba_cropped/test", ids_file_path=ids_file)
+    celeba_train = ds.CelebA(images_dir=DATASET_BASE_PATH + "/Img/img_align_celeba_cropped/train", ids_file_path=ids_file, transform=transform)
+    celeba_validation = ds.CelebA(images_dir=DATASET_BASE_PATH + "/Img/img_align_celeba_cropped/test", ids_file_path=ids_file, transform=transform)
     train_loader = torch.utils.data.DataLoader(dataset=celeba_train, batch_size=batch_size, shuffle=True, pin_memory=True)
     validation_loader = torch.utils.data.DataLoader(dataset=celeba_validation, batch_size=batch_size, pin_memory=True)
 
     # Training parameters
-    num_epochs = 1
+    num_epochs = 30
     learning_rate = .001
     evaluation = mtw.AccuracyEvaluation(loss_criterion=nn.CrossEntropyLoss())
 
@@ -88,7 +97,7 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, betas=(0.9, 0.999), eps=1e-08)
 
     # Train the model
-    trainer = mtw.Trainer(evaluation=evaluation, epochs=num_epochs, train_data_loader=validation_loader, validation_data_loader=validation_loader, io_manager=iomanager, device=device)
+    trainer = mtw.Trainer(evaluation=evaluation, epochs=num_epochs, train_data_loader=train_loader, validation_data_loader=validation_loader, io_manager=iomanager, device=device)
     model_id = trainer.model_id
     train_results, validation_results = trainer.train(model, optimizer, verbose=True)
 
@@ -96,7 +105,7 @@ if __name__ == "__main__":
     ###########################################################################
     # Test
     ###########################################################################
-    celeba_test = ds.CelebA(images_dir=DATASET_BASE_PATH + "/Img/img_align_celeba_cropped/test", ids_file_path=ids_file) # FIXME: create test dataset
+    celeba_test = ds.CelebA(images_dir=DATASET_BASE_PATH + "/Img/img_align_celeba_cropped/test", ids_file_path=ids_file, transform=transform) # FIXME: create test dataset
     test_loader = torch.utils.data.DataLoader(dataset=celeba_test, batch_size=batch_size, pin_memory=True)
 
     # Test the model with the test dataset

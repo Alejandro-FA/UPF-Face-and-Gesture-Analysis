@@ -58,7 +58,6 @@ if __name__ == "__main__":
         original_dataset = OriginalDatasetSplitter(cropped_imgs_path="data/ids_img_cropped", target_dataset_path=OUTPUT_DIR, annotations_path=ANNOTATIONS_PATH)
         ids_count = original_dataset.from_cropped_to_dataset()
 
-
     if args.split: # Separate the images into train and test splits
         img2id_map = ds.get_ids(ANNOTATIONS_PATH)
         ds.train_test_split(img2id_map, input_dir=OUTPUT_DIR, imgs_per_id_in_test=2)

@@ -13,7 +13,7 @@ def parse_arguments() -> argparse.Namespace:
 
     if not args.crop and not args.split and not args.relabel:
         args.crop = True
-        args.expand = True
+        args.split = True
         args.relabel = True
 
     return args

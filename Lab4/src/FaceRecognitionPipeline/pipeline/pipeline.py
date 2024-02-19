@@ -23,7 +23,7 @@ class Pipeline:
         detection_results: list[DetectionResult] = self.face_detector(preprocessed_image)   
         
         for res in detection_results:
-            probability: float = res.probability
+            probability: float = res.probability # TODO: Decide whether to use this probability or not
             bounding_box: BoundingBox = res.bounding_box
 
             boxed_image: imageio.v2.Array = self.fe_preprocessor(preprocessed_image, bounding_box)

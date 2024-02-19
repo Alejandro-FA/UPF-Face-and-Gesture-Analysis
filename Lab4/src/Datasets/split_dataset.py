@@ -67,10 +67,8 @@ def train_test_split(img2id_map: dict[str, int], input_dir, imgs_per_id_in_test:
     # Create the train and test directories
     train_dir = os.path.join(input_dir, "train")
     test_dir = os.path.join(input_dir, "test")
-    unused_dir = os.path.join(input_dir, "unused")
     os.makedirs(train_dir, exist_ok=True)
     os.makedirs(test_dir, exist_ok=True)
-    os.makedirs(unused_dir, exist_ok=True)
 
     # Create a dictionary to keep track of the number of images per id in the test set
     imgs_per_id: dict[int, int] = {}
@@ -93,6 +91,10 @@ def train_test_split(img2id_map: dict[str, int], input_dir, imgs_per_id_in_test:
 
     # Move the ids that are not present in both the train and test sets to "unused" directory
     test_images_paths = __get_images_paths(test_dir, "jpg")
+    unused_dir = os.path.join(input_dir, "unused")
+    if len(test_images_paths) > 0:
+        os.makedirs(unused_dir, exist_ok=True)
+
     for img in tqdm(test_images_paths, desc="Moving ids not present in both splits to 'unused' directory"):
         img_name = img.split(".")[0]
         id = img2id_map[img_name]
