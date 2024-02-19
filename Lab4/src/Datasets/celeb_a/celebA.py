@@ -1,10 +1,9 @@
 from torch.utils.data import Dataset
 import os
 import torch
-from .utils import get_ids
 from PIL import Image
 from torchvision import transforms
-from ..utils import get_images_paths
+from ..utils import get_images_paths, get_ids
 
 
 class CelebA(Dataset):

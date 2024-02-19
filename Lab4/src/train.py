@@ -6,7 +6,6 @@ import torch.nn as nn
 import matplotlib.pyplot as plt
 import scipy
 import numpy as np
-import time
 
 
 def plot_acc_loss(fig, axes, accuracies, losses, epochs, save_figure, plot_mode="both"):

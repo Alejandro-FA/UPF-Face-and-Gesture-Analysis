@@ -70,7 +70,9 @@ class IOManager:
         """
         Args:
             storage_dir (str): Folder path where the models are stored.
-        """ 
+        """
+        if not os.path.isdir(storage_dir):
+            os.makedirs(storage_dir)
         self.storage_dir = storage_dir       
         self._path_manager = _PathManager(storage_dir)
 

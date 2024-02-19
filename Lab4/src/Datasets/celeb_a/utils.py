@@ -1,30 +1,6 @@
 import os
 import random
-
-
-def get_ids(ids_path: str, extension: str="") -> dict[str, int]:
-    """
-    Loads the information from the ids file.
-    A line has the following format:
-        XXXXXX.jpg <id>
-    where XXXXXX represents the image number, and <id> represents the id of the person in that image.
-
-    Returns a dictionary that maps the image number to the id of the person in that image.
-    """
-    ids = {}
-    with open(ids_path, "r") as file:
-        for line in file:
-            splited_line = line.strip().split(" ")
-            img_name = splited_line[0].split(".")[0]
-            if extension.startswith("."):
-                img_name += extension
-            elif extension != "":
-                img_name += "." + extension
-            id = int(splited_line[1])
-            ids[img_name] = id
-    
-    return ids
-
+from ..utils import get_ids
 
 
 def get_unique_ids_from_dir(images_dir: str, ids: dict[str, int]) -> set[int]:
