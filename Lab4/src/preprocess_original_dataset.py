@@ -16,12 +16,13 @@ def parse_arguments() -> argparse.Namespace:
     parser.add_argument('--crop', '-c', action='store_true', default=False, help='Crop the images')
     parser.add_argument('--expand', '-e', action='store_true', default=False, help='Expand the images')
     parser.add_argument('--split', '-s', action='store_true', default=False, help='Split the images into train-test splits')
+    parser.add_argument('--relabel', '-r', action='store_true', default=False, help='Relabel the ids of the images')
     args = parser.parse_args()
 
-    if not args.crop and not args.expand and not args.split:
+    if not args.crop and not args.expand and not args.split and not args.relabel:
         args.expand = True
         args.split = True
-
+        args.relabel = True
     return args
 
 
@@ -29,7 +30,7 @@ def parse_arguments() -> argparse.Namespace:
 if __name__ == "__main__":
     args = parse_arguments()
     ANNOTATIONS_PATH = "data/expanded_annotations.txt"
-    OUTPUT_DIR = "data/EXPANDED"
+    OUTPUT_DIR = "data/datasets/EXPANDED"
 
     if args.crop:
         INPUT_DIR = "data/ids_img"
@@ -61,4 +62,11 @@ if __name__ == "__main__":
     if args.split: # Separate the images into train and test splits
         img2id_map = ds.get_ids(ANNOTATIONS_PATH)
         ds.train_test_split(img2id_map, input_dir=OUTPUT_DIR, imgs_per_id_in_test=2)
+
+    if args.relabel:
+        # Relabel the ids of the images
+        MODIFIED_ANNOTATIONS = "data/expanded_annotations_relabeled.txt"
+        TRAIN_IMAGES_DIR = OUTPUT_DIR + "/train"
+        TEST_IMAGES_DIR = OUTPUT_DIR + "/test"
+        ds.relabel_ids(ANNOTATIONS_PATH, MODIFIED_ANNOTATIONS, TRAIN_IMAGES_DIR, TEST_IMAGES_DIR)
     

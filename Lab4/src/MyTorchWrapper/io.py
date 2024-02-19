@@ -45,7 +45,7 @@ class _PathManager:
         Returns:
             str: The path of the model file.
         """        
-        return self.models_dir + self.get_model_name(model_id, epoch) + self.model_ext
+        return os.path.join(self.models_dir, self.get_model_name(model_id, epoch) + self.model_ext)
     
 
     def get_summary_path(self, model_id: int, epoch: Optional[int] = None) -> str:

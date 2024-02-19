@@ -30,6 +30,7 @@ def get_ids(ids_path: str, extension: str="") -> dict[str, int]:
     return ids
 
 
+
 def get_log_path(base_path: str, extension: str = "log") -> str:
     """
     Generates a log file path based on the given base path and extension.

@@ -2,7 +2,7 @@ from torch.utils.data import Dataset
 import os
 import torch
 from torchvision import transforms
-from ..celeb_a.utils import get_ids
+from ..utils import get_ids
 from ..utils import get_images_paths
 from PIL import Image
 

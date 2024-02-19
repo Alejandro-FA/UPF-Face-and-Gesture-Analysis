@@ -30,6 +30,26 @@ def __log_stats(imgs_per_id: dict[int, int], imgs_per_id_in_test: int):
             file.write(f"ID: {id}, test count: {imgs_per_id_in_test}, train count: {count - imgs_per_id_in_test}\n")
 
 
+def __get_images_paths(directory: str, extension: str) -> list[str]:
+    """
+    Returns the paths of the images in the given directory.
+
+    Args:
+        directory: directory containing the images
+        extension: file extension of the images
+    """
+    if not os.path.isdir(directory):
+        raise ValueError(f"Invalid directory {directory}")
+
+    images_paths = []
+    for img in os.listdir(directory):
+        path = os.path.join(directory, img)
+        if os.path.isfile(path) and img.endswith(extension):
+            images_paths.append(img)
+    return images_paths
+
+
+
 def train_test_split(img2id_map: dict[str, int], input_dir, imgs_per_id_in_test: int = 1, log_results=True) -> None:
     """
     Splits the dataset into a train and test set. Creates a new directory for
@@ -47,8 +67,10 @@ def train_test_split(img2id_map: dict[str, int], input_dir, imgs_per_id_in_test:
     # Create the train and test directories
     train_dir = os.path.join(input_dir, "train")
     test_dir = os.path.join(input_dir, "test")
+    unused_dir = os.path.join(input_dir, "unused")
     os.makedirs(train_dir, exist_ok=True)
     os.makedirs(test_dir, exist_ok=True)
+    os.makedirs(unused_dir, exist_ok=True)
 
     # Create a dictionary to keep track of the number of images per id in the test set
     imgs_per_id: dict[int, int] = {}
@@ -56,9 +78,9 @@ def train_test_split(img2id_map: dict[str, int], input_dir, imgs_per_id_in_test:
         imgs_per_id[id] = 0
 
     # Move the images to the train and test directories
-    files = [f for f in os.listdir(input_dir) if os.path.isfile(os.path.join(input_dir, f))]
+    images_paths = __get_images_paths(input_dir, "jpg")
 
-    for img in tqdm(files, desc="Splitting dataset into train and test sets"):
+    for img in tqdm(images_paths, desc="Splitting dataset into train and test sets"):
         img_name = img.split(".")[0]
         id = img2id_map[img_name]
 
@@ -69,6 +91,14 @@ def train_test_split(img2id_map: dict[str, int], input_dir, imgs_per_id_in_test:
 
         imgs_per_id[id] += 1
 
+    # Move the ids that are not present in both the train and test sets to "unused" directory
+    test_images_paths = __get_images_paths(test_dir, "jpg")
+    for img in tqdm(test_images_paths, desc="Moving ids not present in both splits to 'unused' directory"):
+        img_name = img.split(".")[0]
+        id = img2id_map[img_name]
+        if imgs_per_id[id] == 0 or imgs_per_id[id] == imgs_per_id_in_test:
+            os.rename(os.path.join(test_dir, img), os.path.join(unused_dir, img))
+        
     # Log the results
-    if log_results and len(files) > 0:
+    if log_results and len(images_paths) > 0:
         __log_stats(imgs_per_id, imgs_per_id_in_test)

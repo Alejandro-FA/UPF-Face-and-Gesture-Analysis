@@ -9,6 +9,7 @@ import itertools
 from tqdm import tqdm
 import pandas as pd
 import FaceRecognitionPipeline as frp
+from PIL import Image
 
 
 def CHALL_AGC_ComputeRecognScores(auto_ids, true_ids):
@@ -56,7 +57,7 @@ def load_model() -> frp.Pipeline:
         frp.MTCNNDetector(use_gpu=True, thresholds=[0.6, 0.7, 0.7]),
         # frp.MediaPipeDetector(model_asset_path="model/detector.tflite"),
         frp.FeatureExtractorPreprocessor(new_size=128, output_channels=3),
-        frp.LightCNN()
+        frp.LightCNN(model_path="model/transfer_learning/model_1-8.ckpt", threshold=0.2, num_classes=80, input_channels=3),
     )
     return pipeline
 
@@ -110,7 +111,7 @@ my_FRmodel = load_model()
 total_images = len(imageName)
 total_time = 0
 for idx, im in tqdm(enumerate(imageName), total=total_images):
-
+    
     A = imread(imgPath + im)
 
     try:

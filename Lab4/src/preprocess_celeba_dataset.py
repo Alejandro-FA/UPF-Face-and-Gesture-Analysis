@@ -45,6 +45,6 @@ if __name__ == '__main__':
     if args.relabel:
         # Relabel the ids of the images
         MODIFIED_ANNOTATIONS = BASE_PATH + "/Anno/identity_CelebA_relabeled.txt"
-        TRAIN_PATH = OUTPUT_DIR + "/train"
-        TEST_PATH = OUTPUT_DIR + "/test"
-        ds.celeb_a.relabel_ids(ANNOTATIONS_PATH, MODIFIED_ANNOTATIONS, TRAIN_PATH, TEST_PATH, percentage_no_id=0.15)
+        TRAIN_IMAGES_DIR = OUTPUT_DIR + "/train"
+        TEST_IMAGES_DIR = OUTPUT_DIR + "/test"
+        ds.relabel_ids(ANNOTATIONS_PATH, MODIFIED_ANNOTATIONS, TRAIN_IMAGES_DIR, TEST_IMAGES_DIR)
