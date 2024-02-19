@@ -74,7 +74,7 @@ if __name__ == "__main__":
     validation_loader = torch.utils.data.DataLoader(dataset=celeba_validation, batch_size=batch_size, pin_memory=True)
 
     # Training parameters
-    num_epochs = 30
+    num_epochs = 1
     learning_rate = .001
     evaluation = mtw.AccuracyEvaluation(loss_criterion=nn.CrossEntropyLoss())
 
@@ -82,11 +82,13 @@ if __name__ == "__main__":
     num_classes_train = celeba_train.num_unique_labels()
     num_classes_validation = celeba_validation.num_unique_labels()
     assert num_classes_train == num_classes_validation, "The number of classes in the training and validation datasets must be the same"
-    model = frp.network_9layers(num_classes=num_classes_train, input_channels=3)
+    # model = frp.network_9layers(num_classes=num_classes_train, input_channels=3)
+    # model = frp.lighter_network_9layers(num_classes=num_classes_train, input_channels=3)
+    model = frp.SqueezeNet(num_classes=num_classes_train)
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, betas=(0.9, 0.999), eps=1e-08)
 
     # Train the model
-    trainer = mtw.Trainer(evaluation=evaluation, epochs=num_epochs, train_data_loader=train_loader, validation_data_loader=validation_loader, io_manager=iomanager, device=device)
+    trainer = mtw.Trainer(evaluation=evaluation, epochs=num_epochs, train_data_loader=validation_loader, validation_data_loader=validation_loader, io_manager=iomanager, device=device)
     model_id = trainer.model_id
     train_results, validation_results = trainer.train(model, optimizer, verbose=True)
 

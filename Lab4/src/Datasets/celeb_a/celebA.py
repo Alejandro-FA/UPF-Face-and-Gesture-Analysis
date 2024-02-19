@@ -16,7 +16,13 @@ class CelebA(Dataset):
         if not os.path.isfile(ids_file_path):
             raise ValueError(f"Invalid file {ids_file_path}")
         
-        self.transform = transforms.ToTensor()
+        # self.transform = transforms.ToTensor()
+        self.transform =transforms.Compose([
+            transforms.Resize(256),
+            transforms.CenterCrop(224),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+        ])
         ids: dict[str, int] = get_ids(ids_file_path, extension="jpg")
         self.images_paths = get_images_paths(images_dir, input_format="jpg")
         self.labels = {os.path.join(images_dir, k): torch.tensor(v) for k, v in ids.items()}
