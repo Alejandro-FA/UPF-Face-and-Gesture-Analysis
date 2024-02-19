@@ -73,7 +73,7 @@ class network_9layers(nn.Module):
 class LightCNN(FeatureExtractor):
     def __init__(self) -> None:
         super().__init__()
-        self.torch_transform = transforms.Compose([transforms.ToTensor()])
+        self.torch_transform = transforms.ToTensor()
     
 
     def __call__(self, image: imageio.v2.Array) -> int:
