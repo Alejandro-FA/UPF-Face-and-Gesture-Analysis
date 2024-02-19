@@ -74,7 +74,7 @@ if __name__ == "__main__":
     validation_loader = torch.utils.data.DataLoader(dataset=celeba_validation, batch_size=batch_size, pin_memory=True)
 
     # Training parameters
-    num_epochs = 3
+    num_epochs = 30
     learning_rate = .001
     evaluation = mtw.AccuracyEvaluation(loss_criterion=nn.CrossEntropyLoss())
 
@@ -149,8 +149,8 @@ if __name__ == "__main__":
     validation_losses = validation_results.average(num_epochs=num_epochs).as_dict()["loss"]
     epochs = np.arange(1, num_epochs + 1)
     
-    plt.plot(epochs, train_accuracies, label="Train loss", color="blue")
-    plt.plot(epochs, validation_accuracies, label="Validation loss", color="red")
+    plt.plot(epochs, train_losses, label="Train loss", color="blue")
+    plt.plot(epochs, validation_losses, label="Validation loss", color="red")
     plt.title("Train and validation loss evolution", fontsize=14, fontweight="bold")
     plt.legend()
     plt.xlabel("Epochs")
