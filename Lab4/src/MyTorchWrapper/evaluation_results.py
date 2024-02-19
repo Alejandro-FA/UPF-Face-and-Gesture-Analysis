@@ -3,10 +3,9 @@ import numpy as np
 
 def _average_results(results: list[float], batch_sizes: list[int], num_epochs: int = 1) -> list[float]:
     results_per_epoch = len(results) // num_epochs
-    if results_per_epoch % num_epochs != 0:
+    if len(results) % num_epochs != 0:
         raise ValueError(f"Length of results ({results_per_epoch}) is not a multiple of num_epochs ({num_epochs}).")
     
-
     averages = []
     for i in range(num_epochs):
         partial_results = results[i * results_per_epoch:(i + 1) * results_per_epoch]

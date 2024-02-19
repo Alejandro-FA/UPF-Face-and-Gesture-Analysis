@@ -6,6 +6,7 @@ import torch.nn as nn
 import matplotlib.pyplot as plt
 import scipy
 import numpy as np
+import time
 
 
 def plot_acc_loss(fig, axes, accuracies, losses, epochs, save_figure, plot_mode="both"):
@@ -73,7 +74,7 @@ if __name__ == "__main__":
     validation_loader = torch.utils.data.DataLoader(dataset=celeba_validation, batch_size=batch_size, pin_memory=True)
 
     # Training parameters
-    num_epochs = 30
+    num_epochs = 3
     learning_rate = .001
     evaluation = mtw.AccuracyEvaluation(loss_criterion=nn.CrossEntropyLoss())
 
@@ -132,7 +133,6 @@ if __name__ == "__main__":
     validation_accuracies = validation_results.average(num_epochs=num_epochs).as_dict()["accuracy"]
     epochs = np.arange(1, num_epochs + 1)
     
-    
     plt.plot(epochs, train_accuracies, label="Train accuracy", color="blue")
     plt.plot(epochs, validation_accuracies, label="Validation accuracy", color="red")
     plt.title("Train and validation accuracy evolution", fontsize=14, fontweight="bold")
@@ -140,7 +140,23 @@ if __name__ == "__main__":
     plt.xlabel("Epochs")
     plt.ylabel("Accuracy")
     if save_figure:
-        plt.savefig(f"{RESULTS_PATH}/{model_id}_train_validation.png", dpi=500)
+        plt.savefig(f"{RESULTS_PATH}/{model_id}_train_validation_accuracy.png", dpi=500)
+
+
+    # Plot train-validation loss evolution
+    fig4 = plt.figure(figsize=(10, 5))
+    train_losses = train_results.average(num_epochs=num_epochs).as_dict()["loss"]
+    validation_losses = validation_results.average(num_epochs=num_epochs).as_dict()["loss"]
+    epochs = np.arange(1, num_epochs + 1)
+    
+    plt.plot(epochs, train_accuracies, label="Train loss", color="blue")
+    plt.plot(epochs, validation_accuracies, label="Validation loss", color="red")
+    plt.title("Train and validation loss evolution", fontsize=14, fontweight="bold")
+    plt.legend()
+    plt.xlabel("Epochs")
+    plt.ylabel("Loss")
+    if save_figure:
+        plt.savefig(f"{RESULTS_PATH}/{model_id}_train_validation_loss.png", dpi=500)
 
 
     # plt.show()
