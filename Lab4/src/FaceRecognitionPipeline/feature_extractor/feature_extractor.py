@@ -3,7 +3,7 @@ import torch
 
 class FeatureExtractor(ABC):
     @abstractmethod
-    def __call__(self, image: torch.Tensor) -> int:
+    def __call__(self, image: torch.Tensor) -> tuple[int, float]:
         raise NotImplementedError("Implement in the subclass.")
 
     @abstractmethod

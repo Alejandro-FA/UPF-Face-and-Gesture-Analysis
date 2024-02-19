@@ -7,7 +7,7 @@ from .light_cnn import network_9layers
 
 
 class DeepLearningExtractor(FeatureExtractor):
-    def __init__(self, model_path: str, threshold=0.2, num_classes=80, input_channels=3) -> None:
+    def __init__(self, model_path: str, num_classes=80, input_channels=3) -> None:
         super().__init__()
         if not os.path.isfile(model_path):
             raise ValueError(f"Invalid file {model_path}")
@@ -16,18 +16,20 @@ class DeepLearningExtractor(FeatureExtractor):
         self.model = network_9layers(num_classes=num_classes, input_channels=input_channels)
         self.model.load_state_dict(torch.load(model_path))
         self.model.eval()
-        self.threshold = threshold
     
 
-    def __call__(self, image: imageio.v2.Array) -> int:
+    def __call__(self, image: imageio.v2.Array) -> tuple[int, float]:
+        # Transform image to tensor
         tensor: torch.Tensor = self.torch_transform(image).unsqueeze(0)
-        out = self.model(tensor)
-        idx_max = torch.argmax(out)
-        result = idx_max.item() if out[idx_max] > self.threshold else -1
-        if result == -1:
-            print(f"Low confidence: {out[idx_max]}")
-            print(f"Whole tensor: {out}")
-        return result
+        
+        # Run inference on the model and get the probabilities
+        output = self.model(tensor)
+        probabilities = torch.nn.functional.softmax(output, dim=1)
+
+        # Get the class with the highest probability
+        predicted_class = torch.argmax(probabilities, dim=1).item()
+        predicted_class_prob = probabilities[0][predicted_class].item()
+        return predicted_class + 1, predicted_class_prob # We add 1 to the class to match the expected output of the pipeline (1-indexed classes)
 
 
     def save(file_path: str) -> None:
