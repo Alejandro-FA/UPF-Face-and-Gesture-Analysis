@@ -57,7 +57,6 @@ if __name__ == "__main__":
     seed_value = 42
     device = mtw.get_torch_device(use_gpu=True, debug=True)
     iomanager = mtw.IOManager(storage_dir="model/")
-    model_id = iomanager.next_id_available()
     save_figure = True
     batch_size = 256
     RESULTS_PATH = "assets"
@@ -74,7 +73,7 @@ if __name__ == "__main__":
     validation_loader = torch.utils.data.DataLoader(dataset=celeba_validation, batch_size=batch_size, pin_memory=True)
 
     # Training parameters
-    num_epochs = 1
+    num_epochs = 30
     learning_rate = .001
     evaluation = mtw.AccuracyEvaluation(loss_criterion=nn.CrossEntropyLoss())
 
@@ -86,29 +85,49 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, betas=(0.9, 0.999), eps=1e-08)
 
     # Train the model
-    trainer = mtw.Trainer(evaluation=evaluation, epochs=num_epochs, train_data_loader=train_loader, validation_loader=validation_loader, io_manager=iomanager, device=device)
+    trainer = mtw.Trainer(evaluation=evaluation, epochs=num_epochs, train_data_loader=train_loader, validation_data_loader=validation_loader, io_manager=iomanager, device=device)
+    model_id = trainer.model_id
     train_results, validation_results = trainer.train(model, optimizer, verbose=True) # TODO: Use validation_results
-    initial_train_losses = train_results['loss']
-    initial_train_accuracies = train_results['accuracy']
-
+    
+    results_per_batch = train_results.as_dict()
+    initial_train_losses = results_per_batch["loss"]
+    initial_train_accuracies = results_per_batch["accuracy"]
+    
+    # TODO: move to mtw framework
     # Plot loss and accuracy evolution with the training dataset
     fig2, axes = plt.subplots(1, 2, figsize=(10, 5))
     plt.suptitle("Training Loss and accuracy evolution with initial conditions", fontsize=14, fontweight="bold")
     plot_acc_loss(fig2, axes, initial_train_accuracies, initial_train_losses, num_epochs, save_figure, plot_mode="both")
     if save_figure:
-        plt.savefig(f"{RESULTS_PATH}/fig2.png", dpi=500)
-    # plt.show()
+        plt.savefig(f"{RESULTS_PATH}/{model_id}.png", dpi=500)
+
+    # Plot train-validation accuracy evolution
+    fig3 = plt.figure(figsize=(10, 5))
+    train_accuracies = train_results.average(num_epochs=num_epochs).as_dict()["accuracy"]
+    validation_accuracies = validation_results.average(num_epochs=num_epochs).as_dict()["accuracy"]
+    epochs = np.arange(1, num_epochs + 1)
+    
+    
+    plt.plot(epochs, train_accuracies, label="Train accuracy", color="blue")
+    plt.plot(epochs, validation_accuracies, label="Validation accuracy", color="red")
+    plt.title("Train and validation accuracy evolution", fontsize=14, fontweight="bold")
+    plt.legend()
+    plt.xlabel("Epochs")
+    plt.ylabel("Accuracy")
+    if save_figure:
+        plt.savefig(f"{RESULTS_PATH}/{model_id}_train_validation.png", dpi=500)
 
 
     ###############################################################################
     # Test
     ###############################################################################
-    celeba_test = ds.CelebA(path=DATASET_BASE_PATH + "/img_align_celeba_cropped/test", ids_file_path=ids_file, input_format="jpg") # FIXME: create test dataset
+    celeba_test = ds.CelebA(path=DATASET_BASE_PATH + "/Img/img_align_celeba_cropped/test", ids_file_path=ids_file, input_format="jpg") # FIXME: create test dataset
     test_loader = torch.utils.data.DataLoader(dataset=celeba_test, batch_size=batch_size, pin_memory=True)
 
     # Test the model with the test dataset
     tester = mtw.Tester(evaluation=evaluation, data_loader=test_loader, device=device)
     test_results = tester.test(model=model)
+    test_results = test_results.average().as_dict()
     initial_test_acc = test_results["accuracy"]
     print(f'Test Accuracy of the model on the {len(celeba_test)} test images: {initial_test_acc} %')
 
@@ -118,3 +137,7 @@ if __name__ == "__main__":
 
     # Compute model paramters
     print("Number of parameters of the model:", mtw.get_model_params(model))
+
+
+    ###############################################################################
+    # plt.show()

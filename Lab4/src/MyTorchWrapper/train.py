@@ -2,6 +2,7 @@ import torch
 from torch import nn
 from torch.utils.data.dataloader import DataLoader
 from .evaluation import BasicEvaluation
+from .evaluation_results import BasicResults
 from .test import Tester
 from .io import IOManager
 from typing import Optional
@@ -34,9 +35,10 @@ class Trainer:
         self.tester = Tester(evaluation, validation_data_loader, device)
         self.device = device
         self.iomanager = io_manager
+        self.model_id = self.iomanager.next_id_available()
 
 
-    def train(self, model: nn.Module, optimizer: torch.optim.Optimizer, seed_value: Optional[int] = 10, verbose: bool = True) -> dict[str, list[float]]:
+    def train(self, model: nn.Module, optimizer: torch.optim.Optimizer, seed_value: Optional[int] = 10, verbose: bool = True) -> tuple[BasicResults, BasicResults]:
         """Train the torch model with the training data provided.
 
         Args:
@@ -60,8 +62,8 @@ class Trainer:
         validation_results = self.evaluation.create_results()
 
         # Take the next available model id to save checkpoints
-        model_id = self.iomanager.next_id_available()
-        print(f"Training model {model_id} with {len(self.train_data_loader)} images...")
+        self.model_id = self.iomanager.next_id_available()
+        print(f"Training model {self.model_id} with {len(self.train_data_loader)} batches per epoch...")
 
         for epoch in range(self.epochs):
             # Train model over all batches of the dataset
@@ -86,10 +88,10 @@ class Trainer:
                     )
 
             # Save the model checkpoint
-            self.iomanager.save(model, model_id, epoch + 1)
+            self.iomanager.save(model, self.model_id, epoch + 1)
 
             # Test the model with the validation dataset
             epoch_validation_results = self.tester.test(model)
             validation_results.append(epoch_validation_results)
 
-        return results.as_dict(averaged=False), validation_results.as_dict(averaged=False)
+        return results, validation_results
