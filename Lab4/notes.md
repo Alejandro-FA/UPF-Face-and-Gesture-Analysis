@@ -52,14 +52,20 @@ Transfer learning will probably not pass the layer-parameter limitation.
 
 -   [DigiFace1M](https://github.com/microsoft/DigiFace1M?tab=readme-ov-file): 720K images with 10K identities (72 images per identity). For each identity, 4 different sets of accessories are sampled and 18 images are rendered for each set.
     500K images with 100K identities (5 images per identity). For each identity, only one set of accessories is sampled. Problem: images are synthetic.
+
 -   [CelebA](https://mmlab.ie.cuhk.edu.hk/projects/CelebA.html). 200K celebrity image with 10k identities. Faces can be downloaded in the wild, or aligned and cropped.
--   [MillionCelebs](https://buptzyb.github.io/MillionCelebs): 22.8M images with 719K identities, downloadable with OneDrive. Faces are already cropped.
 
--   [IMDB-Face](https://github.com/fwang91/IMDb-Face): 1.7M faces, 59K identities
+-   [MillionCelebs](https://buptzyb.github.io/MillionCelebs): 22.8M images with 719K identities, downloadable with OneDrive. Faces are already cropped. Link does not work?
 
--   [Labelled Faces in the Wild](http://vis-www.cs.umass.edu/lfw/#download)
+-   [IMDB-Face](https://github.com/fwang91/IMDb-Face): 1.7M faces, 59K identities. Requires scraping script to download images from IMDb.
 
--   [MS-Celeb-1](https://github.com/EB-Dodo/C-MS-Celeb) 6M images with 95K identities
+-   [Labelled Faces in the Wild](http://vis-www.cs.umass.edu/lfw/#download) 13K images with 1680 identities. Available.
+
+-   [MS-Celeb-1](https://github.com/EB-Dodo/C-MS-Celeb) 6M images with 95K identities. Requires Bittorrent to download.
+
+-   [WebFace260M](https://www.face-benchmark.org/download.html) 42M images with 2M identities. Requires a signed agreement in collaboration with UPF.
+
+-   [VGGFace2](https://academictorrents.com/details/535113b8395832f09121bc53ac85d7bc8ef6fa5b) 3.3M images, 9K identities. Requires Bittorrent to download.
 
 # Identities
 
