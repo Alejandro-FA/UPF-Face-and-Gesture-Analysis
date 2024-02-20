@@ -32,7 +32,7 @@ With a terminal opened in the root folder of the lab, you only need to run the f
 python src/CHALL_AGC_FRbasicScript.py 
 ```
 
-This script will load the DL model that we have trained on the CPU and will start recognizing the identity of the people in each of the images stored in the `data/TRAINING` directory.
+This script will load on the CPU the DL model that we have trained and will start recognizing the identity of the people in each of the images stored in the `data/TRAINING` directory.
 
 > NOTE: by default, the models will be loaded on the CPU. If you want to execute them in the GPU, you need to change the `load_model()` function for the following one:
 >
@@ -70,7 +70,7 @@ More information can be found in `model/transfer_learning/lab4_version/model_4.t
 
 The model has been trained using a separate dataset. We have chosen to use the CelebA dataset. During the training process, the model has received 191261 corresponding to 10125 identities. It has been tested on 10125 images of the same dataset corresponding to 10125 identities (one testing image per identity).
 
-Once the feature extractor has been trained to properly classify the 10K identities we have re-trained the last fully connected layer (the one responsible of the classification) with an extended version of the dataset (done by us) that we were provided with consisting of 6527 images of the 80 identities that we have to recognize for the challenge.
+Once the feature extractor has been trained to properly classify the 10K identities we have re-trained the last fully connected layer (the one responsible of the classification) with an extended version of the original 1200 training images. We have added 6527 images of the 80 identities that we have to recognize for the challenge. The original 1200 images are used just for testing the performance of the model once trained.
 
 ## Results
 
