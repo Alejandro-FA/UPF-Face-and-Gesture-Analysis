@@ -2,6 +2,27 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+"""
+All the code in this file has been taken from the following github repository.
+https://github.com/AlfredXiangWu/LightCNN/tree/master
+
+It is an implementation of the LightCNN network described in the following paper:
+Wu, X., He, R., Sun, Z., & Tan, T. (2018). A light CNN for deep face representation with noisy labels. IEEE Transactions on Information Forensics and Security, 13(11), 2884-2896.
+
+After understanding how the architecture works, we used this code as a baseline to develop a suitable verion of LightCNN accomplishing the requirements that we had been given in the instructions of the assignment.
+These instructions were:
+
+    - Model size: The maximum size of the code and associated model files must
+    not exceed 80 MB. ACCOMPLISHED by this model
+
+    - Model depth: The maximum number of layers in deep learning-based models
+    must not exceed 10 layers and 2 submodels. NOT ACCOMPLISHED by this model
+
+    - Model parameters: The model must contain less than 1 million parameters. NOT ACCOMPLISHED by this model
+
+Our modified architecture, which we have named as SuperLightCNN can be found in the superlight_cnn.py file.
+"""
+
 
 class mfm(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size=3, stride=1, padding=1, type=1):

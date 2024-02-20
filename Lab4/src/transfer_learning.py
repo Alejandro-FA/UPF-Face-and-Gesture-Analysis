@@ -82,7 +82,7 @@ if __name__ == "__main__":
     
     # Transfer Learning (reset last fully connected layer)
     model = frp.superlight_network_9layers(num_classes=num_classes, input_channels=3) # FIXME: get num_classes from the dataset. We can't do this now because the number of labels is not consistent between our repositories
-    model.load_state_dict(torch.load(MODEL_PATH + '/superlight_cnn/model_43-8.ckpt'))
+    model.load_state_dict(torch.load(MODEL_PATH + '/superlight_cnn/lab4_version/model_45-5.ckpt'))
     model.fc2 = nn.Linear(128, 80)
 
     # Training parameters

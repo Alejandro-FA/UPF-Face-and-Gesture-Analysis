@@ -2,6 +2,17 @@ import torch
 import torch.nn as nn
 import torch.nn.init as init
 
+"""
+SqueezeNet implementation obtained from:
+https://github.com/pytorch/vision/blob/main/torchvision/models/squeezenet.py
+
+This is the pytorch implementation of SqueezeNet, introduced in:
+
+Iandola, F. N., Han, S., Moskewicz, M. W., Ashraf, K., Dally, W. J., & Keutzer, K. (2016). SqueezeNet: AlexNet-level accuracy with 50x fewer parameters and< 0.5 MB model size. arXiv preprint arXiv:1602.07360.
+
+We have tried to understand this model, but we have not managed to make it work. Thus, WE HAVE NOT USED IT. Moreover, it does not adjust to the requirements imposed in our assignment in terms of network layers.
+"""
+
 class Fire(nn.Module):
     def __init__(self, inplanes: int, squeeze_planes: int, expand1x1_planes: int, expand3x3_planes: int) -> None:
         super().__init__()
