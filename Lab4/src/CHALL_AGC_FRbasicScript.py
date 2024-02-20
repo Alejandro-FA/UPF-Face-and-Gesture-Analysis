@@ -1,4 +1,3 @@
-import os
 import numpy as np
 # from imageio import imread
 from imageio.v2 import imread
@@ -9,8 +8,7 @@ import itertools
 from tqdm import tqdm
 import pandas as pd
 import FaceRecognitionPipeline as frp
-import MyTorchWrapper as mtw
-from PIL import Image
+
 
 
 def CHALL_AGC_ComputeRecognScores(auto_ids, true_ids):
@@ -31,7 +29,7 @@ def CHALL_AGC_ComputeRecognScores(auto_ids, true_ids):
     #
 
     if len(auto_ids) != len(true_ids):
-        assert ('Inputs must be of the same len');
+        assert ('Inputs must be of the same len')
 
     f_beta = 1
     res_list = list(filter(lambda x: true_ids[x] != -1, range(len(true_ids))))
@@ -62,7 +60,7 @@ def load_model() -> frp.Pipeline:
         detection_min_prob=0.5, # Increasing this value to 0.9 improves the accuracy
         classification_min_prob=0.4,
     )
-    print(f"Loaded model with {pipeline.feature_extractor.num_parameters()} number of parameters")
+    print(f"Loaded model with {pipeline.feature_extractor.num_parameters()} parameters")
     return pipeline
 
 def my_face_recognition_function(A, my_FRmodel):
