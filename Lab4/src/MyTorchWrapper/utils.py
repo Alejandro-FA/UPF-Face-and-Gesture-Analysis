@@ -2,33 +2,39 @@ import torch
 from torch import nn
 import torchinfo
 from .train import Trainer
-from typing import Dict, List, Union
+from .evaluation_results import BasicResults
+from typing import Optional
 
 
 def training_summary(
     model: nn.Module,
     optimizer: torch.optim.Optimizer,
     trainer: Trainer,
-    test_results: Dict[str, Union[float, List[str]]],
+    validation_results: Optional[BasicResults] = None,
 ) -> str:  
     """Build a performance summary report for future reference.
 
+    This function generates a summary report that includes information about
+    the model, optimizer, trainer, and validation results. The summary can be
+    printed to the screen or written to a file.
+
     Args:
-        model (nn.Module): the model from which we want to get an architecture summary.
-        optimizer (torch.optim.Optimizer): the optimizer used during training
-        trainer (Trainer): trainer instance used to train the model.
-        test_results (EvaluationResults): EvaluationResults obtained during
-        testing. Used to record the performance of the model.
+        model (nn.Module): The model from which we want to get an architecture summary.
+        optimizer (torch.optim.Optimizer): The optimizer used during training.
+        trainer (Trainer): The trainer instance used to train the model.
+        validation_results (Optional[BasicResults]): The evaluation results obtained during testing.
+            Used to record the performance of the model. (default: None)
 
     Returns:
-        str: Summary content. Usually used for printing it to screen or
-        writing it to a file.
+        str: The summary content.
     """
     batch, _ = next(iter(trainer.train_data_loader))
     model_stats = torchinfo.summary(model, input_size=batch.shape, device=trainer.device, verbose=0)
 
+    results = validation_results.average(num_epochs=trainer.epochs).as_dict() if validation_results is not None else None
+    results = f"Test results: {results}\n" if results is not None else ""
     summary = (
-        f"Test results: {test_results}\n"
+        results
         + f"Loss function used: {trainer.evaluation.loss_criterion}\n"
         + f"Epochs: {trainer.epochs}\n"
         + f"Optimizer: {optimizer}\n"

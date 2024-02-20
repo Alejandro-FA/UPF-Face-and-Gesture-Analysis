@@ -13,6 +13,17 @@ Iandola, F. N., Han, S., Moskewicz, M. W., Ashraf, K., Dally, W. J., & Keutzer, 
 We have tried to understand this model, but we have not managed to make it work. Thus, WE HAVE NOT USED IT. Moreover, it does not adjust to the requirements imposed in our assignment in terms of network layers.
 """
 
+# IMPORTANT NOTE:
+# The following transformations are required to use our CelebA dataset with
+# the SqueezeNet model:
+# transform = transforms.Compose([ # Uncomment this for SqueezeNet
+#     transforms.Resize(256),
+#     transforms.CenterCrop(224),
+#     transforms.ToTensor(),
+#     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+# ])
+
+
 class Fire(nn.Module):
     def __init__(self, inplanes: int, squeeze_planes: int, expand1x1_planes: int, expand3x3_planes: int) -> None:
         super().__init__()

@@ -8,10 +8,9 @@ from typing import Optional
 class _PathManager:
     """Auxiliary class in charge of resolving the path of input and output files.
     """    
-
     model_ext = ".ckpt" # Extension of model files
     summary_ext = ".txt" # Extension of summary files
-    filename_pattern = re.compile(r"model_(\d+)(?:-(\d+))?.ckpt")
+    model_folder_pattern = re.compile(r"model_(\d+)")
 
     def __init__(self, models_dir: str) -> None:
         """
@@ -21,21 +20,19 @@ class _PathManager:
         self.models_dir = models_dir
 
 
-    def get_model_name(self, model_id: int, epoch: Optional[int] = None) -> str:
-        """Given a model id, it returns the model name.
+    def get_model_folder(self, model_id: int) -> str:
+        """Given a model id, it returns the model folder path.
 
         Args:
             model_id (int): Identification number of the model.
-            epoch (Optional[int]): Optional epoch number.
 
         Returns:
-            str: The model name.
-        """
-        suffix = f"-{epoch}" if epoch is not None else ""        
-        return "model_" + str(model_id) + suffix
+            str: The model folder path.
+        """    
+        return os.path.join(self.models_dir, f"model_{model_id}")
     
 
-    def get_model_path(self, model_id: int, epoch: Optional[int] = None) -> str:
+    def get_model_path(self, model_id: int, epoch: int = 1) -> str:
         """Given a model id, it returns the path of its corresponding model file (.ckpt)
 
         Args:
@@ -45,20 +42,19 @@ class _PathManager:
         Returns:
             str: The path of the model file.
         """        
-        return os.path.join(self.models_dir, self.get_model_name(model_id, epoch) + self.model_ext)
+        return os.path.join(self.get_model_folder(model_id), f"epoch-{epoch}{self.model_ext}")
     
 
-    def get_summary_path(self, model_id: int, epoch: Optional[int] = None) -> str:
+    def get_summary_path(self, model_id: int) -> str:
         """Given a model id, it returns its corresponding training summary file path.
 
         Args:
             model_id (int): Identification number of the model.
-            epoch (Optional[int]): Optional epoch number.
 
         Returns:
             str: The path of the summary file.
         """        
-        return os.path.join(self.models_dir, self.get_model_name(model_id, epoch) + self.summary_ext)
+        return os.path.join(self.get_model_folder(model_id), f"summary{self.summary_ext}")
 
 
 
@@ -83,27 +79,12 @@ class IOManager:
         Returns:
             int: The next available identification number.
         """
-        files = os.listdir(self.storage_dir)
-        models = list(filter(lambda name: self._path_manager.model_ext in name, files))
-        indices = [int(self._path_manager.filename_pattern.search(model).group(1)) for model in models]
+        model_dirs = [m for m in os.listdir(self.storage_dir) if self._path_manager.model_folder_pattern.match(m)]
+        indices = [int(self._path_manager.model_folder_pattern.search(m).group(1)) for m in model_dirs]
         return 1 if not indices else max(indices) + 1        
-    
-
-    def exists(self, model_id: int, epoch: Optional[int] = None) -> bool:
-        """Checks if a given model already exists.
-
-        Args:
-            model_id (int): Identification number of the model to search.
-            epoch (Optional[int]): Optional epoch number.
-
-        Returns:
-            bool: Whether a model has already been saved with the specified id and epoch or not.
-        """
-        model_path = self._path_manager.get_model_path(model_id, epoch)        
-        return os.path.exists(model_path)
 
 
-    def save(self, model: nn.Module, model_id: int, epoch: Optional[int] = None) -> None:
+    def save(self, model: nn.Module, model_id: int, epoch: int = 1) -> None:
         """Given a torch model, it saves it in the storage_dir with the
         provided model_id.
 
@@ -111,7 +92,8 @@ class IOManager:
             model (nn.Module): Neural Network model to store.
             model_id (int): Identification number with which to store the model.
             epoch (Optional[int]): Optional epoch number.
-        """        
+        """
+        os.makedirs(self._path_manager.get_model_folder(model_id), exist_ok=True)       
         file_path = self._path_manager.get_model_path(model_id, epoch)
         torch.save(model.state_dict(), file_path)
 
@@ -129,15 +111,14 @@ class IOManager:
         model.load_state_dict(torch.load(file_path))
 
 
-    def save_summary(self, summary_content: str, model_id: int, epoch: Optional[int] = None) -> None:
+    def save_summary(self, summary_content: str, model_id: int) -> None:
         """Given a training summary, it stores its results in a file.
 
         Args:
             summary_content (str): The content of the summary.
             model_id (int): Identification number of the model from which the the summary has been obtained.
-            epoch (Optional[int]): Optional epoch number.
         """        
-        file_path = self._path_manager.get_summary_path(model_id, epoch)
+        file_path = self._path_manager.get_summary_path(model_id)
         with open(file_path, "w") as results_txt:
             results_txt.write(summary_content)
     
