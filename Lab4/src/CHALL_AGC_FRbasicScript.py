@@ -9,8 +9,7 @@ import itertools
 from tqdm import tqdm
 import pandas as pd
 import FaceRecognitionPipeline as frp
-import MyTorchWrapper as mtw
-from PIL import Image
+
 
 
 def CHALL_AGC_ComputeRecognScores(auto_ids, true_ids):
