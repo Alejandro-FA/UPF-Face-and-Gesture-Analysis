@@ -83,6 +83,7 @@ class FaceCropper:
         try:
             results = self.face_detector(batch)
         except:
+            # FIXME: What is this for? Ideally face_detector should not raise an exception. Solve the source of the exception.
             return
         if results == []: # Batch with no detections
             return

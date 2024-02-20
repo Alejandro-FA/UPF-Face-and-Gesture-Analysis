@@ -56,8 +56,8 @@ def load_model() -> frp.Pipeline:
         frp.MTCNNDetector(use_gpu=False, thresholds=[0.6, 0.7, 0.7]),
         # frp.MediaPipeDetector(model_asset_path="model/detector.tflite"),
         frp.FeatureExtractorPreprocessor(new_size=128, output_channels=3),
-        frp.DeepLearningExtractor(model_path="model/transfer_learning/lab4_version/model_4-15.ckpt", num_classes=80, input_channels=3, use_gpu=False),
-        detection_min_prob=0.5, # Increasing this value to 0.9 improves the accuracy
+        frp.DeepLearningExtractor(model_path="models/transfer_learning/lab4_version/model_4-15.ckpt", num_classes=80, input_channels=3, use_gpu=False),
+        detection_min_prob=0.9,
         classification_min_prob=0.4,
     )
     print(f"Loaded model with {pipeline.feature_extractor.num_parameters()} parameters")
@@ -135,8 +135,8 @@ for idx, im in tqdm(enumerate(imageName), total=total_images):
         tt = time.time() - ti
         total_time = total_time + tt
     except Exception as e:
-        print("Problematic image:", im) #FIXME: remove before submitting
-        raise e #FIXME: remove before submitting
+        # print("Problematic image:", im) #FIXME: remove before submitting
+        # raise e #FIXME: remove before submitting
         # If the face recognition function fails, it will be assumed that no user was detected for his input image
         autom_id = random.randint(-1, 80)
 

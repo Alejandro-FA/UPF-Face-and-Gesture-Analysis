@@ -4,3 +4,4 @@ from .test import *
 from .evaluation import *
 from .evaluation_results import *
 from .utils import *
+from .plot import *

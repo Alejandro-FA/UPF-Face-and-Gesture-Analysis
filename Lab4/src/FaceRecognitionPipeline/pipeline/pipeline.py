@@ -12,8 +12,8 @@ class Pipeline:
         face_detector: FaceDetector,
         fe_preprocessor: FeatureExtractorPreprocessor,
         feature_extractor: FeatureExtractor,
-        detection_min_prob: float = 0.3,
-        classification_min_prob: float = 0.3,
+        detection_min_prob: float = 0.5,
+        classification_min_prob: float = 0.2,
     ) -> None:
         self.fd_preprocessor = fd_preprocessor
         self.face_detector = face_detector

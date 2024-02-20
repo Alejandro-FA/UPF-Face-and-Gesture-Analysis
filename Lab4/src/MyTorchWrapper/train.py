@@ -9,7 +9,19 @@ from typing import Optional
 
 
 class Trainer:
-    """Class to train a Neural Network model."""
+    """
+    The Trainer class is responsible for training a given model using the provided training dataset.
+    It uses a validation dataset to test the performance of the model at each epoch (which can be used to check for overfitting, for example).
+    It saves training checkpoints of the model using the io_manager.
+
+    Args:
+        evaluation (BasicEvaluation): An instance of the BasicEvaluation class used for evaluating the model.
+        epochs (int): The number of training epochs.
+        train_data_loader (DataLoader): The data loader for the training dataset.
+        validation_data_loader (DataLoader): The data loader for the validation dataset.
+        io_manager (IOManager): An instance of the IOManager class used for saving checkpoints of the model.
+        device (torch.device): The device (CPU or GPU) on which the model will be trained.
+    """
 
     def __init__(
         self,
@@ -20,15 +32,6 @@ class Trainer:
         io_manager: IOManager,
         device: torch.device,
     ) -> None:
-        """
-        Args:
-            evaluation (BasicEvaluation): evaluation instance with the desired
-            methods of evaluation, including the loss. See the BasicEvaluation
-            class for more details.
-            epochs (int): number of training epochs
-            data_loader (DataLoader): Data with which to train the torch model
-            device (torch.device): device in which to perform the computations
-        """
         self.evaluation = evaluation
         self.epochs = epochs
         self.train_data_loader = train_data_loader
@@ -38,20 +41,28 @@ class Trainer:
         self.model_id = self.iomanager.next_id_available()
 
 
+    @property
+    def model_name(self) -> str:
+        return f"model_{self.model_id}"
+
+   
     def train(self, model: nn.Module, optimizer: torch.optim.Optimizer, seed_value: Optional[int] = 10, verbose: bool = True) -> tuple[BasicResults, BasicResults]:
-        """Train the torch model with the training data provided.
+        """
+        Trains the given model using the provided optimizer.
 
         Args:
-            model (nn.Module): the model to train
-            optimizer (torch.optim.Optimizer): optimization algorithm to use
-            seed_value (int | None, optional): Set a manual random seed to get consistent results.
-            If it is None, then no manual seed is set. Defaults to 10.
-            verbose (bool, optional): Whether to print training progress or not. Defaults to True.
+            model (nn.Module): The model to be trained.
+            optimizer (torch.optim.Optimizer): The optimizer used for training the model.
+            seed_value (Optional[int], optional): The seed value for random number generation. Defaults to 10.
+            verbose (bool, optional): Whether to print training progress. Defaults to True.
 
         Returns:
-            dict[str, list[float]]: Performance evaluation of the training
-            process at each step.
+            tuple[BasicResults, BasicResults]: A tuple containing the training results and validation results.
         """
+        # Take the next available model id to save checkpoints
+        self.model_id = self.iomanager.next_id_available()
+        print(f"Training {self.model_name} with {len(self.train_data_loader)} batches per epoch...")
+
         if seed_value is not None: torch.manual_seed(seed_value) # Ensure repeatable results
         model.train() # Set the model in training mode
         model.to(self.device)
@@ -60,10 +71,6 @@ class Trainer:
         feedback_step = round(total_steps / 3) + 1
         results = self.evaluation.create_results()
         validation_results = self.evaluation.create_results()
-
-        # Take the next available model id to save checkpoints
-        self.model_id = self.iomanager.next_id_available()
-        print(f"Training model {self.model_id} with {len(self.train_data_loader)} batches per epoch...")
 
         for epoch in range(self.epochs):
             # Train model over all batches of the dataset
