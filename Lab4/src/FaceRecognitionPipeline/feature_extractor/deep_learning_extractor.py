@@ -3,21 +3,21 @@ import os
 import torch
 from torchvision import transforms
 import imageio.v2
-from .light_cnn import network_9layers
 from .superlight_cnn import superlight_network_9layers
 import MyTorchWrapper as mtw
 
 
 class DeepLearningExtractor(FeatureExtractor):
-    def __init__(self, model_path: str, num_classes=80, input_channels=3) -> None:
+    def __init__(self, model_path: str, num_classes=80, input_channels=3, use_gpu: bool = False) -> None:
         super().__init__()
         if not os.path.isfile(model_path):
             raise ValueError(f"Invalid file {model_path}")
         
+        device = mtw.get_torch_device(use_gpu=use_gpu, debug=False)
         self.torch_transform = transforms.ToTensor()
         # self.model = network_9layers(num_classes=num_classes, input_channels=input_channels)
         self.model = superlight_network_9layers(num_classes=num_classes, input_channels=input_channels)
-        self.model.load_state_dict(torch.load(model_path))
+        self.model.load_state_dict(torch.load(model_path, map_location=device))
         self.model.eval()
     
 
