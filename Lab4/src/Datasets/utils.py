@@ -31,6 +31,15 @@ def get_ids(ids_path: str, extension: str="") -> dict[str, int]:
 
 
 
+def get_num_unique_ids(ids_path: str) -> int:
+    """
+    Returns the number of unique ids in the ids file.
+    """
+    ids_map = get_ids(ids_path)
+    return len(set(ids_map.values()))
+
+
+
 def get_log_path(base_path: str, extension: str = "log") -> str:
     """
     Generates a log file path based on the given base path and extension.

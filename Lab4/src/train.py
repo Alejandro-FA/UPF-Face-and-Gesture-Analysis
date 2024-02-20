@@ -67,13 +67,13 @@ if __name__ == "__main__":
     # Train
     ###########################################################################
     # Transformations
-    # transform = transforms.ToTensor() # Uncomment this for LightCNN
-    transform = transforms.Compose([ # Uncomment this for SqueezeNet
-        transforms.Resize(256),
-        transforms.CenterCrop(224),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-    ])
+    transform = transforms.ToTensor() # Uncomment this for LightCNN
+    # transform = transforms.Compose([ # Uncomment this for SqueezeNet
+    #     transforms.Resize(256),
+    #     transforms.CenterCrop(224),
+    #     transforms.ToTensor(),
+    #     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+    # ])
 
     # Load the dataset
     ids_file = DATASET_BASE_PATH + "/Anno/identity_CelebA_relabeled.txt"
@@ -88,12 +88,12 @@ if __name__ == "__main__":
     evaluation = mtw.AccuracyEvaluation(loss_criterion=nn.CrossEntropyLoss())
 
     # Create an instance of the model
-    num_classes_train = celeba_train.num_unique_labels()
-    num_classes_validation = celeba_validation.num_unique_labels()
+    num_classes_train = celeba_train.num_classes
+    num_classes_validation = celeba_validation.num_classes
     assert num_classes_train == num_classes_validation, "The number of classes in the training and validation datasets must be the same"
     # model = frp.network_9layers(num_classes=num_classes_train, input_channels=3)
-    # model = frp.lighter_network_9layers(num_classes=num_classes_train, input_channels=3)
-    model = frp.SqueezeNet(num_classes=num_classes_train)
+    model = frp.superlight_network_9layers(num_classes=num_classes_train, input_channels=3)
+    # model = frp.SqueezeNet(num_classes=num_classes_train)
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, betas=(0.9, 0.999), eps=1e-08)
 
     # Train the model

@@ -9,6 +9,7 @@ import itertools
 from tqdm import tqdm
 import pandas as pd
 import FaceRecognitionPipeline as frp
+import MyTorchWrapper as mtw
 from PIL import Image
 
 
@@ -57,10 +58,11 @@ def load_model() -> frp.Pipeline:
         frp.MTCNNDetector(use_gpu=True, thresholds=[0.6, 0.7, 0.7]),
         # frp.MediaPipeDetector(model_asset_path="model/detector.tflite"),
         frp.FeatureExtractorPreprocessor(new_size=128, output_channels=3),
-        frp.DeepLearningExtractor(model_path="model/transfer_learning/model_1-8.ckpt", num_classes=80, input_channels=3),
+        frp.DeepLearningExtractor(model_path="model/transfer_learning.ckpt", num_classes=80, input_channels=3),
         detection_min_prob=0.5, # Increasing this value to 0.9 improves the accuracy
         classification_min_prob=0.4,
     )
+    print(f"Loaded model with {pipeline.feature_extractor.num_parameters()} number of parameters")
     return pipeline
 
 def my_face_recognition_function(A, my_FRmodel):

@@ -9,3 +9,6 @@ class FeatureExtractor(ABC):
     @abstractmethod
     def save(file_path: str) -> None:
         raise NotImplementedError("Implement in the subclass.")
+    
+    def num_parameters(self):
+        raise NotImplementedError("Implemenet in the subclass")

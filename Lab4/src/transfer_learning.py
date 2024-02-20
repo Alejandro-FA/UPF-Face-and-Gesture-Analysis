@@ -69,25 +69,29 @@ if __name__ == "__main__":
 
     ###########################################################################
     # Train
-    ###########################################################################    
+    ###########################################################################
+    # Get unique ids of CelebA dataset
+    num_classes = ds.get_num_unique_ids(DATASET_BASE_PATH + "/datasets/CelebA/Anno/identity_CelebA_relabeled.txt")
+    
+    # Load the original dataset
     original_ids_file = DATASET_BASE_PATH + "/expanded_annotations_relabeled.txt"
     original_train = ds.OriginalDataset(images_dir=DATASET_BASE_PATH + "/datasets/EXPANDED/train", ids_file_path=original_ids_file)
     original_validation = ds.OriginalDataset(images_dir=DATASET_BASE_PATH + "/datasets/EXPANDED/test", ids_file_path=original_ids_file)
     train_loader = torch.utils.data.DataLoader(dataset=original_train, batch_size=batch_size, shuffle=True, pin_memory=True)
     validation_loader = torch.utils.data.DataLoader(dataset=original_validation, batch_size=batch_size, pin_memory=True)
-
+    
     # Transfer Learning (reset last fully connected layer)
-    model = frp.network_9layers(num_classes=8608, input_channels=3) # FIXME: get num_classes from the dataset. We can't do this now because the number of labels is not consistent between our repositories
-    model.load_state_dict(torch.load(MODEL_PATH + '/model_32-5.ckpt'))
-    model.fc2 = nn.Linear(256, 80)
+    model = frp.superlight_network_9layers(num_classes=num_classes, input_channels=3) # FIXME: get num_classes from the dataset. We can't do this now because the number of labels is not consistent between our repositories
+    model.load_state_dict(torch.load(MODEL_PATH + '/superlight_cnn/model_43-8.ckpt'))
+    model.fc2 = nn.Linear(128, 80)
 
     # Training parameters
-    num_epochs = 8
+    num_epochs = 15
     learning_rate = .001
     evaluation = mtw.AccuracyEvaluation(loss_criterion=nn.CrossEntropyLoss())
 
     # Train the model
-    assert original_train.num_unique_labels() == original_validation.num_unique_labels(), "The number of classes in the training and validation datasets must be the same"
+    assert original_train.num_classes == original_validation.num_classes, "The number of classes in the training and validation datasets must be the same"
     optimizer = torch.optim.Adam(model.fc2.parameters(), lr=learning_rate, betas=(0.9, 0.999), eps=1e-08)
     trainer = mtw.Trainer(evaluation=evaluation, epochs=num_epochs, train_data_loader=train_loader, validation_data_loader=validation_loader, io_manager=iomanager, device=device)
     model_id = trainer.model_id

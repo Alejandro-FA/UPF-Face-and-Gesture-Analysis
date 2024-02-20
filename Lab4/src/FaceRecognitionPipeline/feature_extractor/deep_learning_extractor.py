@@ -4,6 +4,8 @@ import torch
 from torchvision import transforms
 import imageio.v2
 from .light_cnn import network_9layers
+from .superlight_cnn import superlight_network_9layers
+import MyTorchWrapper as mtw
 
 
 class DeepLearningExtractor(FeatureExtractor):
@@ -13,7 +15,8 @@ class DeepLearningExtractor(FeatureExtractor):
             raise ValueError(f"Invalid file {model_path}")
         
         self.torch_transform = transforms.ToTensor()
-        self.model = network_9layers(num_classes=num_classes, input_channels=input_channels)
+        # self.model = network_9layers(num_classes=num_classes, input_channels=input_channels)
+        self.model = superlight_network_9layers(num_classes=num_classes, input_channels=input_channels)
         self.model.load_state_dict(torch.load(model_path))
         self.model.eval()
     
@@ -34,3 +37,7 @@ class DeepLearningExtractor(FeatureExtractor):
 
     def save(file_path: str) -> None:
         raise NotImplementedError("Implement save method!")
+    
+    
+    def num_parameters(self):
+        return mtw.get_model_params(self.model)

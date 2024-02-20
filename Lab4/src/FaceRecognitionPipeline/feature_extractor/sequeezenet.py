@@ -21,7 +21,7 @@ class Fire(nn.Module):
 
 
 class SqueezeNet(nn.Module):
-    def __init__(self, version: str = "1_1", num_classes: int = 1000, dropout: float = 0.5) -> None:
+    def __init__(self, version: str = "1_0", num_classes: int = 1000, dropout: float = 0.5) -> None:
         super().__init__()
         self.num_classes = num_classes
         if version == "1_0":

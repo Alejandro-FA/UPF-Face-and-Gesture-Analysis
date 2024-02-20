@@ -3,7 +3,7 @@ import os
 import torch
 from PIL import Image
 from torchvision import transforms
-from ..utils import get_images_paths, get_ids
+from ..utils import get_images_paths, get_ids, get_num_unique_ids
 
 
 class CelebA(Dataset):
@@ -18,15 +18,11 @@ class CelebA(Dataset):
         
         self.transform = transform
         ids: dict[str, int] = get_ids(ids_file_path, extension="jpg")
+        self.num_classes = get_num_unique_ids(ids_file_path)
         self.images_paths = get_images_paths(images_dir, input_format="jpg")
         self.labels = {os.path.join(images_dir, k): torch.tensor(v) for k, v in ids.items()}
 
-        print(f"Created dataset with {len(self)} images and {self.num_unique_labels()} unique labels.")
-
-
-    def num_unique_labels(self) -> int:
-        labels = {tensor.item() for tensor in self.labels.values()}
-        return len(labels)
+        print(f"Created dataset with {len(self)} images and {self.num_classes} unique labels.")
 
 
     ################################ Necerssary functions for pytorch data loader ################################
