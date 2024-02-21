@@ -4,6 +4,8 @@ import torch
 from torch import nn
 from .evaluation_results import BasicResults
 import pickle
+import tempfile
+import shutil
 
 
 class _PathManager:
@@ -126,8 +128,14 @@ class IOManager:
         """
         os.makedirs(self._path_manager.get_model_folder(model_id), exist_ok=True) 
         results_path = self._path_manager.get_results_path(model_id, epoch)
-        with open(results_path, "wb") as results_file:
-            pickle.dump((training_results, validation_results), results_file)
+
+        # Create a temporary file in the same directory as the results_path
+        dir_name = os.path.dirname(results_path)
+        with tempfile.NamedTemporaryFile('wb', dir=dir_name, delete=False) as tmp_file:
+            pickle.dump((training_results, validation_results), tmp_file)
+
+        # Rename (move) the temporary file to the final location
+        shutil.move(tmp_file.name, results_path)
 
 
     def load_model(self, model: nn.Module, model_id: int, epoch: int = 1) -> None:
