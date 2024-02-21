@@ -2,7 +2,7 @@ import re
 import os
 import torch
 from torch import nn
-from evaluation_results import BasicResults
+from .evaluation_results import BasicResults
 import pickle
 
 
@@ -155,7 +155,7 @@ class IOManager:
             tuple[BasicResults, BasicResults]: A tuple containing the basic results for training and validation.
         """
         results_path = self._path_manager.get_results_path(model_id, epoch)
-        with open(results_path, "wb") as results_file:
+        with open(results_path, "rb") as results_file:
             res = pickle.load(results_file)
         return res
 
