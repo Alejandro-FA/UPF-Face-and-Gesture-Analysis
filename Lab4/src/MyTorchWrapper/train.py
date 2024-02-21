@@ -69,7 +69,7 @@ class Trainer:
 
         total_steps = len(self.train_data_loader)
         feedback_step = round(total_steps / 3) + 1
-        results = self.evaluation.create_results()
+        training_results = self.evaluation.create_results()
         validation_results = self.evaluation.create_results()
 
         for epoch in range(self.epochs):
@@ -77,10 +77,10 @@ class Trainer:
             for i, (features, labels) in enumerate(self.train_data_loader):
                 # Move the data to the torch device
                 features = features.to(self.device)
-                labels = labels.to(self.device) # FIXME: Perhaps we need to use .to(self.device, dtype=torch.long)
+                labels = labels.to(self.device) # FIXME: Perhaps we need to use .to(self.device, dtype=torch.long)
                 
                 outputs = model(features)  # Forward pass
-                loss = self.evaluation(outputs, labels, results)  # Evaluation
+                loss = self.evaluation(outputs, labels, training_results)  # Evaluation
 
                 # Backward and optimize
                 optimizer.zero_grad()
@@ -94,11 +94,12 @@ class Trainer:
                         )
                     )
 
-            # Save the model checkpoint
-            self.iomanager.save(model, self.model_id, epoch + 1)
+            # Save the model checkpoint and the results up to the current epoch
+            self.iomanager.save_model(model, self.model_id, epoch + 1)
+            self.iomanager.save_results(training_results, validation_results, self.model_id, epoch + 1)
 
             # Test the model with the validation dataset
             epoch_validation_results = self.tester.test(model)
             validation_results.append(epoch_validation_results)
 
-        return results, validation_results
+        return training_results, validation_results
