@@ -99,14 +99,17 @@ class Trainer:
                         )
                     )
 
+            # Evaluate the performance at the current epoch
+            validation_epoch_results = self.tester.test(model)
+            training_results.add_epoch(train_epoch_results)
+            validation_results.append(validation_epoch_results)
+
             # Update the learning rate
             if lr_scheduler is not None:
-                lr_scheduler.step()
-
-            # Store the results of the current epoch
-            training_results.add_epoch(train_epoch_results)
-            validation_epoch_results = self.tester.test(model)
-            validation_results.append(validation_epoch_results)
+                try:
+                    lr_scheduler.step(metrics=validation_results['loss'][-1])
+                except TypeError:
+                    lr_scheduler.step()
 
             # Save the model checkpoint and the results up to the current epoch
             self.iomanager.save_model(model, self.model_id, epoch)

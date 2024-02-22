@@ -57,4 +57,4 @@ class Tester:
                 epoch_results.append(batch_results)
         
         test_results.add_epoch(epoch_results)
-        return test_results
+        return test_results.average(per_epoch=True)
