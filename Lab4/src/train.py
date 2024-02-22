@@ -9,7 +9,7 @@ import numpy as np
 
 if __name__ == "__main__":
     # Set global variables
-    seed_value = 42
+    seed_value = None
     use_gpu = True
     iomanager = mtw.IOManager(storage_dir="models")
     batch_size = 512
@@ -38,10 +38,11 @@ if __name__ == "__main__":
     # Create an instance of the model
     model = frp.superlight_network_9layers(celeba_train.num_classes, input_channels=3)
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, betas=(0.9, 0.999), eps=1e-08)
+    lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer)
 
     # Train the model
     trainer = mtw.Trainer(evaluation=evaluation, epochs=num_epochs, train_data_loader=validation_loader, validation_data_loader=validation_loader, io_manager=iomanager, device=device)
-    train_results, validation_results = trainer.train(model, optimizer, verbose=True)
+    train_results, validation_results = trainer.train(model, optimizer, lr_scheduler, seed_value, verbose=True)
 
 
     ###########################################################################

@@ -6,6 +6,8 @@ from .evaluation_results import EvaluationResults, Result
 from .test import Tester
 from .io import IOManager
 from typing import Optional
+from torch.optim import Optimizer
+from torch.optim.lr_scheduler import LRScheduler
 
 
 class Trainer:
@@ -46,7 +48,7 @@ class Trainer:
         return f"model_{self.model_id}"
 
    
-    def train(self, model: nn.Module, optimizer: torch.optim.Optimizer, seed_value: Optional[int] = 10, verbose: bool = True) -> tuple[EvaluationResults, EvaluationResults]:
+    def train(self, model: nn.Module, optimizer: Optimizer, lr_scheduler: Optional[LRScheduler] = None, seed_value: Optional[int] = None, verbose: bool = True) -> tuple[EvaluationResults, EvaluationResults]:
         """
         Trains the given model using the provided optimizer.
 
@@ -96,6 +98,10 @@ class Trainer:
                             epoch, self.epochs, i + 1, total_steps, loss.item()
                         )
                     )
+
+            # Update the learning rate
+            if lr_scheduler is not None:
+                lr_scheduler.step()
 
             # Store the results of the current epoch
             training_results.add_epoch(train_epoch_results)
