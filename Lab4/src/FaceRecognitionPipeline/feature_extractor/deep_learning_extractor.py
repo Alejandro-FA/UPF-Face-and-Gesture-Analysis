@@ -19,6 +19,7 @@ class DeepLearningExtractor(FeatureExtractor):
         self.model = superlight_network_9layers(num_classes=num_classes, input_channels=input_channels)
         self.model.load_state_dict(torch.load(model_path, map_location=device))
         self.model.eval()
+        self.model_path = model_path
     
 
     def __call__(self, image: imageio.v2.Array) -> tuple[int, float]:

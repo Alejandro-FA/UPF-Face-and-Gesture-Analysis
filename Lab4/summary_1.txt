@@ -1,0 +1,418 @@
+Will create summary for the model
+	models/transfer_learning/lab4_version/model_4-15.ckpt
+F1-score: 79.18015102481122. Total time:  0 m  36.19 s
+
+Categories with <40% of correct classifications (6):
+[39, 36, 41, 33, 2, 28]
+Categories with 40%-60% of correct classifications (11):
+[12, 49, 60, 70, 63, 20, 57, 75, 59, 37, 56]
+Categories with 60%-80% of correct classifications (0):
+[]
+Categories with >80% of correct classifications: (64)
+[3, 7, 35, 1, 26, 5, 27, 68, 80, 46, 40, 13, 73, 32, 62, 42, 45, 53, 38, 76, 77, 74, 10, 71, 43, 67, 72, 65, 9, 4, 22, 19, 24, 25, 14, 17, -1, 23, 6, 11, 16, 30, 44, 8, 31, 54, 50, 79, 78, 55, 51, 47, 34, 66, 64, 58, 61, 21, 48, 29, 69, 52, 18, 15]
+
+Category with ID -1
+	Classified correctly 640 out of 720 (88.9%)
+	False positives (number of people that have been classified as -1 without corresponding to it): 63
+		IDs that have been classified as -1: [39, 5, 49, 14, 4, 36, 70, 1, 57, 46, 76, 41, 74, 11, 28, 2, 35, 3, 22, 37, 32, 56, 17, 62, 60, 6, 80, 77, 25, 42, 65, 45, 13, 9, 67, 19, 24, 33, 63, 68, 38, 72, 12]
+
+Category with ID 39
+	Classified correctly 1 out of 4 (25.0%)
+	False positives (number of people that have been classified as 39 without corresponding to it): 0
+
+
+Category with ID 27
+	Classified correctly 3 out of 4 (75.0%)
+	False positives (number of people that have been classified as 27 without corresponding to it): 0
+
+
+Category with ID 5
+	Classified correctly 8 out of 11 (72.7%)
+	False positives (number of people that have been classified as 5 without corresponding to it): 3
+		IDs that have been classified as 5: [-1, 59]
+
+Category with ID 49
+	Classified correctly 2 out of 4 (50.0%)
+	False positives (number of people that have been classified as 49 without corresponding to it): 1
+		IDs that have been classified as 49: [73]
+
+Category with ID 68
+	Classified correctly 3 out of 4 (75.0%)
+	False positives (number of people that have been classified as 68 without corresponding to it): 2
+		IDs that have been classified as 68: [-1]
+
+Category with ID 44
+	Classified correctly 4 out of 4 (100.0%)
+	False positives (number of people that have been classified as 44 without corresponding to it): 1
+		IDs that have been classified as 44: [-1]
+
+Category with ID 8
+	Classified correctly 4 out of 4 (100.0%)
+	False positives (number of people that have been classified as 8 without corresponding to it): 0
+
+
+Category with ID 31
+	Classified correctly 14 out of 14 (100.0%)
+	False positives (number of people that have been classified as 31 without corresponding to it): 2
+		IDs that have been classified as 31: [-1]
+
+Category with ID 54
+	Classified correctly 4 out of 4 (100.0%)
+	False positives (number of people that have been classified as 54 without corresponding to it): 1
+		IDs that have been classified as 54: [-1]
+
+Category with ID 7
+	Classified correctly 4 out of 6 (66.7%)
+	False positives (number of people that have been classified as 7 without corresponding to it): 1
+		IDs that have been classified as 7: [-1]
+
+Category with ID 23
+	Classified correctly 8 out of 9 (88.9%)
+	False positives (number of people that have been classified as 23 without corresponding to it): 1
+		IDs that have been classified as 23: [5]
+
+Category with ID 12
+	Classified correctly 2 out of 5 (40.0%)
+	False positives (number of people that have been classified as 12 without corresponding to it): 0
+
+
+Category with ID 14
+	Classified correctly 7 out of 8 (87.5%)
+	False positives (number of people that have been classified as 14 without corresponding to it): 1
+		IDs that have been classified as 14: [-1]
+
+Category with ID 30
+	Classified correctly 13 out of 14 (92.9%)
+	False positives (number of people that have been classified as 30 without corresponding to it): 3
+		IDs that have been classified as 30: [-1, 4]
+
+Category with ID 60
+	Classified correctly 2 out of 4 (50.0%)
+	False positives (number of people that have been classified as 60 without corresponding to it): 3
+		IDs that have been classified as 60: [-1]
+
+Category with ID 4
+	Classified correctly 9 out of 11 (81.8%)
+	False positives (number of people that have been classified as 4 without corresponding to it): 5
+		IDs that have been classified as 4: [23, -1, 30, 20]
+
+Category with ID 50
+	Classified correctly 4 out of 4 (100.0%)
+	False positives (number of people that have been classified as 50 without corresponding to it): 0
+
+
+Category with ID 36
+	Classified correctly 1 out of 4 (25.0%)
+	False positives (number of people that have been classified as 36 without corresponding to it): 2
+		IDs that have been classified as 36: [-1, 27]
+
+Category with ID 22
+	Classified correctly 5 out of 6 (83.3%)
+	False positives (number of people that have been classified as 22 without corresponding to it): 3
+		IDs that have been classified as 22: [-1, 56, 2]
+
+Category with ID 70
+	Classified correctly 2 out of 4 (50.0%)
+	False positives (number of people that have been classified as 70 without corresponding to it): 3
+		IDs that have been classified as 70: [-1, 25, 40]
+
+Category with ID 80
+	Classified correctly 3 out of 4 (75.0%)
+	False positives (number of people that have been classified as 80 without corresponding to it): 2
+		IDs that have been classified as 80: [-1, 16]
+
+Category with ID 46
+	Classified correctly 3 out of 4 (75.0%)
+	False positives (number of people that have been classified as 46 without corresponding to it): 9
+		IDs that have been classified as 46: [-1, 2, 59, 7]
+
+Category with ID 1
+	Classified correctly 5 out of 7 (71.39999999999999%)
+	False positives (number of people that have been classified as 1 without corresponding to it): 0
+
+
+Category with ID 79
+	Classified correctly 4 out of 4 (100.0%)
+	False positives (number of people that have been classified as 79 without corresponding to it): 0
+
+
+Category with ID 78
+	Classified correctly 4 out of 4 (100.0%)
+	False positives (number of people that have been classified as 78 without corresponding to it): 0
+
+
+Category with ID 24
+	Classified correctly 12 out of 14 (85.7%)
+	False positives (number of people that have been classified as 24 without corresponding to it): 1
+		IDs that have been classified as 24: [-1]
+
+Category with ID 63
+	Classified correctly 2 out of 4 (50.0%)
+	False positives (number of people that have been classified as 63 without corresponding to it): 3
+		IDs that have been classified as 63: [-1, 12]
+
+Category with ID 20
+	Classified correctly 4 out of 8 (50.0%)
+	False positives (number of people that have been classified as 20 without corresponding to it): 2
+		IDs that have been classified as 20: [12, 75]
+
+Category with ID 55
+	Classified correctly 4 out of 4 (100.0%)
+	False positives (number of people that have been classified as 55 without corresponding to it): 5
+		IDs that have been classified as 55: [20, -1, 28]
+
+Category with ID 40
+	Classified correctly 3 out of 4 (75.0%)
+	False positives (number of people that have been classified as 40 without corresponding to it): 2
+		IDs that have been classified as 40: [-1, 1]
+
+Category with ID 2
+	Classified correctly 4 out of 13 (30.8%)
+	False positives (number of people that have been classified as 2 without corresponding to it): 0
+
+
+Category with ID 13
+	Classified correctly 6 out of 8 (75.0%)
+	False positives (number of people that have been classified as 13 without corresponding to it): 0
+
+
+Category with ID 51
+	Classified correctly 4 out of 4 (100.0%)
+	False positives (number of people that have been classified as 51 without corresponding to it): 1
+		IDs that have been classified as 51: [3]
+
+Category with ID 73
+	Classified correctly 3 out of 4 (75.0%)
+	False positives (number of people that have been classified as 73 without corresponding to it): 4
+		IDs that have been classified as 73: [-1]
+
+Category with ID 47
+	Classified correctly 4 out of 4 (100.0%)
+	False positives (number of people that have been classified as 47 without corresponding to it): 0
+
+
+Category with ID 32
+	Classified correctly 3 out of 4 (75.0%)
+	False positives (number of people that have been classified as 32 without corresponding to it): 2
+		IDs that have been classified as 32: [10]
+
+Category with ID 34
+	Classified correctly 5 out of 5 (100.0%)
+	False positives (number of people that have been classified as 34 without corresponding to it): 1
+		IDs that have been classified as 34: [-1]
+
+Category with ID 62
+	Classified correctly 3 out of 4 (75.0%)
+	False positives (number of people that have been classified as 62 without corresponding to it): 3
+		IDs that have been classified as 62: [2, -1]
+
+Category with ID 57
+	Classified correctly 2 out of 4 (50.0%)
+	False positives (number of people that have been classified as 57 without corresponding to it): 0
+
+
+Category with ID 42
+	Classified correctly 3 out of 4 (75.0%)
+	False positives (number of people that have been classified as 42 without corresponding to it): 1
+		IDs that have been classified as 42: [39]
+
+Category with ID 45
+	Classified correctly 3 out of 4 (75.0%)
+	False positives (number of people that have been classified as 45 without corresponding to it): 0
+
+
+Category with ID 53
+	Classified correctly 3 out of 4 (75.0%)
+	False positives (number of people that have been classified as 53 without corresponding to it): 1
+		IDs that have been classified as 53: [-1]
+
+Category with ID 75
+	Classified correctly 2 out of 4 (50.0%)
+	False positives (number of people that have been classified as 75 without corresponding to it): 1
+		IDs that have been classified as 75: [-1]
+
+Category with ID 11
+	Classified correctly 11 out of 12 (91.7%)
+	False positives (number of people that have been classified as 11 without corresponding to it): 1
+		IDs that have been classified as 11: [75]
+
+Category with ID 38
+	Classified correctly 3 out of 4 (75.0%)
+	False positives (number of people that have been classified as 38 without corresponding to it): 2
+		IDs that have been classified as 38: [28, 63]
+
+Category with ID 59
+	Classified correctly 2 out of 4 (50.0%)
+	False positives (number of people that have been classified as 59 without corresponding to it): 1
+		IDs that have been classified as 59: [-1]
+
+Category with ID 76
+	Classified correctly 3 out of 4 (75.0%)
+	False positives (number of people that have been classified as 76 without corresponding to it): 3
+		IDs that have been classified as 76: [-1]
+
+Category with ID 26
+	Classified correctly 5 out of 7 (71.39999999999999%)
+	False positives (number of people that have been classified as 26 without corresponding to it): 3
+		IDs that have been classified as 26: [-1]
+
+Category with ID 28
+	Classified correctly 6 out of 16 (37.5%)
+	False positives (number of people that have been classified as 28 without corresponding to it): 1
+		IDs that have been classified as 28: [36]
+
+Category with ID 66
+	Classified correctly 4 out of 4 (100.0%)
+	False positives (number of people that have been classified as 66 without corresponding to it): 3
+		IDs that have been classified as 66: [28, -1]
+
+Category with ID 77
+	Classified correctly 3 out of 4 (75.0%)
+	False positives (number of people that have been classified as 77 without corresponding to it): 2
+		IDs that have been classified as 77: [-1]
+
+Category with ID 41
+	Classified correctly 1 out of 4 (25.0%)
+	False positives (number of people that have been classified as 41 without corresponding to it): 1
+		IDs that have been classified as 41: [20]
+
+Category with ID 16
+	Classified correctly 11 out of 12 (91.7%)
+	False positives (number of people that have been classified as 16 without corresponding to it): 0
+
+
+Category with ID 74
+	Classified correctly 3 out of 4 (75.0%)
+	False positives (number of people that have been classified as 74 without corresponding to it): 3
+		IDs that have been classified as 74: [-1]
+
+Category with ID 25
+	Classified correctly 12 out of 14 (85.7%)
+	False positives (number of people that have been classified as 25 without corresponding to it): 3
+		IDs that have been classified as 25: [-1]
+
+Category with ID 3
+	Classified correctly 6 out of 10 (60.0%)
+	False positives (number of people that have been classified as 3 without corresponding to it): 0
+
+
+Category with ID 64
+	Classified correctly 4 out of 4 (100.0%)
+	False positives (number of people that have been classified as 64 without corresponding to it): 2
+		IDs that have been classified as 64: [53, 13]
+
+Category with ID 58
+	Classified correctly 4 out of 4 (100.0%)
+	False positives (number of people that have been classified as 58 without corresponding to it): 2
+		IDs that have been classified as 58: [-1]
+
+Category with ID 10
+	Classified correctly 6 out of 8 (75.0%)
+	False positives (number of people that have been classified as 10 without corresponding to it): 1
+		IDs that have been classified as 10: [-1]
+
+Category with ID 61
+	Classified correctly 4 out of 4 (100.0%)
+	False positives (number of people that have been classified as 61 without corresponding to it): 1
+		IDs that have been classified as 61: [28]
+
+Category with ID 21
+	Classified correctly 6 out of 6 (100.0%)
+	False positives (number of people that have been classified as 21 without corresponding to it): 0
+
+
+Category with ID 48
+	Classified correctly 4 out of 4 (100.0%)
+	False positives (number of people that have been classified as 48 without corresponding to it): 3
+		IDs that have been classified as 48: [-1, 26]
+
+Category with ID 29
+	Classified correctly 5 out of 5 (100.0%)
+	False positives (number of people that have been classified as 29 without corresponding to it): 1
+		IDs that have been classified as 29: [-1]
+
+Category with ID 71
+	Classified correctly 3 out of 4 (75.0%)
+	False positives (number of people that have been classified as 71 without corresponding to it): 4
+		IDs that have been classified as 71: [-1]
+
+Category with ID 69
+	Classified correctly 4 out of 4 (100.0%)
+	False positives (number of people that have been classified as 69 without corresponding to it): 1
+		IDs that have been classified as 69: [28]
+
+Category with ID 35
+	Classified correctly 4 out of 6 (66.7%)
+	False positives (number of people that have been classified as 35 without corresponding to it): 0
+
+
+Category with ID 6
+	Classified correctly 9 out of 10 (90.0%)
+	False positives (number of people that have been classified as 6 without corresponding to it): 2
+		IDs that have been classified as 6: [-1]
+
+Category with ID 9
+	Classified correctly 7 out of 9 (77.8%)
+	False positives (number of people that have been classified as 9 without corresponding to it): 1
+		IDs that have been classified as 9: [-1]
+
+Category with ID 19
+	Classified correctly 5 out of 6 (83.3%)
+	False positives (number of people that have been classified as 19 without corresponding to it): 6
+		IDs that have been classified as 19: [-1, 35, 5, 43, 71]
+
+Category with ID 43
+	Classified correctly 3 out of 4 (75.0%)
+	False positives (number of people that have been classified as 43 without corresponding to it): 0
+
+
+Category with ID 17
+	Classified correctly 14 out of 16 (87.5%)
+	False positives (number of people that have been classified as 17 without corresponding to it): 0
+
+
+Category with ID 52
+	Classified correctly 4 out of 4 (100.0%)
+	False positives (number of people that have been classified as 52 without corresponding to it): 1
+		IDs that have been classified as 52: [-1]
+
+Category with ID 37
+	Classified correctly 2 out of 4 (50.0%)
+	False positives (number of people that have been classified as 37 without corresponding to it): 1
+		IDs that have been classified as 37: [-1]
+
+Category with ID 67
+	Classified correctly 3 out of 4 (75.0%)
+	False positives (number of people that have been classified as 67 without corresponding to it): 2
+		IDs that have been classified as 67: [-1]
+
+Category with ID 56
+	Classified correctly 2 out of 4 (50.0%)
+	False positives (number of people that have been classified as 56 without corresponding to it): 4
+		IDs that have been classified as 56: [2, -1]
+
+Category with ID 72
+	Classified correctly 3 out of 4 (75.0%)
+	False positives (number of people that have been classified as 72 without corresponding to it): 2
+		IDs that have been classified as 72: [28, 20]
+
+Category with ID 65
+	Classified correctly 3 out of 4 (75.0%)
+	False positives (number of people that have been classified as 65 without corresponding to it): 1
+		IDs that have been classified as 65: [-1]
+
+Category with ID 18
+	Classified correctly 4 out of 4 (100.0%)
+	False positives (number of people that have been classified as 18 without corresponding to it): 2
+		IDs that have been classified as 18: [-1]
+
+Category with ID 33
+	Classified correctly 1 out of 4 (25.0%)
+	False positives (number of people that have been classified as 33 without corresponding to it): 0
+
+
+Category with ID 15
+	Classified correctly 4 out of 4 (100.0%)
+	False positives (number of people that have been classified as 15 without corresponding to it): 0
+
+
