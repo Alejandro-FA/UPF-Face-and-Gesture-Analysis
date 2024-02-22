@@ -1,28 +1,22 @@
 import MyTorchWrapper as mtw
-import FaceRecognitionPipeline as frp
 import os
 import numpy as np
 
 
 if __name__ == "__main__":
-    MODEL_ID = 3
-    ASSETS_PATH = f"assets/transfer_learning"
-    iomanager = mtw.IOManager(storage_dir="models/transfer_learning")
-    model = frp.superlight_network_9layers(num_classes=80, input_channels=3)
+    MODEL_ID = 1
+    ASSETS_PATH = f"assets/"
+    iomanager = mtw.IOManager(storage_dir="models/")
 
 
     ###########################################################################
-    # Load results and model
+    # Load results
     ###########################################################################
     train_results, validation_results = iomanager.load_results(MODEL_ID)
-    iomanager.load_model(model, MODEL_ID)
 
     # Print results
     epoch_best_loss = np.argmin(validation_results["loss"])
     print(f'Accuracy of the model at epoch {epoch_best_loss + 1} (epoch of lowest loss): {validation_results["accuracy"][epoch_best_loss]} %')
-
-    # Compute model paramters
-    print("Number of parameters of the model:", mtw.get_model_params(model))
 
 
     ###########################################################################
@@ -44,4 +38,5 @@ if __name__ == "__main__":
     fig3 = plotter.plot_train_validation_comparison(metric='accuracy', figsize=(10, 5))
     fig3.savefig(os.path.join(figures_folder, "train_validation_accuracy.png"), dpi=500)
 
+    print("Figures saved in:", figures_folder)
     # plt.show()

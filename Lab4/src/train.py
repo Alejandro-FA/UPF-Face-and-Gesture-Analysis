@@ -3,6 +3,7 @@ import MyTorchWrapper as mtw
 import Datasets as ds
 import torch
 import torch.nn as nn
+import torch.optim.lr_scheduler as lr_scheduler
 import numpy as np
 
 
@@ -32,22 +33,40 @@ if __name__ == "__main__":
 
     # Training parameters
     num_epochs = 15
-    learning_rate = .001
+    learning_rate = 1e-3
     evaluation = mtw.AccuracyEvaluation(loss_criterion=nn.CrossEntropyLoss())
 
     # Create an instance of the model
     model = frp.superlight_network_9layers(celeba_train.num_classes, input_channels=3)
     optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, betas=(0.9, 0.999), eps=1e-08)
-    lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer)
+    lr_scheduler_epoch = lr_scheduler.ReduceLROnPlateau(optimizer)
+    lr_scheduler_minibatch = lr_scheduler.LinearLR(optimizer, start_factor=1.0, end_factor=0.01, total_iters=num_epochs * len(train_loader))
 
     # Train the model
-    trainer = mtw.Trainer(evaluation=evaluation, epochs=num_epochs, train_data_loader=train_loader, validation_data_loader=validation_loader, io_manager=iomanager, device=device)
-    train_results, validation_results = trainer.train(model, optimizer, lr_scheduler, seed_value, verbose=True)
+    trainer = mtw.Trainer(
+        evaluation=evaluation,
+        epochs=num_epochs,
+        train_data_loader=train_loader,
+        validation_data_loader=validation_loader,
+        io_manager=iomanager,
+        device=device
+    )
+    train_results, validation_results = trainer.train(
+        model=model,
+        optimizer=optimizer,
+        lr_scheduler_epoch=lr_scheduler_epoch,
+        lr_scheduler_minibatch=lr_scheduler_minibatch,
+        seed_value=seed_value,
+        verbose=True
+    )
 
 
     ###########################################################################
     # Save training results
     ###########################################################################
+    # Print last learning rate used
+    print("Last learning rate used:", lr_scheduler_epoch.get_last_lr())
+
     # Print results
     epoch_best_loss = np.argmin(validation_results["loss"])
     print(f'Accuracy of the model at epoch {epoch_best_loss + 1} (epoch of lowest loss): {validation_results["accuracy"][epoch_best_loss]} %')

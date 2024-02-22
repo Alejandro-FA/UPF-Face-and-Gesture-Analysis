@@ -48,7 +48,15 @@ class Trainer:
         return f"model_{self.model_id}"
 
    
-    def train(self, model: nn.Module, optimizer: Optimizer, lr_scheduler: Optional[LRScheduler] = None, seed_value: Optional[int] = None, verbose: bool = True) -> tuple[EvaluationResults, EvaluationResults]:
+    def train(
+            self,
+            model: nn.Module,
+            optimizer: Optimizer,
+            lr_scheduler_epoch: Optional[LRScheduler] = None,
+            lr_scheduler_minibatch: Optional[LRScheduler] = None,
+            seed_value: Optional[int] = None,
+            verbose: bool = True
+        ) -> tuple[EvaluationResults, EvaluationResults]:
         """
         Trains the given model using the provided optimizer.
 
@@ -63,7 +71,7 @@ class Trainer:
         """
         # Take the next available model id to save checkpoints
         self.model_id = self.iomanager.next_id_available()
-        print(f"Training {self.model_name} with {len(self.train_data_loader)} batches per epoch...")
+        print(f"Training {self.model_name} with {len(self.train_data_loader)} minibatches per epoch...")
 
         if seed_value is not None: torch.manual_seed(seed_value) # Ensure repeatable results
         model.train() # Set the model in training mode
@@ -92,6 +100,14 @@ class Trainer:
                 loss.backward()
                 optimizer.step()
 
+                # Update the learning rate
+                if lr_scheduler_minibatch is not None:
+                    if isinstance(lr_scheduler_minibatch, torch.optim.lr_scheduler.ReduceLROnPlateau):
+                        raise ValueError("ReduceLROnPlateau scheduler cannot be used at minibatch level")
+                    else:
+                        lr_scheduler_minibatch.step()
+
+                # Print the progress
                 if verbose and ((i + 1) % feedback_step == 0 or i + 1 == total_steps):
                     print(
                         "Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}".format(
@@ -105,11 +121,11 @@ class Trainer:
             validation_results.append(validation_epoch_results)
 
             # Update the learning rate
-            if lr_scheduler is not None:
-                try:
-                    lr_scheduler.step(metrics=validation_results['loss'][-1])
-                except TypeError:
-                    lr_scheduler.step()
+            if lr_scheduler_epoch is not None:
+                if isinstance(lr_scheduler_epoch, torch.optim.lr_scheduler.ReduceLROnPlateau):
+                    lr_scheduler_epoch.step(metrics=validation_results['loss'][-1])
+                else:
+                    lr_scheduler_epoch.step()
 
             # Save the model checkpoint and the results up to the current epoch
             self.iomanager.save_model(model, self.model_id, epoch)
