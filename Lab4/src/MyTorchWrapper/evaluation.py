@@ -1,5 +1,6 @@
 import torch
-from .evaluation_results import *
+from .evaluation_results import Result
+from typing import Callable
 
 
 class BasicEvaluation:
@@ -14,15 +15,15 @@ class BasicEvaluation:
     mode. Additional evaluation methods can be added by subclassing this class.
     """    
 
-    def __init__(self, loss_criterion) -> None:
+    def __init__(self, loss_criterion: Callable[..., torch.Tensor]) -> None:
         """
         Args:
             loss_criterion (torch.nn.modules.loss): the loss function to use
         """            
-        self.loss_criterion = loss_criterion
+        self.loss_criterion: Callable[..., torch.Tensor] = loss_criterion
 
 
-    def __call__(self, outputs: torch.Tensor, labels: torch.Tensor, results: BasicResults) -> torch.Tensor:
+    def __call__(self, outputs: torch.Tensor, labels: torch.Tensor) -> tuple[torch.Tensor, Result]:
         """Evaluates the performance of the output of a torch model and returns
         the loss.
 
@@ -32,15 +33,9 @@ class BasicEvaluation:
             results (EvaluationResults): where to store the results
         """        
         loss = self.loss_criterion(outputs, labels)
-        results._log_loss(loss.item())
-        results._log_batch_size(outputs.size(0))
-        return loss
-    
-
-    def create_results(self) -> BasicResults:
-        """Creates an instance of the appropriate results class.
-        """        
-        return BasicResults()
+        results = Result(batch_size=outputs.size(0))
+        results['loss'] = loss.item()
+        return loss, results
 
 
 
@@ -49,20 +44,14 @@ class AccuracyEvaluation(BasicEvaluation):
     the output. Only intended for classification models.
     """    
 
-    def __call__(self, outputs: torch.Tensor, labels: torch.Tensor, results: AccuracyResults) -> torch.Tensor:
+    def __call__(self, outputs: torch.Tensor, labels: torch.Tensor) -> tuple[torch.Tensor, Result]:
+        loss, results = super().__call__(outputs, labels)
+
         with torch.no_grad():
             _, predicted = torch.max(outputs.data, dim=1)  # Get predicted class
             total = labels.size(0)
             correct = (predicted == labels).sum().item()  # Compare with ground-truth
             accuracy = 100 * correct / total
-            results._log_accuracy(accuracy)
+            results['accuracy'] = accuracy
 
-        return super().__call__(outputs, labels, results)
-    
-
-    def create_results(self) -> AccuracyResults:
-        """Creates an instance of the appropriate results class.
-        """        
-        return AccuracyResults()
-    
-    
+        return loss, results

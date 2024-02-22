@@ -2,7 +2,7 @@ import torch
 from torch import nn
 from torch.utils.data.dataloader import DataLoader
 from .evaluation import BasicEvaluation
-from .evaluation_results import BasicResults
+from .evaluation_results import EvaluationResults, Result
 
 class Tester:
     """
@@ -28,7 +28,7 @@ class Tester:
         self.device = device
 
 
-    def test(self, model: nn.Module) -> BasicResults:
+    def test(self, model: nn.Module) -> EvaluationResults:
         """Test the performance of a model with a given dataset.
 
         Args:
@@ -39,9 +39,11 @@ class Tester:
         """
         model.eval()
         model.to(self.device)
-        results = self.evaluation.create_results()
+        test_results = EvaluationResults()
 
         with torch.no_grad():
+            epoch_results: list[Result] = []
+
             for features, labels in self.data_loader:
                 # Move the data to the torch device
                 features = features.to(self.device)
@@ -51,6 +53,8 @@ class Tester:
                 outputs = model(features)
 
                 # Evaluate performance of the model
-                self.evaluation(outputs, labels, results)
+                loss, batch_results = self.evaluation(outputs, labels)
+                epoch_results.append(batch_results)
         
-        return results
+        test_results.add_epoch(epoch_results)
+        return test_results

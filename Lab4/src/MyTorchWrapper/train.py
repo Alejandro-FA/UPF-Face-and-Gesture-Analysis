@@ -2,7 +2,7 @@ import torch
 from torch import nn
 from torch.utils.data.dataloader import DataLoader
 from .evaluation import BasicEvaluation
-from .evaluation_results import BasicResults
+from .evaluation_results import EvaluationResults, Result
 from .test import Tester
 from .io import IOManager
 from typing import Optional
@@ -32,13 +32,13 @@ class Trainer:
         io_manager: IOManager,
         device: torch.device,
     ) -> None:
-        self.evaluation = evaluation
-        self.epochs = epochs
-        self.train_data_loader = train_data_loader
+        self.evaluation: BasicEvaluation = evaluation
+        self.epochs: int = epochs
+        self.train_data_loader: DataLoader = train_data_loader
         self.tester = Tester(evaluation, validation_data_loader, device)
-        self.device = device
-        self.iomanager = io_manager
-        self.model_id = self.iomanager.next_id_available()
+        self.device: torch.device = device
+        self.iomanager: IOManager = io_manager
+        self.model_id: int = self.iomanager.next_id_available()
 
 
     @property
@@ -46,7 +46,7 @@ class Trainer:
         return f"model_{self.model_id}"
 
    
-    def train(self, model: nn.Module, optimizer: torch.optim.Optimizer, seed_value: Optional[int] = 10, verbose: bool = True) -> tuple[BasicResults, BasicResults]:
+    def train(self, model: nn.Module, optimizer: torch.optim.Optimizer, seed_value: Optional[int] = 10, verbose: bool = True) -> tuple[EvaluationResults, EvaluationResults]:
         """
         Trains the given model using the provided optimizer.
 
@@ -69,10 +69,12 @@ class Trainer:
 
         total_steps = len(self.train_data_loader)
         feedback_step = round(total_steps / 3) + 1
-        training_results = self.evaluation.create_results()
-        validation_results = self.evaluation.create_results()
+        training_results = EvaluationResults()
+        validation_results = EvaluationResults()
 
-        for epoch in range(self.epochs):
+        for epoch in range(1, self.epochs + 1):
+            train_epoch_results: list[Result] = []
+
             # Train model over all batches of the dataset
             for i, (features, labels) in enumerate(self.train_data_loader):
                 # Move the data to the torch device
@@ -80,7 +82,8 @@ class Trainer:
                 labels = labels.to(self.device) # FIXME: Perhaps we need to use .to(self.device, dtype=torch.long)
                 
                 outputs = model(features)  # Forward pass
-                loss = self.evaluation(outputs, labels, training_results)  # Evaluation
+                loss, batch_results = self.evaluation(outputs, labels)  # Evaluation
+                train_epoch_results.append(batch_results)
 
                 # Backward and optimize
                 optimizer.zero_grad()
@@ -90,16 +93,17 @@ class Trainer:
                 if verbose and ((i + 1) % feedback_step == 0 or i + 1 == total_steps):
                     print(
                         "Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}".format(
-                            epoch + 1, self.epochs, i + 1, total_steps, loss.item()
+                            epoch, self.epochs, i + 1, total_steps, loss.item()
                         )
                     )
 
-            # Save the model checkpoint and the results up to the current epoch
-            self.iomanager.save_model(model, self.model_id, epoch + 1)
-            self.iomanager.save_results(training_results, validation_results, self.model_id, epoch + 1)
+            # Store the results of the current epoch
+            training_results.add_epoch(train_epoch_results)
+            validation_epoch_results = self.tester.test(model)
+            validation_results.append(validation_epoch_results)
 
-            # Test the model with the validation dataset
-            epoch_validation_results = self.tester.test(model)
-            validation_results.append(epoch_validation_results)
+            # Save the model checkpoint and the results up to the current epoch
+            self.iomanager.save_model(model, self.model_id, epoch)
+            self.iomanager.save_results(training_results, validation_results, self.model_id)
 
         return training_results, validation_results

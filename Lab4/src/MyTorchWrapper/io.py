@@ -2,10 +2,11 @@ import re
 import os
 import torch
 from torch import nn
-from .evaluation_results import BasicResults
+from .evaluation_results import EvaluationResults
 import pickle
 import tempfile
 import shutil
+from typing import Optional
 
 
 class _PathManager:
@@ -36,7 +37,7 @@ class _PathManager:
         return os.path.join(self.models_dir, f"model_{model_id}")
     
 
-    def get_model_path(self, model_id: int, epoch: int = 1) -> str:
+    def get_model_path(self, model_id: int, epoch: int) -> str:
         """Given a model id, it returns the path of its corresponding model file (.ckpt)
 
         Args:
@@ -49,17 +50,15 @@ class _PathManager:
         return os.path.join(self.get_model_folder(model_id), f"epoch-{epoch}{self.model_ext}")
     
 
-    def get_results_path(self, model_id: int, epoch: int = 1) -> str:
+    def get_results_path(self, model_id: int) -> str:
         """Given a model id, it returns the path of its corresponding results file.
 
         Args:
             model_id (int): Identification number of the model.
-            epoch (Optional[int]): Optional epoch number.
 
         Returns:
             str: The path of the results file.
-        """
-        # NOTE: The epoch is not currently used. It might be used in the future        
+        """    
         return os.path.join(self.get_model_folder(model_id), f"results{self.results_ext}")
     
 
@@ -73,6 +72,22 @@ class _PathManager:
             str: The path of the summary file.
         """        
         return os.path.join(self.get_model_folder(model_id), f"summary{self.summary_ext}")
+    
+
+    def get_last_epoch(self, model_id: int) -> int:
+        """Given a model id, it returns the last epoch number available for that model.
+
+        Args:
+            model_id (int): Identification number of the model.
+
+        Returns:
+            int: The last epoch number available for that model.
+        """
+        model_folder = self.get_model_folder(model_id)
+        if not os.path.isdir(model_folder):
+            return 0
+        model_files = [f for f in os.listdir(model_folder) if f.endswith(self.model_ext)]
+        return len(model_files)
 
 
 
@@ -102,7 +117,7 @@ class IOManager:
         return 1 if not indices else max(indices) + 1        
 
 
-    def save_model(self, model: nn.Module, model_id: int, epoch: int = 1) -> None:
+    def save_model(self, model: nn.Module, model_id: int, epoch: Optional[int] = None) -> None:
         """Given a torch model, it saves it in the storage_dir with the
         provided model_id.
 
@@ -111,12 +126,13 @@ class IOManager:
             model_id (int): Identification number with which to store the model.
             epoch (Optional[int]): Optional epoch number.
         """
+        epoch = epoch if epoch is not None else self._path_manager.get_last_epoch(model_id) + 1
         os.makedirs(self._path_manager.get_model_folder(model_id), exist_ok=True)       
         file_path = self._path_manager.get_model_path(model_id, epoch)
         torch.save(model.state_dict(), file_path)
     
 
-    def save_results(self, training_results: BasicResults, validation_results: BasicResults, model_id: int, epoch: int = 1):
+    def save_results(self, training_results: EvaluationResults, validation_results: EvaluationResults, model_id: int):
         """
         Saves the training and validation results for a specific model and epoch.
 
@@ -127,7 +143,7 @@ class IOManager:
             epoch (int, optional): Epoch number. Defaults to 1.
         """
         os.makedirs(self._path_manager.get_model_folder(model_id), exist_ok=True) 
-        results_path = self._path_manager.get_results_path(model_id, epoch)
+        results_path = self._path_manager.get_results_path(model_id)
 
         # Create a temporary file in the same directory as the results_path
         dir_name = os.path.dirname(results_path)
@@ -138,7 +154,7 @@ class IOManager:
         shutil.move(tmp_file.name, results_path)
 
 
-    def load_model(self, model: nn.Module, model_id: int, epoch: int = 1) -> None:
+    def load_model(self, model: nn.Module, model_id: int, epoch: Optional[int] = None) -> None:
         """Given a torch model and a model_id, it loads all the parameters stored
         in the model file (identified with model_id) inside the model.
 
@@ -146,12 +162,14 @@ class IOManager:
             model (nn.Module): Neural Network model in which to store the parameters. It must have the appropriate architecture.
             model_id (int): Identification number of the model to load.
             epoch (Optional[int]): Optional epoch number.
-        """        
+        """      
+        epoch = epoch if epoch is not None else self._path_manager.get_last_epoch(model_id)
         file_path = self._path_manager.get_model_path(model_id, epoch)
         model.load_state_dict(torch.load(file_path))
+        print("Model loaded from:", file_path)
         
         
-    def load_results(self, model_id: int, epoch: int = 1) -> tuple[BasicResults, BasicResults]:   
+    def load_results(self, model_id: int) -> tuple[EvaluationResults, EvaluationResults]:   
         """
         Load the results of a trained model for a specific epoch.
 
@@ -162,7 +180,7 @@ class IOManager:
         Returns:
             tuple[BasicResults, BasicResults]: A tuple containing the basic results for training and validation.
         """
-        results_path = self._path_manager.get_results_path(model_id, epoch)
+        results_path = self._path_manager.get_results_path(model_id)
         with open(results_path, "rb") as results_file:
             res = pickle.load(results_file)
         return res

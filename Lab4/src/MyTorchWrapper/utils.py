@@ -2,7 +2,7 @@ import torch
 from torch import nn
 import torchinfo
 from .train import Trainer
-from .evaluation_results import BasicResults
+from .evaluation_results import EvaluationResults
 from typing import Optional
 
 
@@ -10,7 +10,7 @@ def training_summary(
     model: nn.Module,
     optimizer: torch.optim.Optimizer,
     trainer: Trainer,
-    validation_results: Optional[BasicResults] = None,
+    validation_results: Optional[EvaluationResults] = None,
 ) -> str:  
     """Build a performance summary report for future reference.
 
@@ -31,8 +31,8 @@ def training_summary(
     batch, _ = next(iter(trainer.train_data_loader))
     model_stats = torchinfo.summary(model, input_size=batch.shape, device=trainer.device, verbose=0)
 
-    results = validation_results.average(num_epochs=trainer.epochs).as_dict() if validation_results is not None else None
-    results = f"Test results: {results}\n" if results is not None else ""
+    results = validation_results.average(per_epoch=True).as_dict() if validation_results is not None else None
+    results = f"Validation results: {results}\n" if results is not None else ""
     summary = (
         results
         + f"Loss function used: {trainer.evaluation.loss_criterion}\n"

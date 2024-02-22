@@ -1,117 +1,188 @@
 import numpy as np
 
 
-def _average_results(results: list[float], batch_sizes: list[int], num_epochs: int = 1) -> list[float]:
-    results_per_epoch = len(results) // num_epochs
-    if len(results) % num_epochs != 0:
-        raise ValueError(f"Length of results ({results_per_epoch}) is not a multiple of num_epochs ({num_epochs}).")
+class Result:
+    """
+    Represents the evaluation result for a single batch.
+
+    Attributes:
+        __result (dict[str, float]): Dictionary to store the metric name-value pairs.
+        batch_size (int): The size of the batch.
+    """
+
+    def __init__(self, batch_size: int) -> None:
+        self.__result: dict[str, float] = {}
+        self.batch_size = batch_size
     
-    averages = []
-    for i in range(num_epochs):
-        partial_results = results[i * results_per_epoch:(i + 1) * results_per_epoch]
-        partial_batch_sizes = batch_sizes[i * results_per_epoch:(i + 1) * results_per_epoch]
-        a = np.sum(np.multiply(partial_results, partial_batch_sizes))
-        b = np.sum(partial_batch_sizes)
-        averages.append(a / b)
-
-    return averages
-
-
-
-class BasicResults:
-    """Class used to store and retrieve the results of a training or testing process.
-    """    
-
-    def __init__(self) -> None:
-        self.loss = []
-        self.batch_sizes = []
-
-
-    def _log_loss(self, loss: float) -> None:
-        """Adds a loss result to the results history.
+    def __getitem__(self, metric: str) -> float:
+        """
+        Get the value of a metric.
 
         Args:
-            loss (float): The loss value to store.
-            batch_size (int): Size of the batch from which the result has been
-            obtained. Used to accurately average the results.
-        """        
-        self.loss.append(loss)
-
-
-    def _log_batch_size(self, batch_size: int) -> None:
-        """Adds a batch size to the history.
-
-        Args:
-            batch_size (int): Size of the batch to log.
-            Used to accurately average the results.
-        """        
-        self.batch_sizes.append(batch_size)
-    
-
-    def as_dict(self) -> dict[str, float | list[float]]:
-        """Create a dictionary representation of all the results.
+            metric (str): The name of the metric.
 
         Returns:
-            Dict[str, Union[float, List[float]]]: Dictionary representation of the results.
+            float: The value of the metric.
         """
-        return {'loss': self.loss if len(self.loss) > 1 else self.loss[0]}
-
+        return self.__result[metric]
     
-    def average(self, num_epochs: int = 1) -> 'BasicResults':
-        """Averages the results over a given number of epochs.
+    def __setitem__(self, metric: str, value: float) -> None:
+        """
+        Set the value of a metric.
 
         Args:
-            num_epochs (int): Number of epochs to average over.
+            metric (str): The name of the metric.
+            value (float): The value of the metric.
+        """
+        self.__result[metric] = value
+
+    @property
+    def metrics(self) -> list[str]:
+        """
+        Get the list of metrics.
 
         Returns:
-            BasicResults: A new BasicResults instance with the averaged results.
-        """        
-        results = self.__class__()
-        results.loss = _average_results(self.loss, self.batch_sizes, num_epochs)
-        samples_per_epoch = len(self.loss) // num_epochs
-        results.batch_sizes = [np.sum(self.batch_sizes[i * samples_per_epoch:(i + 1) * samples_per_epoch]) for i in range(num_epochs)]
-        return results
+            list[str]: The list of metrics.
+        """
+        return list(self.__result.keys())
     
 
-    def append(self, results: 'BasicResults') -> None:
-        """Appends the results of another BasicResults instance to this one.
 
-        Args:
-            results (BasicResults): Results to append.
-        """
-        self.loss += results.loss
-        self.batch_sizes += results.batch_sizes
+class EvaluationResults:
+    """
+    Represents the evaluation results for multiple epochs.
 
+    Attributes:
+        __results (list[list[Result]]): List of lists of Result objects representing the results for each epoch and batch.
+    """
 
-
-class AccuracyResults(BasicResults):
     def __init__(self) -> None:
-        super().__init__()
-        self.accuracy = []
+        self.__results: list[list[Result]] = []
+    
+
+    @property
+    def num_epochs(self) -> int:
+        """
+        Get the number of epochs.
+
+        Returns:
+            int: The number of epochs.
+        """
+        return len(self.__results)
 
 
-    def _log_accuracy(self, accuracy: float) -> None:
-        """Adds an accuracy result to the results history.
+    @property
+    def metrics(self) -> list[str]:
+        """
+        Get the list of metrics.
+
+        Returns:
+            list[str]: The list of metrics.
+        """
+        return [] if self.num_epochs == 0 else self.__results[0][0].metrics
+    
+
+    def add_batch(self, batch_results: Result) -> None:
+        """
+        Add the results for a single batch.
 
         Args:
-            accuracy (float): The accuracy value to store.
-        """        
-        self.accuracy.append(accuracy)
+            batch_results (Result): The results for a single batch.
+        """
+        if self.num_epochs == 0:
+            self.__results.append([])
+        else:
+            assert self.__results[0][0].metrics == batch_results.metrics, "Metrics do not match."
+        self.__results[-1].append(batch_results)
 
 
-    def average(self, num_epochs: int = 1) -> BasicResults:
-        results = super().average(num_epochs)
-        results.accuracy = _average_results(self.accuracy, self.batch_sizes, num_epochs)
-        return results
+    def add_epoch(self, epoch_results: list[Result]) -> None:
+        """
+        Add the results for a single epoch.
+
+        Args:
+            epoch_results (list[Result]): The results for a single epoch.
+        """
+        if self.num_epochs > 0:
+            assert self.__results[0][0].metrics == epoch_results[0].metrics, "Metrics do not match."
+        self.__results.append(epoch_results)
 
 
-    def as_dict(self) -> dict[str, float | list[float]]:
-        dict = super().as_dict()
-        dict['accuracy'] = self.accuracy if len(self.accuracy) > 1 else self.accuracy[0]
+    def append(self, results: 'EvaluationResults') -> None:
+        """
+        Append the results of another EvaluationResults object.
+
+        Args:
+            results (EvaluationResults): The EvaluationResults object to append.
+        """
+        if not self.num_epochs == 0:
+            assert self.metrics == results.metrics, "Metrics do not match."
+        self.__results.extend(results.__results)
+
+
+    def __getitem__(self, metric: str) -> list[list[float]]:
+        """
+        Get the values of a metric for all epochs and batches.
+
+        Args:
+            metric (str): The name of the metric.
+
+        Returns:
+            list[list[float]]: The values of the metric for all epochs and batches.
+        """
+        return [res[metric] for epoch_results in self.__results for res in epoch_results]
+
+
+    def average(self, per_epoch: bool = True) -> 'EvaluationResults':
+        """
+        Calculate the average results.
+
+        Args:
+            per_epoch (bool, optional): Whether to calculate the average per epoch. Defaults to True.
+
+        Returns:
+            EvaluationResults: The averaged results.
+        """
+        if per_epoch:
+            return self.__average_per_epoch(self)
+        else:
+            raise NotImplementedError("Implement what happens when per_epoch is false")
+        
+
+    def as_dict(self) -> dict[str, list[list[float]]]:
+        """
+        Convert the results to a dictionary.
+
+        Returns:
+            dict[str, list[list[float]]]: The results as a dictionary.
+        """
+        dict = {}
+        for key in self.metrics:
+            dict[key] = self[key]
         return dict
+    
 
+    @staticmethod
+    def __average_per_epoch(results: 'EvaluationResults') -> 'EvaluationResults':
+        """
+        Calculate the average results per epoch.
 
-    def append(self, results: 'AccuracyResults') -> None:
-        super().append(results)
-        self.accuracy += results.accuracy
+        Args:
+            results (EvaluationResults): The EvaluationResults object.
 
+        Returns:
+            EvaluationResults: The averaged results per epoch.
+        """
+        averaged_results = EvaluationResults()
+
+        for epoch_results in results.__results:
+            batch_sizes = [res.batch_size for res in epoch_results]
+            avg = Result(batch_size=np.sum(batch_sizes))
+
+            for metric in results.metrics:
+                values = [res[metric] for res in epoch_results]
+                avg[metric] = np.average(values, weights=batch_sizes)
+
+            averaged_results.add_epoch([avg])
+
+        return averaged_results
