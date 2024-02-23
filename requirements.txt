@@ -13,3 +13,4 @@ torchinfo>=1.8.0
 pyarrow>=14.0.1
 seaborn>=0.13.0
 facenet-pytorch>=2.5.3
+retina-face>=0.0.14

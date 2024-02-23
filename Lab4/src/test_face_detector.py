@@ -149,7 +149,7 @@ def get_args():
 
 
 def load_model(model_name: str) -> frp.FaceDetector:
-    valid_names = ["mtcnn", "mediapipe", "yunet"]
+    valid_names = ["mtcnn", "mediapipe", "yunet", "retinaface"]
 
     if model_name == valid_names[0]:
         return frp.MTCNNDetector(use_gpu=False, thresholds=[0.6, 0.7, 0.7])
@@ -157,6 +157,8 @@ def load_model(model_name: str) -> frp.FaceDetector:
         return frp.MediaPipeDetector("models/detector.tflite")
     elif model_name == valid_names[2]:
         return frp.YuNetDetector("models/face_detection_yunet_2023mar.onnx", threshold=0.6)
+    elif model_name == valid_names[3]:
+        return frp.RetinaFaceDetector(threshold=0.5)
     else:
         raise RuntimeError(f"Invalid model name {model_name}. Valid names: {valid_names}")
 

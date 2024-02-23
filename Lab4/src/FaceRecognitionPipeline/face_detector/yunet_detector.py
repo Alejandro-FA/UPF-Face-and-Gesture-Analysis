@@ -1,7 +1,6 @@
 from .face_detector import FaceDetector, DetectionResult, BoundingBox
 import imageio.v2
 import cv2
-import numpy as np
 
 
 class YuNetDetector(FaceDetector):
