@@ -139,12 +139,12 @@ class FaceCropper:
             list[frp.DetectionResult]: The reduced list of face detection results.
         """
         n = len(results)
-
-        with open(log_path, "a") as file:
-            if n > self.max_faces_per_image:
-                file.write(f"Warning: Image {image_path} has more than {self.max_faces_per_image} faces. Only the first {self.max_faces_per_image} faces have been saved.\n")
-            elif n == 0:
-                file.write(f"Warning: Image {image_path} has no faces.\n")
+        if self.log_warnings:
+            with open(log_path, "a") as file:
+                if n > self.max_faces_per_image:
+                    file.write(f"Warning: Image {image_path} has more than {self.max_faces_per_image} faces. Only the first {self.max_faces_per_image} faces have been saved.\n")
+                elif n == 0:
+                    file.write(f"Warning: Image {image_path} has no faces.\n")
 
         return results[:self.max_faces_per_image]
     
