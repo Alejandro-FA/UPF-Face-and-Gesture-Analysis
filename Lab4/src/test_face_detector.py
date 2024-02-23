@@ -35,10 +35,12 @@ def CHALL_AGC_ComputeDetScores(DetectionSTR, AGC_Challenge1_STR, show_figures):
     #   AGC Challenge
     #   Universitat Pompeu Fabra
     #
-    feature_list = ['F1', 'Fmatrix', 'FNR']
-    values = np.zeros((len(AGC_Challenge1_STR), 3), dtype='float')
+    feature_list = ['F1', 'Fmatrix']
+    values = np.zeros((len(AGC_Challenge1_STR), 2), dtype='float')
     scoresSTR = pd.DataFrame(values, index=np.arange(len(AGC_Challenge1_STR)), columns=feature_list, dtype='object')
     
+    total_n_actualFaces = 0
+    total_n_detectedFaces = 0
     for i in range(0, len(AGC_Challenge1_STR)):
         if show_figures:
             A = imread(AGC_Challenge1_STR['imageName'][i])
@@ -57,17 +59,18 @@ def CHALL_AGC_ComputeDetScores(DetectionSTR, AGC_Challenge1_STR, show_figures):
                                    facecolor='none')
                     ax.add_patch(fb)
         n_actualFaces = len(AGC_Challenge1_STR['faceBox'][i])
+        total_n_actualFaces += n_actualFaces
         n_detectedFaces = len(DetectionSTR[i])
         if not n_actualFaces:
             if n_detectedFaces:
-                scoresSTR['F1'][i] = np.zeros(n_detectedFaces)
+                scoresSTR.loc[i, 'F1'] = np.zeros(n_detectedFaces)
             else:
-                scoresSTR['F1'][i] = np.array([1], dtype=float)
+                scoresSTR.loc[i, 'F1'] = np.array([1], dtype=float)
         else:
             if not n_detectedFaces:
-                scoresSTR['F1'][i] = np.zeros(n_actualFaces)
+                scoresSTR.loc[i, 'F1'] = np.zeros(n_actualFaces)
             else:
-                scoresSTR['Fmatrix'][i] = np.zeros((n_actualFaces, n_detectedFaces))
+                scoresSTR.loc[i, 'Fmatrix'] = np.zeros((n_actualFaces, n_detectedFaces))
                 for k1 in range(0, n_actualFaces):
                     f = np.array(AGC_Challenge1_STR['faceBox'][i][k1], dtype=int)
                     for k2 in range(0, n_detectedFaces):
@@ -81,24 +84,24 @@ def CHALL_AGC_ComputeDetScores(DetectionSTR, AGC_Challenge1_STR, show_figures):
                         int_Area = max(0, (x2 - x1)) * max(0, (y2 - y1))
                         total_Area = (f[2] - f[0]) * (f[3] - f[1]) + (g[2] - g[0]) * (g[3] - g[1]) - int_Area
                         if n_detectedFaces == 1 and n_actualFaces == 1:
-                            scoresSTR['Fmatrix'][i] = int_Area / total_Area
+                            scoresSTR.loc[i, 'Fmatrix'] = int_Area / total_Area
                         else:
                             scoresSTR['Fmatrix'][i][k1, k2] = int_Area / total_Area
-                scoresSTR['F1'][i] = np.zeros((max(n_detectedFaces, n_actualFaces)))
+                scoresSTR.loc[i, 'F1'] = np.zeros((max(n_detectedFaces, n_actualFaces)))
                 for k3 in range(0, min(n_actualFaces, n_detectedFaces)):
                     max_F = np.max(scoresSTR['Fmatrix'][i])
                     if n_detectedFaces == 1 and n_actualFaces == 1:
-                        scoresSTR['F1'][i] = np.array([max_F], dtype=float)
-                        scoresSTR['Fmatrix'][i] = 0
-                        scoresSTR['Fmatrix'][i] = 0
+                        scoresSTR.loc[i, 'F1'] = np.array([max_F], dtype=float)
+                        scoresSTR.loc[i, 'Fmatrix'] = 0
+                        scoresSTR.loc[i, 'Fmatrix'] = 0
                     else:
                         max_ind = np.unravel_index(np.argmax(scoresSTR['Fmatrix'][i], axis=None), scoresSTR['Fmatrix'][i].shape)
                         scoresSTR['F1'][i][k3] = max_F
                         scoresSTR['Fmatrix'][i][max_ind[0], :] = 0
                         scoresSTR['Fmatrix'][i][:, max_ind[1]] = 0
 
-        false_negatives = n_actualFaces - np.count_nonzero(scoresSTR['F1'][i])
-        scoresSTR['FNR'][i] = false_negatives / n_actualFaces if n_actualFaces else 0
+        if n_actualFaces > 0:
+            total_n_detectedFaces += np.count_nonzero(scoresSTR['F1'][i])
         
         if show_figures:
             try:
@@ -111,8 +114,8 @@ def CHALL_AGC_ComputeDetScores(DetectionSTR, AGC_Challenge1_STR, show_figures):
             plt.close()
 
     FD_score = np.mean(np.hstack(np.array(scoresSTR['F1'][:])))
-    FNR_score = np.mean(np.hstack(np.array(scoresSTR['FNR'][:])))
-    return FD_score, scoresSTR['F1'], FNR_score, scoresSTR['FNR']
+    FNR_score = 1 - total_n_detectedFaces / total_n_actualFaces
+    return FD_score, scoresSTR['F1'], FNR_score
 
 
 def MyFaceDetectionFunction(A, model: frp.FaceDetector):
@@ -146,11 +149,14 @@ def get_args():
 
 
 def load_model(model_name: str) -> frp.FaceDetector:
-    valid_names = ["mtcnn", "mediapipe"]
+    valid_names = ["mtcnn", "mediapipe", "yunet"]
+
     if model_name == valid_names[0]:
         return frp.MTCNNDetector(use_gpu=False, thresholds=[0.6, 0.7, 0.7])
     elif model_name == valid_names[1]:
-        return frp.MediaPipeDetector("model/detector.tflite")
+        return frp.MediaPipeDetector("models/detector.tflite")
+    elif model_name == valid_names[2]:
+        return frp.YuNetDetector("models/face_detection_yunet_2023mar.onnx", threshold=0.6)
     else:
         raise RuntimeError(f"Invalid model name {model_name}. Valid names: {valid_names}")
 
@@ -215,11 +221,11 @@ if __name__ == '__main__':
 
         DetectionSTR.append(det_faces)
 
-    FD_score, f1_scores, FNR_score, fnr_scores = CHALL_AGC_ComputeDetScores(DetectionSTR, AGC_Challenge1_TRAINING, show_figures=SHOW_FIGURES)
+    FD_score, f1_scores, FNR_score = CHALL_AGC_ComputeDetScores(DetectionSTR, AGC_Challenge1_TRAINING, show_figures=SHOW_FIGURES)
     _, rem = divmod(total_time, 3600)
     minutes, seconds = divmod(rem, 60)
-    print('F1-score: %.2f, Total time: %2d m %.2f s' % (100 * FD_score, int(minutes), seconds))
-    print('FNR-score: %.2f' % (100 * FNR_score))
+    print(f'F1-score: {round(100 * FD_score, 2)} %, Total time: {int(minutes)} m {round(seconds, 2)} s')
+    print(f'FNR-score: {round(100 * FNR_score, 2)} %')
 
     if OUTPUT_FILE:
         save_scores(OUTPUT_FILE, bounding_boxes=DetectionSTR, FD_score=FD_score, f1_scores=f1_scores)

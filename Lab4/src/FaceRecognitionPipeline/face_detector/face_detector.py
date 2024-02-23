@@ -110,11 +110,6 @@ class FaceDetector(ABC):
         if len(largest) == 1:
             return largest[0]
         return largest
-    
-
-    @abstractmethod
-    def save(file_path: str) -> None:
-        raise NotImplementedError("Implement in the subclass.")
 
 
     @abstractmethod

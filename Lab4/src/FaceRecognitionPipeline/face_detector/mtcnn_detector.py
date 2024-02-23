@@ -11,6 +11,7 @@ class MTCNNDetector(FaceDetector):
         device = mtw.get_torch_device(use_gpu=use_gpu, debug=False)
         self.mtcnn = MTCNN(post_process=False, keep_all=True, device=device, thresholds=thresholds)
 
+
     def detect_faces(self, images: list[imageio.v2.Array]) -> list[list[DetectionResult]]:
         global_results = []
         boxes, probs = self.mtcnn.detect(images, landmarks=False) # Process multiple images at once
@@ -20,10 +21,6 @@ class MTCNNDetector(FaceDetector):
             global_results.append(results)
 
         return global_results
-
-
-    def save(file_path: str) -> None:
-        return NotImplementedError()
     
 
     def __get_detection_results(self, boxes: np.ndarray, probs: list[float]) -> list[DetectionResult]:

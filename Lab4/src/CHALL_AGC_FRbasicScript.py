@@ -154,7 +154,7 @@ def load_model() -> frp.Pipeline:
     pipeline = frp.Pipeline(
         frp.FaceDetectorPreprocessor(output_channels=3),
         frp.MTCNNDetector(use_gpu=False, thresholds=[0.6, 0.7, 0.7]),
-        # frp.MediaPipeDetector(model_asset_path="model/detector.tflite"),
+        # frp.MediaPipeDetector(model_asset_path="models/detector.tflite"),
         frp.FeatureExtractorPreprocessor(new_size=128, output_channels=3),
         frp.DeepLearningExtractor(model_path="models/transfer_learning/lab4_version/model_4-15.ckpt", num_classes=80, input_channels=3, use_gpu=False),
         detection_min_prob=0.9,

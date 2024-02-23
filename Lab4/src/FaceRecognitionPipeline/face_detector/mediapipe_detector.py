@@ -24,7 +24,6 @@ class MediaPipeDetector(FaceDetector):
         self.detector = vision.FaceDetector.create_from_options(options)
 
 
-
     def detect_faces(self, images: list[imageio.v2.Array]) -> list[list[DetectionResult]]:
         global_results = []
         for im in images:
@@ -35,10 +34,6 @@ class MediaPipeDetector(FaceDetector):
             global_results.append(results)
             
         return global_results
-    
-
-    def save(file_path: str) -> None:
-        return NotImplementedError()
 
 
     def __get_detection_results(self, detection) -> list[DetectionResult]:
