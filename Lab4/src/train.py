@@ -6,6 +6,7 @@ import torch.nn as nn
 import torch.optim.lr_scheduler as lr_scheduler
 import numpy as np
 import argparse
+import cv2
 
 
 def parse_args() -> argparse.Namespace:
@@ -17,9 +18,7 @@ def parse_args() -> argparse.Namespace:
 
 
 if __name__ == "__main__":
-    
     args = parse_args()
-    
     dataset = args.dataset
     print(f"Dataset {dataset} will be used")
     
@@ -29,6 +28,7 @@ if __name__ == "__main__":
     use_gpu = True
     iomanager = mtw.IOManager(storage_dir="models")
     batch_size = 1024
+    color_transform = cv2.COLOR_RGB2LAB
     RESULTS_PATH = f"assets"
     CELEBA_DATASET_BASE_PATH = "data/datasets/CelebA"
     VGGFACE2_DATASET_BASE_PATH = "data/datasets/VGG-Face2"
@@ -50,8 +50,16 @@ if __name__ == "__main__":
         train_dir = VGGFACE2_DATASET_BASE_PATH + "/data/clean/train"
         test_dir = VGGFACE2_DATASET_BASE_PATH + "/data/clean/test"
     
-    train_dataset = ds.FeatureExtractorDataset(images_dir=train_dir, ids_file_path=ids_file)    
-    validation_dataset = ds.FeatureExtractorDataset(images_dir=test_dir, ids_file_path=ids_file)
+    train_dataset = ds.FeatureExtractorDataset(
+        images_dir=train_dir,
+        ids_file_path=ids_file,
+        color_transform=color_transform,
+    )    
+    validation_dataset = ds.FeatureExtractorDataset(
+        images_dir=test_dir,
+        ids_file_path=ids_file,
+        color_transform=color_transform,
+    )
     
 
     # TODO: Try Xavier initialization for convolutional layers and Gaussian for the fully connected layers.
@@ -59,7 +67,7 @@ if __name__ == "__main__":
     validation_loader = torch.utils.data.DataLoader(dataset=validation_dataset, batch_size=batch_size, pin_memory=use_gpu)
 
     # Training parameters
-    num_epochs = 15
+    num_epochs = 20
     learning_rate = 1e-3
     evaluation = mtw.AccuracyEvaluation(loss_criterion=nn.CrossEntropyLoss())
 
