@@ -109,9 +109,14 @@ class Trainer:
 
                 # Print the progress
                 if verbose and ((i + 1) % feedback_step == 0 or i + 1 == total_steps):
+                    current_lr = optimizer.param_groups[0]['lr']
+                    if lr_scheduler_minibatch is not None:
+                        current_lr = lr_scheduler_minibatch.get_last_lr()[0]
+                    elif lr_scheduler_epoch is not None:
+                        current_lr = lr_scheduler_epoch.get_last_lr()[0]
                     print(
-                        "Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}".format(
-                            epoch, self.epochs, i + 1, total_steps, loss.item()
+                        "Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}, Current lr: {:.2e}".format(
+                            epoch, self.epochs, i + 1, total_steps, loss.item(), current_lr
                         )
                     )
 
