@@ -20,7 +20,7 @@ class CelebA(Dataset):
         ids: dict[str, int] = get_ids(ids_file_path, extension="jpg")
         self.num_classes = get_num_unique_ids(ids_file_path)
         self.images_paths = get_images_paths(images_dir, input_format="jpg")
-        self.labels = {os.path.join(images_dir, k): torch.tensor(v) for k, v in ids.items()}
+        self.labels = {os.path.join(images_dir, k): torch.tensor(v) for k, v in ids.items()} # FIXME: Labels might not be integers, try to specify data type
 
         print(f"Created dataset with {len(self)} images and {self.num_classes} unique labels.")
 

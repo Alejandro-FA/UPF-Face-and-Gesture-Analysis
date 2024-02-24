@@ -28,6 +28,8 @@ if __name__ == "__main__":
     ids_file = DATASET_BASE_PATH + "/Anno/identity_CelebA_relabeled.txt"
     celeba_train = ds.CelebA(images_dir=DATASET_BASE_PATH + "/Img/img_align_celeba_cropped/train", ids_file_path=ids_file)
     celeba_validation = ds.CelebA(images_dir=DATASET_BASE_PATH + "/Img/img_align_celeba_cropped/test", ids_file_path=ids_file)
+
+    # TODO: Try Xavier initialization for convolutional layers and Gaussian for the fully connected layers.
     train_loader = torch.utils.data.DataLoader(dataset=celeba_train, batch_size=batch_size, shuffle=True, pin_memory=use_gpu)
     validation_loader = torch.utils.data.DataLoader(dataset=celeba_validation, batch_size=batch_size, pin_memory=use_gpu)
 

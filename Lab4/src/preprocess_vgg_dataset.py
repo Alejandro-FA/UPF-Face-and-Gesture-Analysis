@@ -8,6 +8,7 @@ import FaceRecognitionPipeline as frp
 import Datasets as ds
 import os
 from Datasets.original import OriginalDatasetSplitter
+from Datasets.vgg_face2 import VGGFace2Splitter
 import argparse
 from tqdm import tqdm
 
@@ -32,10 +33,10 @@ if __name__ == "__main__":
     args = parse_arguments()
     BASE_PATH = "data/datasets/VGG-Face2"
     ANNOTATIONS_PATH = BASE_PATH + "/annotations.txt"
-    OUTPUT_DIR = BASE_PATH + "/cropped"
+    OUTPUT_DIR = BASE_PATH + "/data/clean"
+    INPUT_DIR = BASE_PATH + "/data/images"
 
     if args.crop:
-        INPUT_DIR = BASE_PATH + "/data/images"
         cropper = ds.FaceCropper(
             frp.MTCNNDetector(use_gpu=False, thresholds=(0.6, 0.7, 0.7)),
             # frp.MediaPipeDetector(model_asset_path="model/detector.tflite"),
@@ -58,7 +59,7 @@ if __name__ == "__main__":
     # appropriate person.
 
     if args.expand:
-        original_dataset = OriginalDatasetSplitter(cropped_imgs_path="data/ids_img_cropped", target_dataset_path=OUTPUT_DIR, annotations_path=ANNOTATIONS_PATH)
+        original_dataset = VGGFace2Splitter(cropped_imgs_path=f"{INPUT_DIR}_cropped", target_dataset_path=OUTPUT_DIR, annotations_path=ANNOTATIONS_PATH)
         ids_count = original_dataset.from_cropped_to_dataset()
 
     if args.split: # Separate the images into train and test splits
@@ -67,7 +68,7 @@ if __name__ == "__main__":
 
     if args.relabel:
         # Relabel the ids of the images
-        MODIFIED_ANNOTATIONS = "data/expanded_annotations_relabeled.txt"
+        MODIFIED_ANNOTATIONS = BASE_PATH + "/vgg_expanded_annotations_relabeled.txt"
         TRAIN_IMAGES_DIR = OUTPUT_DIR + "/train"
         TEST_IMAGES_DIR = OUTPUT_DIR + "/test"
         ds.relabel_ids(ANNOTATIONS_PATH, MODIFIED_ANNOTATIONS, TRAIN_IMAGES_DIR, TEST_IMAGES_DIR)
