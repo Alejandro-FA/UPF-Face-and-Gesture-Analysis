@@ -153,3 +153,7 @@ In this section we include the identities of each of the 80 individuals that are
 | 78  | Edi Gathegi                                                                              |
 | 79  | Emile Hirsch                                                                             |
 | 80  | Joaquin Phoenix                                                                          |
+
+
+
+Try different color spaces that account for better ilumination. HSV, ...
