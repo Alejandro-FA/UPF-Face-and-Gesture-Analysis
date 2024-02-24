@@ -1,7 +1,7 @@
 import os, shutil
 import numpy as np
 import sys
-from ..splitter import DatasetSplitter
+from .splitter import DatasetSplitter
 
 
 class VGGFace2Splitter(DatasetSplitter):

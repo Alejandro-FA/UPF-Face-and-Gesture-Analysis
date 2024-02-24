@@ -1,1 +1,0 @@
-from .vgg_face2_splitter import VGGFace2Splitter
