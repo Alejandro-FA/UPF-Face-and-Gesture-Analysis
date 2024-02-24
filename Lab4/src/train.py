@@ -21,16 +21,17 @@ if __name__ == "__main__":
     args = parse_args()
     
     dataset = args.dataset
+    print(f"Dataset {dataset} will be used")
     
     
     # Set global variables
     seed_value = None
     use_gpu = True
     iomanager = mtw.IOManager(storage_dir="models")
-    batch_size = 512
+    batch_size = 1024
     RESULTS_PATH = f"assets"
     CELEBA_DATASET_BASE_PATH = "data/datasets/CelebA"
-    VGGFACE2_DATASET_BASE_PATH = "data/datasets/VGGFace2"
+    VGGFACE2_DATASET_BASE_PATH = "data/datasets/VGG-Face2"
 
 
     ###########################################################################
@@ -40,12 +41,12 @@ if __name__ == "__main__":
     device = mtw.get_torch_device(use_gpu=True, debug=True)
 
     # Load the dataset
-    if dataset == "celebA":
+    if dataset == "celeba":
         ids_file = CELEBA_DATASET_BASE_PATH + "/Anno/identity_CelebA_relabeled.txt"
         train_dir = CELEBA_DATASET_BASE_PATH + "/Img/img_align_celeba_cropped/train"
         test_dir = CELEBA_DATASET_BASE_PATH + "/Img/img_align_celeba_cropped/test"
     elif dataset == "vggface2":
-        ids_file = VGGFACE2_DATASET_BASE_PATH + "/expanded_annotations_relabeled.txt"
+        ids_file = VGGFACE2_DATASET_BASE_PATH + "/vgg_expanded_annotations_relabeled.txt"
         train_dir = VGGFACE2_DATASET_BASE_PATH + "/data/clean/train"
         test_dir = VGGFACE2_DATASET_BASE_PATH + "/data/clean/test"
     
@@ -81,7 +82,7 @@ if __name__ == "__main__":
         model=model,
         optimizer=optimizer,
         lr_scheduler_epoch=lr_scheduler_epoch,
-        lr_scheduler_minibatch=lr_scheduler_minibatch,
+        lr_scheduler_minibatch=None,
         seed_value=seed_value,
         verbose=True
     )
