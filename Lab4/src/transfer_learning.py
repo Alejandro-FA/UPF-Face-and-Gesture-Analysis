@@ -4,7 +4,7 @@ import Datasets as ds
 import torch
 import torch.nn as nn
 import numpy as np
-import os
+import torch.optim.lr_scheduler as lr_scheduler
 
 
 
@@ -15,8 +15,8 @@ if __name__ == "__main__":
     iomanager = mtw.IOManager(storage_dir="models/transfer_learning")
     batch_size = 512
     DATASET_BASE_PATH = "data"
-    PRETRAINED_MODEL_PATH = "models/superlight_cnn/lab4_version/model_45-5.ckpt"
-    PRETRAINED_MODEL_IDS = "data/datasets/CelebA/Anno/identity_CelebA_relabeled.txt"
+    PRETRAINED_MODEL_PATH = "models/superlight_vgg2/epoch-15.ckpt"
+    PRETRAINED_MODEL_IDS = "data/datasets/VGG-Face2/vgg_expanded_annotations_relabeled.txt"
 
 
     ###########################################################################
@@ -33,20 +33,38 @@ if __name__ == "__main__":
     validation_loader = torch.utils.data.DataLoader(dataset=original_validation, batch_size=batch_size, pin_memory=use_gpu)
 
     # Training parameters
-    num_epochs = 15
-    learning_rate = .001
+    num_epochs = 50
+    learning_rate = 1e-3
     evaluation = mtw.AccuracyEvaluation(loss_criterion=nn.CrossEntropyLoss())
 
     # Transfer Learning (reset last fully connected layer)
     pretrained_classes = ds.get_num_unique_ids(PRETRAINED_MODEL_IDS)
+    pretrained_params = torch.load(PRETRAINED_MODEL_PATH, map_location=device)
     model = frp.superlight_network_9layers(num_classes=pretrained_classes, input_channels=3)
-    model.load_state_dict(torch.load(PRETRAINED_MODEL_PATH))
+    model.load_state_dict(pretrained_params)
     model.fc2 = nn.Linear(128, 80)
-    optimizer = torch.optim.Adam(model.fc2.parameters(), lr=learning_rate, betas=(0.9, 0.999), eps=1e-08)
+
+    # Optimizer and learning rate scheduler
+    optimizer = torch.optim.Adam(model.fc2.parameters(), lr=learning_rate, betas=(0.9, 0.999), eps=1e-08, weight_decay=5e-3)
+    lr_scheduler_epoch = lr_scheduler.ReduceLROnPlateau(optimizer, patience=0, factor=0.5, threshold=0.01, min_lr=1e-5)
+    lr_scheduler_minibatch = lr_scheduler.LinearLR(optimizer, start_factor=1.0, end_factor=0.01, total_iters=num_epochs * len(train_loader))
 
     # Train the model
-    trainer = mtw.Trainer(evaluation=evaluation, epochs=num_epochs, train_data_loader=train_loader, validation_data_loader=validation_loader, io_manager=iomanager, device=device)
-    train_results, validation_results = trainer.train(model, optimizer, verbose=True)
+    trainer = mtw.Trainer(
+        evaluation=evaluation,
+        epochs=num_epochs,
+        train_data_loader=train_loader,
+        validation_data_loader=validation_loader,
+        io_manager=iomanager,
+        device=device,
+    )
+    train_results, validation_results = trainer.train(
+        model=model,
+        optimizer=optimizer,
+        lr_scheduler_epoch=lr_scheduler_epoch,
+        lr_scheduler_minibatch=None,
+        verbose=True,
+    )
 
 
     ###########################################################################

@@ -67,14 +67,16 @@ if __name__ == "__main__":
     validation_loader = torch.utils.data.DataLoader(dataset=validation_dataset, batch_size=batch_size, pin_memory=use_gpu)
 
     # Training parameters
-    num_epochs = 20
+    num_epochs = 40
     learning_rate = 1e-3
     evaluation = mtw.AccuracyEvaluation(loss_criterion=nn.CrossEntropyLoss())
 
     # Create an instance of the model
     model = frp.superlight_network_9layers(train_dataset.num_classes, input_channels=3)
-    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, betas=(0.9, 0.999), eps=1e-08)
-    lr_scheduler_epoch = lr_scheduler.ReduceLROnPlateau(optimizer, patience=1, factor=0.1, min_lr=1e-6)
+
+    # Optimizer and a learning rate scheduler
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, betas=(0.9, 0.999), eps=1e-08, weight_decay=5e-4)
+    lr_scheduler_epoch = lr_scheduler.ReduceLROnPlateau(optimizer, patience=0, factor=0.5, threshold=0.01, min_lr=1e-5)
     lr_scheduler_minibatch = lr_scheduler.LinearLR(optimizer, start_factor=1.0, end_factor=0.01, total_iters=num_epochs * len(train_loader))
 
     # Train the model
