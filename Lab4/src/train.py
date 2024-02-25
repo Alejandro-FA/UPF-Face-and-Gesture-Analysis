@@ -28,7 +28,8 @@ if __name__ == "__main__":
     use_gpu = True
     iomanager = mtw.IOManager(storage_dir="models")
     batch_size = 1024
-    color_transform = cv2.COLOR_RGB2LAB
+    color_transform = None
+    # color_transform = cv2.COLOR_RGB2LAB
     RESULTS_PATH = f"assets"
     CELEBA_DATASET_BASE_PATH = "data/datasets/CelebA"
     VGGFACE2_DATASET_BASE_PATH = "data/datasets/VGG-Face2"
