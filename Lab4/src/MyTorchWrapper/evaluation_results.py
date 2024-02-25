@@ -120,7 +120,7 @@ class EvaluationResults:
         self.__results.extend(results.__results)
 
 
-    def __getitem__(self, metric: str) -> list[list[float]]:
+    def __getitem__(self, metric: str) -> list[float]:
         """
         Get the values of a metric for all epochs and batches.
 
@@ -128,7 +128,7 @@ class EvaluationResults:
             metric (str): The name of the metric.
 
         Returns:
-            list[list[float]]: The values of the metric for all epochs and batches.
+            list[float]: The values of the metric for all epochs and batches.
         """
         return [res[metric] for epoch_results in self.__results for res in epoch_results]
 

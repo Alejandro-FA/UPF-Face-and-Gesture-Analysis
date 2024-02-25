@@ -1,0 +1,11 @@
+{
+    "files.watcherExclude": {
+        "**/data": true
+    },
+    "search.exclude": {
+        "**/data": true
+    },
+    "python.analysis.exclude": [
+        "**/data"
+    ]
+}

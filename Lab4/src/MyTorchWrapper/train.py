@@ -109,9 +109,10 @@ class Trainer:
 
                 # Print the progress
                 if verbose and ((i + 1) % feedback_step == 0 or i + 1 == total_steps):
+                    current_lr = optimizer.param_groups[0]['lr']
                     print(
-                        "Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}".format(
-                            epoch, self.epochs, i + 1, total_steps, loss.item()
+                        "Epoch [{}/{}], Step [{}/{}], Loss: {:.4f}, Current lr: {:.2e}".format(
+                            epoch, self.epochs, i + 1, total_steps, loss.item(), current_lr
                         )
                     )
 
