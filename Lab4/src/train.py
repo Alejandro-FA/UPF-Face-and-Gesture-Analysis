@@ -28,8 +28,8 @@ if __name__ == "__main__":
     use_gpu = True
     iomanager = mtw.IOManager(storage_dir="models")
     batch_size = 1024
-    color_transform = None
-    # color_transform = cv2.COLOR_RGB2LAB
+    # color_transform = None
+    color_transform = cv2.COLOR_RGB2LAB
     RESULTS_PATH = f"assets"
     CELEBA_DATASET_BASE_PATH = "data/datasets/CelebA"
     VGGFACE2_DATASET_BASE_PATH = "data/datasets/VGG-Face2"
@@ -76,7 +76,7 @@ if __name__ == "__main__":
     model = frp.superlight_network_9layers(train_dataset.num_classes, input_channels=3)
 
     # Optimizer and a learning rate scheduler
-    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, betas=(0.9, 0.999), eps=1e-08, weight_decay=5e-4)
+    optimizer = torch.optim.Adam(model.parameters(), lr=learning_rate, betas=(0.9, 0.999), eps=1e-08)
     lr_scheduler_epoch = lr_scheduler.ReduceLROnPlateau(optimizer, patience=0, factor=0.5, threshold=0.01, min_lr=1e-5)
     lr_scheduler_minibatch = lr_scheduler.LinearLR(optimizer, start_factor=1.0, end_factor=0.01, total_iters=num_epochs * len(train_loader))
 
