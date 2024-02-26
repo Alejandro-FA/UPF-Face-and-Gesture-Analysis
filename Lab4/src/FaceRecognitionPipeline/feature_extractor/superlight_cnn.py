@@ -60,19 +60,46 @@ class group(nn.Module):
 
 
 
-class resblock(nn.Module):
-    def __init__(self, in_channels, out_channels):
-        super(resblock, self).__init__()
-        self.conv1 = mfm(in_channels, out_channels, kernel_size=3, stride=1, padding=1)
-        self.conv2 = mfm(in_channels, out_channels, kernel_size=3, stride=1, padding=1)
+class skippable_group(nn.Module):
+    def __init__(self, in_channels, out_channels, kernel_size, stride, padding):
+        super(skippable_group, self).__init__()
+        self.conv_a = mfm(in_channels, in_channels, 1, 1, 0)
+        self.conv   = mfm(in_channels, out_channels, kernel_size, stride, padding)
 
     def forward(self, x):
         res = x
-        out = self.conv1(x)
-        out = self.conv2(out)
+        out = self.conv_a(x)
+        out = self.conv(out)
         out = out + res
         return out
+    
+    
 
+class inception_mfm(nn.Module):
+    def __init__(self, in_channels, out_channels, kernel_size_1=3, kernel_size_2=5):
+        super(inception_mfm, self).__init__()
+        assert out_channels % 2 == 0, "out_channels must be divisible by 2"
+        self.conv1 = mfm(in_channels, out_channels // 2, kernel_size=kernel_size_1, stride=1, padding=kernel_size_1//2, type=1)
+        self.conv2 = mfm(in_channels, out_channels // 2, kernel_size=kernel_size_2, stride=1, padding=kernel_size_2//2, type=1)
+
+    def forward(self, x):
+        out1 = self.conv1(x)
+        out2 = self.conv2(x)
+        return torch.cat([out1, out2], dim=1)
+    
+
+class inception_group(nn.Module):
+    def __init__(self, in_channels, out_channels, kernel_size_1=3, kernel_size_2=5):
+        super(inception_group, self).__init__()
+        assert out_channels % 2 == 0, "out_channels must be divisible by 2"
+        self.group1 = group(in_channels, out_channels // 2, kernel_size=kernel_size_1, stride=1, padding=kernel_size_1//2)
+        self.group2 = group(in_channels, out_channels // 2, kernel_size=kernel_size_2, stride=1, padding=kernel_size_2//2)
+
+    def forward(self, x):
+        out1 = self.group1(x)
+        out2 = self.group2(x)
+        return torch.cat([out1, out2], dim=1)
+    
 
 
 class superlight_network_9layers(nn.Module):
@@ -82,7 +109,6 @@ class superlight_network_9layers(nn.Module):
             mfm(input_channels, 16, 5, 1, 2), 
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
             mfm(16, 32, 3, 1, 1), 
-            # group(16, 32, 3, 1, 1), 
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
             group(32, 64, 3, 1, 1),
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True), 
@@ -101,3 +127,30 @@ class superlight_network_9layers(nn.Module):
         out = self.fc2(x)
         return out#, x
     
+
+class superlight_cnn_inception(nn.Module):
+    def __init__(self, num_classes=79077, input_channels=1):
+        super(superlight_cnn_inception, self).__init__()
+        self.features = nn.Sequential(
+            inception_mfm(input_channels, 26, kernel_size_1=3, kernel_size_2=5),
+            nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
+            inception_mfm(26, 42, kernel_size_1=3, kernel_size_2=5),
+            # nn.Dropout2d(p=0.05),
+            nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
+            skippable_group(42, 64, 3, 1, 1),
+            nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
+            skippable_group(64, 48, 3, 1, 1),
+            # nn.Dropout2d(p=0.05),
+            skippable_group(48, 48, 3, 1, 1),
+            nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
+        )
+        self.fc1 = mfm(8*8*48, 128, type=0)
+        self.fc2 = nn.Linear(128, num_classes)
+
+    def forward(self, x):
+        x = self.features(x)
+        x = x.view(x.size(0), -1)
+        x = self.fc1(x)
+        x = F.dropout(x, training=self.training) # x is the feature vector before the softmax layer
+        out = self.fc2(x)
+        return out#, x

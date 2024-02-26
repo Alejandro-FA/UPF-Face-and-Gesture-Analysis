@@ -1,5 +1,5 @@
 from .feature_extractor import FeatureExtractor
 from .light_cnn import network_9layers
-from .superlight_cnn import superlight_network_9layers
+from .superlight_cnn import superlight_network_9layers, superlight_cnn_inception
 from .sequeezenet import SqueezeNet
 from .deep_learning_extractor import DeepLearningExtractor
