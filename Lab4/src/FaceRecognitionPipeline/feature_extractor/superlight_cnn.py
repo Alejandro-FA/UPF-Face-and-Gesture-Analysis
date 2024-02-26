@@ -30,13 +30,10 @@ class mfm(nn.Module):
         super(mfm, self).__init__()
         self.out_channels = out_channels
         if type == 1:
-            self.filter = nn.Conv2d(in_channels, 2*out_channels, kernel_size=kernel_size, stride=stride, padding=padding)
-            
-            # Depth-wise separable convolutions
-            # self.filter = nn.Sequential(
-            #     nn.Conv2d(in_channels=in_channels, out_channels=in_channels, kernel_size=kernel_size, stride=stride, padding=padding, groups=in_channels),
-            #     nn.Conv2d(in_channels=in_channels, out_channels=2*out_channels, kernel_size=1, stride=stride, padding=0)
-            # )
+            self.filter = nn.Sequential(
+                nn.Conv2d(in_channels, 2*out_channels, kernel_size=kernel_size, stride=stride, padding=padding),
+                nn.BatchNorm2d(2*out_channels, momentum=0.1, affine=False),
+            )
         else:
             self.filter = nn.Linear(in_channels, 2*out_channels)
 
@@ -139,7 +136,6 @@ class superlight_cnn_inception(nn.Module):
             group(42, 64, 3, 1, 1),
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
             group(64, 48, 3, 1, 1),
-            # nn.Dropout2d(p=0.05),
             skippable_group(48, 48, 3, 1, 1),
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
         )
