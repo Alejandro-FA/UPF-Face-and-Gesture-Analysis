@@ -6,21 +6,27 @@ import numpy as np
 
 
 class FeatureExtractorPreprocessor:
-    def __init__(self, new_size: int, output_channels: Literal[1, 3] = 3) -> None:
+    def __init__(self, new_size: int, output_channels: Literal[1, 3] = 3, color_transform: int = None) -> None:
         self.output_width = new_size
         self.output_height = new_size
         self.output_channels = output_channels
+        self.color_transform = color_transform
     
 
     def __call__(self, image: imageio.v2.Array, bbox: BoundingBox) -> imageio.v2.Array:
         image = self.__to_3_dims(image)
         image = self.__change_channels(image)
+        
+        if self.color_transform is not None:
+            image = cv2.cvtColor(image, self.color_transform)
+        
         image = self.__square_crop(image, bbox)
         
         if image.shape[0] > self.output_width:
             image = self.__downscale(image) # Output image should be downscaled
         elif image.shape[0] < self.output_width:
             image = self.__upscale(image) # Output image should be upscaled
+        
         
         assert image.shape[0] == self.output_width, "Image width is not the expected"
         assert image.shape[1] == self.output_height, "Image height is not the expected"

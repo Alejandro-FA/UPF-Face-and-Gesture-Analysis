@@ -4,19 +4,22 @@ import torch
 from torchvision import transforms
 from ..utils import get_ids, get_images_paths, get_num_unique_ids
 from PIL import Image
+import numpy as np
+import cv2
 
 
 class OriginalDataset(Dataset):
     """
     Required class to load the original dataset provided for training
     """
-    def __init__(self, images_dir: str, ids_file_path: str) -> None:
+    def __init__(self, images_dir: str, ids_file_path: str, color_transfrom: int = None) -> None:
         if not os.path.isdir(images_dir):
             raise ValueError(f"Invalid directory {images_dir}")
         if not os.path.isfile(ids_file_path):
             raise ValueError(f"Invalid file {ids_file_path}")
     
         self.transform = transforms.ToTensor()
+        self.color_transform = color_transfrom
         ids: dict[str, int] = get_ids(ids_file_path, extension="jpg")
         self.num_classes = get_num_unique_ids(ids_file_path)
         self.images_paths = get_images_paths(images_dir, input_format="jpg")
@@ -28,7 +31,14 @@ class OriginalDataset(Dataset):
     ################################ Necerssary functions for pytorch data loader ################################
     def __getitem__(self, index):
         file_path = self.images_paths[index]
-        image = self.transform(Image.open(file_path))
+        image = Image.open(file_path)
+        if self.color_transform is not None:
+            image = np.array(image)
+            image = cv2.cvtColor(image, self.color_transform)
+            image = Image.fromarray(image)
+
+        image = self.transform(image)
+        
         return image, self.labels[file_path]
     
 
