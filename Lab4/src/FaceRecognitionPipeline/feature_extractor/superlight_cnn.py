@@ -132,10 +132,9 @@ class superlight_cnn_inception(nn.Module):
     def __init__(self, num_classes=79077, input_channels=1):
         super(superlight_cnn_inception, self).__init__()
         self.features = nn.Sequential(
-            inception_mfm(input_channels, 26, kernel_size_1=3, kernel_size_2=5),
+            inception_mfm(input_channels, 24, kernel_size_1=5, kernel_size_2=7),
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
-            inception_mfm(26, 42, kernel_size_1=3, kernel_size_2=5),
-            # nn.Dropout2d(p=0.05),
+            inception_mfm(24, 42, kernel_size_1=3, kernel_size_2=5),
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
             group(42, 64, 3, 1, 1),
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
