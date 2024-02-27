@@ -131,6 +131,16 @@ class EvaluationResults:
             list[float]: The values of the metric for all epochs and batches.
         """
         return [res[metric] for epoch_results in self.__results for res in epoch_results]
+    
+
+    def __len__(self) -> int:
+        """
+        Get the number of batches for which results are available.
+
+        Returns:
+            int: The number of batches.
+        """
+        return sum([len(epoch_results) for epoch_results in self.__results])
 
 
     def average(self, per_epoch: bool = True) -> 'EvaluationResults':

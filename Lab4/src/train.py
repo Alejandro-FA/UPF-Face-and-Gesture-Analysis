@@ -73,7 +73,7 @@ if __name__ == "__main__":
     evaluation = mtw.AccuracyEvaluation(loss_criterion=nn.CrossEntropyLoss())
 
     # Create an instance of the model
-    model = frp.superlight_cnn_inception(train_dataset.num_classes, input_channels=3)
+    model = frp.superlight_cnn_v3(train_dataset.num_classes, input_channels=3, batch_norm=True)
     # model = frp.superlight_network_9layers(train_dataset.num_classes, input_channels=3)
 
     # Optimizer and a learning rate scheduler
@@ -103,16 +103,16 @@ if __name__ == "__main__":
     ###########################################################################
     # Save training results
     ###########################################################################
-    # Print last learning rate used
-    print("Last learning rate used:", lr_scheduler_epoch.get_last_lr())
+    if len(validation_results) == 0:
+        print("No results available")
+    else:
+        # Print results
+        epoch_best_loss = np.argmin(validation_results["loss"])
+        print(f'Accuracy of the model at epoch {epoch_best_loss + 1} (epoch of lowest loss): {validation_results["accuracy"][epoch_best_loss]} %')
 
-    # Print results
-    epoch_best_loss = np.argmin(validation_results["loss"])
-    print(f'Accuracy of the model at epoch {epoch_best_loss + 1} (epoch of lowest loss): {validation_results["accuracy"][epoch_best_loss]} %')
-
-    # Save a training summary
-    summary = mtw.training_summary(model, optimizer, trainer, validation_results)
-    iomanager.save_summary(summary_content=summary, model_id=trainer.model_id)
+        # Save a training summary
+        summary = mtw.training_summary(model, optimizer, trainer, validation_results)
+        iomanager.save_summary(summary_content=summary, model_id=trainer.model_id)
 
     # Compute model paramters
     print("Number of parameters of the model:", mtw.get_model_params(model))

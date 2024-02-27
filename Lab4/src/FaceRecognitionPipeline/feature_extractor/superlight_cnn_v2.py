@@ -30,7 +30,10 @@ class mfm(nn.Module):
         super(mfm, self).__init__()
         self.out_channels = out_channels
         if type == 1:
-            self.filter = nn.Conv2d(in_channels, 2*out_channels, kernel_size=kernel_size, stride=stride, padding=padding),
+            self.filter = nn.Sequential(
+                nn.Conv2d(in_channels, 2*out_channels, kernel_size=kernel_size, stride=stride, padding=padding),
+                nn.BatchNorm2d(2*out_channels, momentum=0.1, affine=False),
+            )
         else:
             self.filter = nn.Linear(in_channels, 2*out_channels)
 
@@ -41,31 +44,45 @@ class mfm(nn.Module):
 
 
 
-class group(nn.Module):
+class skippable_group(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, stride, padding):
-        super(group, self).__init__()
+        super(skippable_group, self).__init__()
         self.conv_a = mfm(in_channels, in_channels, 1, 1, 0)
         self.conv   = mfm(in_channels, out_channels, kernel_size, stride, padding)
 
     def forward(self, x):
-        x = self.conv_a(x)
-        x = self.conv(x)
-        return x
+        out = self.conv_a(x)
+        out = self.conv(out + x)
+        return out
+    
     
 
+class inception_mfm(nn.Module):
+    def __init__(self, in_channels, out_channels, kernel_size_1=3, kernel_size_2=5):
+        super(inception_mfm, self).__init__()
+        assert out_channels % 2 == 0, "out_channels must be divisible by 2"
+        self.conv1 = mfm(in_channels, out_channels // 2, kernel_size=kernel_size_1, stride=1, padding=kernel_size_1//2, type=1)
+        self.conv2 = mfm(in_channels, out_channels // 2, kernel_size=kernel_size_2, stride=1, padding=kernel_size_2//2, type=1)
 
-class superlight_network_9layers(nn.Module):
+    def forward(self, x):
+        out1 = self.conv1(x)
+        out2 = self.conv2(x)
+        return torch.cat([out1, out2], dim=1)
+
+    
+
+class superlight_cnn_inception(nn.Module):
     def __init__(self, num_classes=79077, input_channels=1):
-        super(superlight_network_9layers, self).__init__()
+        super(superlight_cnn_inception, self).__init__()
         self.features = nn.Sequential(
-            mfm(input_channels, 16, 5, 1, 2), 
+            inception_mfm(input_channels, 24, kernel_size_1=5, kernel_size_2=7),
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
-            mfm(16, 32, 3, 1, 1), 
+            inception_mfm(24, 42, kernel_size_1=3, kernel_size_2=5),
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
-            group(32, 64, 3, 1, 1),
-            nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True), 
-            group(64, 48, 3, 1, 1),
-            group(48, 48, 3, 1, 1),
+            skippable_group(42, 64, 3, 1, 1),
+            nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
+            skippable_group(64, 48, 3, 1, 1),
+            skippable_group(48, 48, 3, 1, 1),
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
         )
         self.fc1 = mfm(8*8*48, 128, type=0)
