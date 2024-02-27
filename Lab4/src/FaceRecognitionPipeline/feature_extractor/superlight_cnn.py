@@ -64,10 +64,8 @@ class skippable_group(nn.Module):
         self.conv   = mfm(in_channels, out_channels, kernel_size, stride, padding)
 
     def forward(self, x):
-        res = x
         out = self.conv_a(x)
-        out = self.conv(out)
-        out = out + res
+        out = self.conv(out + x)
         return out
     
     
@@ -133,9 +131,9 @@ class superlight_cnn_inception(nn.Module):
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
             inception_mfm(24, 42, kernel_size_1=3, kernel_size_2=5),
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
-            group(42, 64, 3, 1, 1),
+            skippable_group(42, 64, 3, 1, 1),
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
-            group(64, 48, 3, 1, 1),
+            skippable_group(64, 48, 3, 1, 1),
             skippable_group(48, 48, 3, 1, 1),
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
         )

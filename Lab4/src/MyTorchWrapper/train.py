@@ -64,6 +64,7 @@ class Trainer:
         """
         This method catches the SIGINT signal (Ctrl+C) and calls the signal_handler method.
         """
+        self.stop_training = False
         self.previous_signal_handler = signal.signal(signal.SIGINT, self.signal_handler)
 
 
@@ -146,7 +147,7 @@ class Trainer:
             training_results.add_epoch(train_epoch_results)
             validation_results.append(validation_epoch_results)
 
-            # Update the learning rate
+            # Update the learning rate
             if lr_scheduler_epoch is not None:
                 if isinstance(lr_scheduler_epoch, torch.optim.lr_scheduler.ReduceLROnPlateau):
                     lr_scheduler_epoch.step(metrics=validation_results['loss'][-1])
@@ -181,7 +182,7 @@ class Trainer:
             loss.backward()
             optimizer.step()
 
-            # Update the learning rate
+            # Update the learning rate
             if lr_scheduler is not None:
                 if isinstance(lr_scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
                     raise ValueError("ReduceLROnPlateau scheduler cannot be used at minibatch level")

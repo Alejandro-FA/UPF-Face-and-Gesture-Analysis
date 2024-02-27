@@ -1,4 +1,3 @@
-from .original import OriginalDataset
 from .crop_dataset import FaceCropper
 from .split_dataset import train_test_split
 from .splitter import DatasetSplitter

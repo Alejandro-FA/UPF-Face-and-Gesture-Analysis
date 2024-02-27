@@ -1,7 +1,6 @@
-import os, shutil
-import numpy as np
-import sys
-from ..splitter import DatasetSplitter
+import os
+import shutil
+from .splitter import DatasetSplitter
 
 
 class OriginalDatasetSplitter(DatasetSplitter):

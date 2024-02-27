@@ -20,7 +20,7 @@ if __name__ == "__main__":
     PRETRAINED_MODEL_IDS = "data/datasets/VGG-Face2/vgg_expanded_annotations_relabeled.txt"
     
     # color_transform = None
-    color_tranform = cv2.COLOR_RGB2LAB
+    color_transform = cv2.COLOR_RGB2LAB
 
     ###########################################################################
     # Train
@@ -30,8 +30,8 @@ if __name__ == "__main__":
 
     # Load the dataset
     ids_file = DATASET_BASE_PATH + "/expanded_annotations_relabeled.txt"
-    original_train = ds.OriginalDataset(images_dir=DATASET_BASE_PATH + "/datasets/EXPANDED/train", ids_file_path=ids_file, color_transfrom=color_tranform)
-    original_validation = ds.OriginalDataset(images_dir=DATASET_BASE_PATH + "/datasets/EXPANDED/test", ids_file_path=ids_file, color_transfrom=color_tranform)
+    original_train = ds.FeatureExtractorDataset(images_dir=DATASET_BASE_PATH + "/datasets/EXPANDED/train", ids_file_path=ids_file, color_transform=color_transform)
+    original_validation = ds.FeatureExtractorDataset(images_dir=DATASET_BASE_PATH + "/datasets/EXPANDED/test", ids_file_path=ids_file, color_transform=color_transform)
     train_loader = torch.utils.data.DataLoader(dataset=original_train, batch_size=batch_size, shuffle=True, pin_memory=use_gpu)
     validation_loader = torch.utils.data.DataLoader(dataset=original_validation, batch_size=batch_size, pin_memory=use_gpu)
 
@@ -43,7 +43,7 @@ if __name__ == "__main__":
     # Transfer Learning (reset last fully connected layer)
     pretrained_classes = ds.get_num_unique_ids(PRETRAINED_MODEL_IDS)
     pretrained_params = torch.load(PRETRAINED_MODEL_PATH, map_location=device)
-    model = frp.superlight_network_9layers(num_classes=pretrained_classes, input_channels=3)
+    model = frp.superlight_cnn_inception(num_classes=pretrained_classes, input_channels=3)
     model.load_state_dict(pretrained_params)
     model.fc2 = nn.Linear(128, 80)
 
