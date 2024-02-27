@@ -27,7 +27,7 @@ if __name__ == "__main__":
     seed_value = None
     use_gpu = True
     iomanager = mtw.IOManager(storage_dir="models")
-    batch_size = 512
+    batch_size = 256
     # color_transform = None
     color_transform = cv2.COLOR_RGB2LAB
     RESULTS_PATH = f"assets"
