@@ -12,6 +12,7 @@ import cv2
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Train a feature extractor model")
     parser.add_argument("--dataset", "-d", required=True, choices=["vggface2", "celeba"], help="Dataset that has to be loaded.")
+    parser.add_argument("--model_name", "-m", required=False, type=str, help="The name of the model")
     args = parser.parse_args()
     return args
 
@@ -20,6 +21,7 @@ def parse_args() -> argparse.Namespace:
 if __name__ == "__main__":
     args = parse_args()
     dataset = args.dataset
+    model_name = args.model_name
     print(f"Dataset {dataset} will be used")
     
     
@@ -88,7 +90,8 @@ if __name__ == "__main__":
         train_data_loader=train_loader,
         validation_data_loader=validation_loader,
         io_manager=iomanager,
-        device=device
+        device=device,
+        model_name=model_name
     )
     train_results, validation_results = trainer.train(
         model=model,

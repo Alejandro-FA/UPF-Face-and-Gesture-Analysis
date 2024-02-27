@@ -25,16 +25,19 @@ class _PathManager:
         self.models_dir = models_dir
 
 
-    def get_model_folder(self, model_id: int) -> str:
+    def get_model_folder(self, model_id: int | str) -> str:
         """Given a model id, it returns the model folder path.
 
         Args:
-            model_id (int): Identification number of the model.
+            model_id (int | str): Identification number of the model | identification name of the model.
 
         Returns:
             str: The model folder path.
-        """    
-        return os.path.join(self.models_dir, f"model_{model_id}")
+        """
+        if type(model_id) == int:
+            return os.path.join(self.models_dir, f"model_{model_id}")
+        else:
+            return os.path.join(self.models_dir, f"{model_id}")
     
 
     def get_model_path(self, model_id: int, epoch: int) -> str:
@@ -50,11 +53,11 @@ class _PathManager:
         return os.path.join(self.get_model_folder(model_id), f"epoch-{epoch}{self.model_ext}")
     
 
-    def get_results_path(self, model_id: int) -> str:
+    def get_results_path(self, model_id: int | str) -> str:
         """Given a model id, it returns the path of its corresponding results file.
 
         Args:
-            model_id (int): Identification number of the model.
+            model_id (int | str): Identification number of the model. | Identification name of the model.
 
         Returns:
             str: The path of the results file.
@@ -104,6 +107,12 @@ class IOManager:
             os.makedirs(storage_dir)
         self.storage_dir = storage_dir       
         self._path_manager = _PathManager(storage_dir)
+    
+    
+    def model_exists(self, model_name: str) -> bool:
+        
+        model_dirs = [m for m in os.listdir(self.storage_dir)]
+        return model_name in model_dirs
 
 
     def next_id_available(self) -> int:
@@ -117,13 +126,13 @@ class IOManager:
         return 1 if not indices else max(indices) + 1        
 
 
-    def save_model(self, model: nn.Module, model_id: int, epoch: Optional[int] = None) -> None:
+    def save_model(self, model: nn.Module, model_id: int | str, epoch: Optional[int] = None) -> None:
         """Given a torch model, it saves it in the storage_dir with the
         provided model_id.
 
         Args:
             model (nn.Module): Neural Network model to store.
-            model_id (int): Identification number with which to store the model.
+            model_id (int | str): Identification number with which to store the model. | Identification name with which to store the model.
             epoch (Optional[int]): Optional epoch number.
         """
         epoch = epoch if epoch is not None else self._path_manager.get_last_epoch(model_id) + 1
@@ -132,14 +141,14 @@ class IOManager:
         torch.save(model.state_dict(), file_path)
     
 
-    def save_results(self, training_results: EvaluationResults, validation_results: EvaluationResults, model_id: int):
+    def save_results(self, training_results: EvaluationResults, validation_results: EvaluationResults, model_id: int | str):
         """
         Saves the training and validation results for a specific model and epoch.
 
         Args:
             training_results (BasicResults): Training results to be saved.
             validation_results (BasicResults): Validation results to be saved.
-            model_id (int): Identification number of the model.
+            model_id (int | str): Identification number of the model. | Identification name of the model
             epoch (int, optional): Epoch number. Defaults to 1.
         """
         os.makedirs(self._path_manager.get_model_folder(model_id), exist_ok=True) 
@@ -169,12 +178,12 @@ class IOManager:
         print("Model loaded from:", file_path)
         
         
-    def load_results(self, model_id: int) -> tuple[EvaluationResults, EvaluationResults]:   
+    def load_results(self, model_id: int | str) -> tuple[EvaluationResults, EvaluationResults]:   
         """
         Load the results of a trained model for a specific epoch.
 
         Args:
-            model_id (int): The ID of the model.
+            model_id (int | str): The ID of the model | The name of the model.
             epoch (int, optional): The epoch number. Defaults to 1.
 
         Returns:

@@ -35,6 +35,7 @@ class Trainer:
         validation_data_loader: DataLoader,
         io_manager: IOManager,
         device: torch.device,
+        model_name: str = None
     ) -> None:
         self.evaluation: BasicEvaluation = evaluation
         self.epochs: int = epochs
@@ -44,7 +45,13 @@ class Trainer:
 
         # The IOManager is used to save the model checkpoints and the training results
         self.iomanager: IOManager = io_manager
-        self.model_id: int = self.iomanager.next_id_available()
+        if model_name is None:
+            self.model_id: int = self.iomanager.next_id_available()
+        else:
+            if not self.iomanager.model_exists(model_name):
+                self.model_id: str = model_name
+            else:
+                raise ValueError(f"Model name {model_name} already exists. Please, choose another name")
 
         # Register the signal handler for SIGINT (Ctrl+C)
         self.stop_training: bool = False
@@ -57,7 +64,10 @@ class Trainer:
 
     @property
     def model_name(self) -> str:
-        return f"model_{self.model_id}"
+        if type(self.model_id) == int:
+            return f"model_{self.model_id}"
+        else:
+            return self.model_id
     
 
     def catch_signal(self) -> None:
@@ -122,7 +132,9 @@ class Trainer:
         self.catch_signal() # Catch the SIGINT signal (Ctrl+C)
 
         # Take the next available model id to save checkpoints
-        self.model_id = self.iomanager.next_id_available()
+        if type(self.model_id) == int:
+            self.model_id = self.iomanager.next_id_available()
+            
         print(f"Training {self.model_name} with {len(self.train_data_loader)} minibatches per epoch...")
 
         if seed_value is not None: torch.manual_seed(seed_value) # Ensure repeatable results
