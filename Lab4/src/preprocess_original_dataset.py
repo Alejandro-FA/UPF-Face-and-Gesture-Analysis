@@ -7,7 +7,7 @@ import Datasets as ds
 import FaceRecognitionPipeline as frp
 import Datasets as ds
 import os
-from Datasets.original import OriginalDatasetSplitter
+from Datasets import OriginalDatasetSplitter
 import argparse
 
 
@@ -29,8 +29,8 @@ def parse_arguments() -> argparse.Namespace:
 
 if __name__ == "__main__":
     args = parse_arguments()
-    ANNOTATIONS_PATH = "data/expanded_annotations.txt"
-    OUTPUT_DIR = "data/datasets/EXPANDED"
+    ANNOTATIONS_PATH = "data/expanded_annotations_v2.txt"
+    OUTPUT_DIR = "data/datasets/EXPANDED_v2"
 
     if args.crop:
         INPUT_DIR = "data/ids_img"
@@ -55,16 +55,16 @@ if __name__ == "__main__":
     # appropriate person.
 
     if args.expand:
-        original_dataset = OriginalDatasetSplitter(cropped_imgs_path="data/ids_img_cropped", target_dataset_path=OUTPUT_DIR, annotations_path=ANNOTATIONS_PATH)
+        original_dataset = OriginalDatasetSplitter(cropped_imgs_path="data/images_cropped_merged", target_dataset_path=OUTPUT_DIR, annotations_path=ANNOTATIONS_PATH)
         ids_count = original_dataset.from_cropped_to_dataset()
 
     if args.split: # Separate the images into train and test splits
         img2id_map = ds.get_ids(ANNOTATIONS_PATH)
-        ds.train_test_split(img2id_map, input_dir=OUTPUT_DIR, imgs_per_id_in_test=2)
+        ds.train_test_split(img2id_map, input_dir=OUTPUT_DIR, imgs_per_id_in_test=10)
 
     if args.relabel:
         # Relabel the ids of the images
-        MODIFIED_ANNOTATIONS = "data/expanded_annotations_relabeled.txt"
+        MODIFIED_ANNOTATIONS = "data/expanded_annotations_relabeled_v2.txt"
         TRAIN_IMAGES_DIR = OUTPUT_DIR + "/train"
         TEST_IMAGES_DIR = OUTPUT_DIR + "/test"
         ds.relabel_ids(ANNOTATIONS_PATH, MODIFIED_ANNOTATIONS, TRAIN_IMAGES_DIR, TEST_IMAGES_DIR)
