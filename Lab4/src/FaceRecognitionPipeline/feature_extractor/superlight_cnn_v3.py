@@ -32,10 +32,10 @@ class mfm_v2(nn.Module):
         self.out_channels = out_channels
         if type == 1:
             self.filter = nn.Conv2d(in_channels, 2*out_channels, kernel_size=kernel_size, stride=stride, padding=padding, groups=groups)
-            self.bn = nn.BatchNorm2d(2*out_channels, momentum=0.1, affine=True) if batch_norm else None
+            self.bn = nn.BatchNorm2d(2*out_channels, momentum=0.1, affine=False) if batch_norm else None
         else:
             self.filter = nn.Linear(in_channels, 2*out_channels)
-            self.bn = nn.BatchNorm1d(2*out_channels, momentum=0.1, affine=True) if batch_norm else None
+            self.bn = nn.BatchNorm1d(2*out_channels, momentum=0.1, affine=False) if batch_norm else None
 
     def forward(self, x):
         out = self.filter(x)

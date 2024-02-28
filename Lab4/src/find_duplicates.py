@@ -46,7 +46,7 @@ if __name__ == '__main__':
     for imagePath in image_paths:
         # load the input image and compute the hash
         image = cv2.imread(imagePath)
-        h = dhash(image)
+        h = dhash(image, hashSize=4)
         # grab all image paths with that hash, add the current image
         # path to it, and store the list back in the hashes dictionary
         p = hashes.get(h, [])
