@@ -75,7 +75,7 @@ if __name__ == "__main__":
     evaluation = mtw.AccuracyEvaluation(loss_criterion=nn.CrossEntropyLoss())
 
     # Create an instance of the model
-    model = frp.superlight_cnn_v3(train_dataset.num_classes, input_channels=3, batch_norm=True)
+    model = frp.superlight_cnn_v3(train_dataset.num_classes, input_channels=3, instance_norm=True)
     # model = frp.superlight_network_9layers(train_dataset.num_classes, input_channels=3)
 
     # Optimizer and a learning rate scheduler
