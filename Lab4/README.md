@@ -91,14 +91,15 @@ This is a summary of the performance of the new models with the VGG-Face2 datase
 | MODEL NAME      | EPOCH LOWER LOSS | ACCURACY EPOCH LOWER LOSS | TL EPOCH LOWER LOSS | TL ACCURACY EPOCH LOWER LOSS | F1-score | Parameters |   TL Dataset   |
 | --------------- | ---------------- | ------------------------- | ------------------- | ---------------------------- | -------- | ---------- | ---- |
 | superlight_vgg2_expandedv2 | 13               | 79.2191435768262 %        | 50                  | 75.25%                       | 88.98    | 957808     | EXPANDED_v2     |
-| superlight_vgg2_expanded | 13               | 79.2191435768262 %        | 50                | 88.75                  | 89.82 | 957808 | EXPANDED     |
-| superlight_lab  | 10               | 79.7338736173475 %        |                     |                              |          |            |      |
-|                 |                  |                           |                     |                              |          |            |      |
+| superlight_vgg2_expanded | 13               | 79.2191435768262 %        | 50                | 88.75 %                | 89.82 | 957808 | EXPANDED     |
+| superlight_lab_expandedv2 | 10               | 79.7338736173475 %        | 50 | 74.0 % | 86.01 | 957808 | EXPANDED_v2 |
+| superlight_lab_expanded | 10 | 79.7338736173475 % | 50 | 86.875 % | 86.47 | 957808 | EXPANDED |
 |                 |                  |                           |                     |                              |          |            |      |
 
-### superlight_vgg2
+### superlight_vgg2 and superlight_lab (both expanded and expanded_v2)
 
-When used, be careful not to include LAB color transformation neither in the challenge nor in the transfer learning script
+When used, be careful not to include LAB color transformation neither in the challenge nor in the transfer learning script.
+
 
 Observations: the following is the code that should be placed in the `superlight_cnn.py` file for the model to work.
 
