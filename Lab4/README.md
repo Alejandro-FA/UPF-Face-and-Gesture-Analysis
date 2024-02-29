@@ -90,7 +90,8 @@ This is a summary of the performance of the new models with the VGG-Face2 datase
 
 | MODEL NAME      | EPOCH LOWER LOSS | ACCURACY EPOCH LOWER LOSS | TL EPOCH LOWER LOSS | TL ACCURACY EPOCH LOWER LOSS | F1-score | Parameters |   TL Dataset   |
 | --------------- | ---------------- | ------------------------- | ------------------- | ---------------------------- | -------- | ---------- | ---- |
-| superlight_vgg2 | 13               | 79.2191435768262 %        | 50                  | 75.25%                       | 88.98    | 957808     | EXPANDED_v2     |
+| superlight_vgg2_expandedv2 | 13               | 79.2191435768262 %        | 50                  | 75.25%                       | 88.98    | 957808     | EXPANDED_v2     |
+| superlight_vgg2_expanded | 13               | 79.2191435768262 %        | 50                | 88.75                  | 89.82 | 957808 | EXPANDED     |
 | superlight_lab  | 10               | 79.7338736173475 %        |                     |                              |          |            |      |
 |                 |                  |                           |                     |                              |          |            |      |
 |                 |                  |                           |                     |                              |          |            |      |
