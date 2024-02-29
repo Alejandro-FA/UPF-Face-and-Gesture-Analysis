@@ -14,13 +14,13 @@ if __name__ == "__main__":
     seed_value = 42
     use_gpu = True
     iomanager = mtw.IOManager(storage_dir="models/transfer_learning")
-    batch_size = 1024
+    batch_size = 512
     DATASET_BASE_PATH = "data"
-    PRETRAINED_MODEL_PATH = "models/superlight_vgg2/epoch-13.ckpt"
+    PRETRAINED_MODEL_PATH = "models/model_6/epoch-17.ckpt"
     PRETRAINED_MODEL_IDS = "data/datasets/VGG-Face2/vgg_expanded_annotations_relabeled.txt"
     
-    color_transform = None
-    # color_transform = cv2.COLOR_RGB2LAB
+    # color_transform = None
+    color_transform = cv2.COLOR_RGB2LAB
 
     ###########################################################################
     # Train
@@ -36,16 +36,17 @@ if __name__ == "__main__":
     validation_loader = torch.utils.data.DataLoader(dataset=original_validation, batch_size=batch_size, pin_memory=use_gpu)
 
     # Training parameters
-    num_epochs = 50
+    num_epochs = 200
     learning_rate = 1e-3
     evaluation = mtw.AccuracyEvaluation(loss_criterion=nn.CrossEntropyLoss())
 
     # Transfer Learning (reset last fully connected layer)
     pretrained_classes = ds.get_num_unique_ids(PRETRAINED_MODEL_IDS)
     pretrained_params = torch.load(PRETRAINED_MODEL_PATH, map_location=device)
-    model = frp.superlight_network_9layers(num_classes=pretrained_classes, input_channels=3)
+    # model = frp.superlight_network_9layers(num_classes=pretrained_classes, input_channels=3)
+    model = frp.superlight_cnn_v4(num_classes=pretrained_classes, input_channels=3, instance_norm=True)
     model.load_state_dict(pretrained_params)
-    model.fc2 = nn.Linear(128, 80)
+    model.fc2 = nn.Linear(133, 80)
 
     # Optimizer and learning rate scheduler
     optimizer = torch.optim.Adam(model.fc2.parameters(), lr=learning_rate, betas=(0.9, 0.999), eps=1e-08, weight_decay=0)

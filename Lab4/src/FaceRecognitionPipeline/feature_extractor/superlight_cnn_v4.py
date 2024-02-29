@@ -26,16 +26,16 @@ These modifications make the model adjust to the requirements imposed in our ass
 """
 
 
-class mfm_v2(nn.Module):
-    def __init__(self, in_channels: int, out_channels: int, kernel_size: int=3, stride: int=1, padding: int=1, groups: int=1, type: Literal[0,1]=1, instance_norm: bool = False):
-        super(mfm_v2, self).__init__()
+class mfm_v3(nn.Module):
+    def __init__(self, in_channels: int, out_channels: int, kernel_size: int=3, stride: int=1, padding: int=1, type: Literal[0,1]=1, instance_norm: bool = False):
+        super(mfm_v3, self).__init__()
         self.out_channels = out_channels
         if type == 1:
-            self.filter = nn.Conv2d(in_channels, 2*out_channels, kernel_size=kernel_size, stride=stride, padding=padding, groups=groups)
+            self.filter = nn.Conv2d(in_channels, 2*out_channels, kernel_size=kernel_size, stride=stride, padding=padding)
             self.norm = nn.InstanceNorm2d(2*out_channels, momentum=0.1, affine=False) if instance_norm else None
         else:
             self.filter = nn.Linear(in_channels, 2*out_channels)
-            self.norm = nn.InstanceNorm1d(2*out_channels, momentum=0.1, affine=False) if instance_norm else None
+            self.norm = None
 
     def forward(self, x):
         out = self.filter(x)
@@ -43,19 +43,18 @@ class mfm_v2(nn.Module):
         out = torch.split(out, self.out_channels, 1)
         return torch.max(out[0], out[1])
 
+    
 
-
-class depth_wise_separable_mfm(nn.Module):
-    def __init__(self, in_channels: int, out_channels: int, kernel_size: int, instance_norm: bool = False):
-        super(depth_wise_separable_mfm, self).__init__()
-        padding = kernel_size // 2
-        self.conv_a = mfm_v2(in_channels, in_channels, kernel_size=kernel_size, padding=padding, groups=in_channels, instance_norm=instance_norm)
-        self.conv_b = mfm_v2(in_channels, out_channels, kernel_size=1, padding=0, groups=1, instance_norm=instance_norm)
+class group_v3(nn.Module):
+    def __init__(self, in_channels: int, out_channels: int, kernel_size: int, stride: int, padding: int, instance_norm: bool):
+        super(group_v3, self).__init__()
+        self.conv_a = mfm_v3(in_channels, in_channels, 1, 1, 0, instance_norm=instance_norm)
+        self.conv   = mfm_v3(in_channels, out_channels, kernel_size, stride, padding, instance_norm=instance_norm)
 
     def forward(self, x):
-        out = self.conv_a(x)
-        out = self.conv_b(out + x) # Skip connection
-        return out
+        x = self.conv_a(x)
+        x = self.conv(x)
+        return x
     
     
 
@@ -63,8 +62,8 @@ class inception_mfm(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size_1=3, kernel_size_2=5, instance_norm: bool=False):
         super(inception_mfm, self).__init__()
         assert out_channels % 2 == 0, "out_channels must be divisible by 2"
-        self.conv1 = mfm_v2(in_channels, out_channels // 2, kernel_size=kernel_size_1, padding=kernel_size_1//2, instance_norm=instance_norm)
-        self.conv2 = mfm_v2(in_channels, out_channels // 2, kernel_size=kernel_size_2, padding=kernel_size_2//2, instance_norm=instance_norm)
+        self.conv1 = mfm_v3(in_channels, out_channels // 2, kernel_size=kernel_size_1, padding=kernel_size_1//2, instance_norm=instance_norm)
+        self.conv2 = mfm_v3(in_channels, out_channels // 2, kernel_size=kernel_size_2, padding=kernel_size_2//2, instance_norm=instance_norm)
 
     def forward(self, x):
         out1 = self.conv1(x)
@@ -73,17 +72,17 @@ class inception_mfm(nn.Module):
 
     
 
-class superlight_cnn_v3(nn.Module):
+class superlight_cnn_v4(nn.Module):
     def __init__(self, num_classes=79077, input_channels=1, instance_norm: bool=False):
-        super(superlight_cnn_v3, self).__init__()
-        self.conv1 = inception_mfm(input_channels, 24, kernel_size_1=5, kernel_size_2=7, instance_norm=instance_norm)
-        self.conv2 = inception_mfm(24, 42, kernel_size_1=3, kernel_size_2=5, instance_norm=instance_norm)
-        self.conv3 = depth_wise_separable_mfm(42, 84, 3, instance_norm=instance_norm)
-        self.conv4 = depth_wise_separable_mfm(84, 56, 3, instance_norm=instance_norm)
-        self.conv5 = depth_wise_separable_mfm(56, 56, 3, instance_norm=instance_norm)
+        super(superlight_cnn_v4, self).__init__()
+        self.conv1 = inception_mfm(input_channels, 16, kernel_size_1=5, kernel_size_2=7, instance_norm=instance_norm)
+        self.conv2 = inception_mfm(16, 32, kernel_size_1=3, kernel_size_2=5, instance_norm=instance_norm)
+        self.conv3 = group_v3(32, 64, 3, 1, 1, instance_norm=instance_norm)
+        self.conv4 = group_v3(64, 48, 3, 1, 1, instance_norm=instance_norm)
+        self.conv5 = group_v3(48, 48, 3, 1, 1, instance_norm=instance_norm)
 
-        self.fc1 = mfm_v2(8*8*56, 128, type=0, instance_norm=instance_norm)
-        self.fc2 = nn.Linear(128, num_classes)
+        self.fc1 = mfm_v3(8*8*48, 133, type=0, instance_norm=instance_norm)
+        self.fc2 = nn.Linear(133, num_classes)
 
     def forward(self, x):
         # Feature extraction
@@ -104,5 +103,5 @@ class superlight_cnn_v3(nn.Module):
         x = self.fc1(x)
 
         # Classification
-        x = F.dropout(x, training=self.training)
+        x = F.dropout(x, p=0.2, training=self.training)
         return self.fc2(x)

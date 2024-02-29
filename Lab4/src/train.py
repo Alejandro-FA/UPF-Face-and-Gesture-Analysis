@@ -29,7 +29,7 @@ if __name__ == "__main__":
     seed_value = None
     use_gpu = True
     iomanager = mtw.IOManager(storage_dir="models")
-    batch_size = 256
+    batch_size = 512
     # color_transform = None
     color_transform = cv2.COLOR_RGB2LAB
     RESULTS_PATH = f"assets"
@@ -75,7 +75,7 @@ if __name__ == "__main__":
     evaluation = mtw.AccuracyEvaluation(loss_criterion=nn.CrossEntropyLoss())
 
     # Create an instance of the model
-    model = frp.superlight_cnn_v3(train_dataset.num_classes, input_channels=3, instance_norm=True)
+    model = frp.superlight_cnn_v4(train_dataset.num_classes, input_channels=3, instance_norm=True)
     # model = frp.superlight_network_9layers(train_dataset.num_classes, input_channels=3)
 
     # Optimizer and a learning rate scheduler
