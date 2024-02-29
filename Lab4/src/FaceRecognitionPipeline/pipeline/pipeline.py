@@ -3,6 +3,8 @@ from ..preprocessor import FaceDetectorPreprocessor, FeatureExtractorPreprocesso
 from ..feature_extractor import FeatureExtractor
 import imageio.v2
 import numpy as np
+import os
+import cv2
 
 
 class Pipeline:
@@ -45,5 +47,39 @@ class Pipeline:
         best_prob_idx = np.argmax(classification_probs)
         best_id = ids[best_prob_idx]
         return best_id if classification_probs[best_prob_idx] >= self.classification_min_prob else -1
+    
+    
+    def visualize(self, image: imageio.v2.Array, output_dir: str):
+        if not os.path.exists(output_dir):
+            os.makedirs(output_dir)
+        
+        # Save the original image
+        imageio.imwrite(f"{output_dir}/original_image.png", image)
+        
+        # Save the Face Detector preprocessed image
+        fd_preprocessed = self.fd_preprocessor(image)
+        imageio.imwrite(f"{output_dir}/fd_preprocessed.png", fd_preprocessed)
+        
+        # Save the image with the bounding box
+        results: list[DetectionResult] = self.face_detector(fd_preprocessed)
+        bbox_image = cv2.cvtColor(fd_preprocessed, cv2.COLOR_RGB2BGR)
+        bounding_box: BoundingBox = results[0].bounding_box
+        x0 = bounding_box.x0
+        y0 = bounding_box.y0
+        x1 = bounding_box.x1
+        y1 = bounding_box.y1
+        curr_image = cv2.rectangle(bbox_image, (x0, y0), (x1, y1), (0, 255, 0), 2)        
+        cv2.imwrite(f"{output_dir}/bbox_image.png", curr_image)
+        
+        # Save the Feature Extractor preprocessed image
+        boxed_image: imageio.v2.Array = self.fe_preprocessor(fd_preprocessed, bounding_box)
+        imageio.imwrite(f"{output_dir}/fe_preprocessed.png", boxed_image)
+        
+        
+    
+        self.feature_extractor.visualize(boxed_image, output_dir)
+        
+        
+        
         
         

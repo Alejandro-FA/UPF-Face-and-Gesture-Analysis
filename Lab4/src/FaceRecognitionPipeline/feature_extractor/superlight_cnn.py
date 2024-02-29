@@ -30,7 +30,13 @@ class mfm(nn.Module):
         super(mfm, self).__init__()
         self.out_channels = out_channels
         if type == 1:
-            self.filter = nn.Conv2d(in_channels, 2*out_channels, kernel_size=kernel_size, stride=stride, padding=padding),
+            self.filter = nn.Conv2d(in_channels, 2*out_channels, kernel_size=kernel_size, stride=stride, padding=padding)
+            
+            # Depth-wise separable convolutions
+            # self.filter = nn.Sequential(
+            #     nn.Conv2d(in_channels=in_channels, out_channels=in_channels, kernel_size=kernel_size, stride=stride, padding=padding, groups=in_channels),
+            #     nn.Conv2d(in_channels=in_channels, out_channels=2*out_channels, kernel_size=1, stride=stride, padding=0)
+            # )
         else:
             self.filter = nn.Linear(in_channels, 2*out_channels)
 
@@ -51,7 +57,22 @@ class group(nn.Module):
         x = self.conv_a(x)
         x = self.conv(x)
         return x
-    
+
+
+
+class resblock(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super(resblock, self).__init__()
+        self.conv1 = mfm(in_channels, out_channels, kernel_size=3, stride=1, padding=1)
+        self.conv2 = mfm(in_channels, out_channels, kernel_size=3, stride=1, padding=1)
+
+    def forward(self, x):
+        res = x
+        out = self.conv1(x)
+        out = self.conv2(out)
+        out = out + res
+        return out
+
 
 
 class superlight_network_9layers(nn.Module):
@@ -61,6 +82,7 @@ class superlight_network_9layers(nn.Module):
             mfm(input_channels, 16, 5, 1, 2), 
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
             mfm(16, 32, 3, 1, 1), 
+            # group(16, 32, 3, 1, 1), 
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True),
             group(32, 64, 3, 1, 1),
             nn.MaxPool2d(kernel_size=2, stride=2, ceil_mode=True), 

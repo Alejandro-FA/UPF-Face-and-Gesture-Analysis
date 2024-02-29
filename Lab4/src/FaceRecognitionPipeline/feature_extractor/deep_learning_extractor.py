@@ -5,6 +5,7 @@ from torchvision import transforms
 import imageio.v2
 from .superlight_cnn import superlight_network_9layers
 import MyTorchWrapper as mtw
+import matplotlib.pyplot as plt
 
 
 class DeepLearningExtractor(FeatureExtractor):
@@ -20,7 +21,7 @@ class DeepLearningExtractor(FeatureExtractor):
         self.model.load_state_dict(torch.load(model_path, map_location=device))
         self.model.eval()
         self.model_path = model_path
-    
+
 
     def __call__(self, image: imageio.v2.Array) -> tuple[int, float]:
         # Transform image to tensor
@@ -42,3 +43,44 @@ class DeepLearningExtractor(FeatureExtractor):
     
     def num_parameters(self):
         return mtw.get_model_params(self.model)
+
+    
+    def visualize(self, image: imageio.v2.Array, output_dir: str):
+        transform = transforms.Compose([
+            transforms.ToTensor()
+        ])
+
+        
+        image = transform(image).unsqueeze(0)
+        activation = {}
+
+        def get_activation(name):
+            def hook(model, input, output):
+                activation[name] = output.detach()
+            return hook
+
+
+        conv_layers = [layer_name for layer_name, _ in self.model.named_modules() if isinstance(_, torch.nn.Conv2d)]
+
+        for name, module in self.model.named_modules():
+            if isinstance(module, torch.nn.Conv2d):
+                module.register_forward_hook(get_activation(name))
+
+        output = self.model(image)
+
+        # Visualize the feature maps for each convolutional layer
+        for layer_name, feature_map in activation.items():
+            print(f"Creating feature maps for layer: {layer_name}")
+            num_features = feature_map.size(1)
+            num_cols = 8  # Number of feature maps to display per row
+            num_rows = num_features // num_cols + 1
+
+            plt.figure(figsize=(20, 20))
+            plt.suptitle(f'Feature maps for layer: {layer_name}')
+            for i in range(num_features):
+                plt.subplot(num_rows, num_cols, i + 1)
+                plt.imshow(feature_map[0, i].cpu().detach().numpy(), cmap='jet')
+                plt.axis('off')
+            
+            plt.savefig(f"{output_dir}/{layer_name}.png", dpi=500)
+
