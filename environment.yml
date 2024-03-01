@@ -1,6 +1,6 @@
 name: face_analysis
 channels:
-  - nvidia # Uncomment this if you want Nvidia GPU support
+  # - nvidia # Uncomment this if you want Nvidia GPU support
   - pytorch
   - conda-forge
   - defaults
@@ -15,7 +15,7 @@ dependencies:
   - scipy>=1.12.0
   - seaborn>=0.13.2
   - pytorch:pytorch>=2.2.0
-  - pytorch-cuda=12.1 # Uncomment this if you want Nvidia GPU support
+  # - pytorch-cuda=12.1 # Uncomment this if you want Nvidia GPU support
   - torchvision>=0.17.0
   - torchinfo>=1.8.0
   - tqdm>=4.66.2
