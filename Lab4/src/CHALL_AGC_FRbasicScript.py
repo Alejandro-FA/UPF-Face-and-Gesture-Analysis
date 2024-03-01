@@ -21,6 +21,8 @@ SUMMARY_FILE_EXTENSION = "txt"
 def get_args():
     parser = argparse.ArgumentParser(description="Face recognition challenge")
     parser.add_argument("--summary", action=argparse.BooleanOptionalAction, default=False, help="After the execution of the challenge, generate a summary of the performance of the model")
+    parser.add_argument("--detector_threshold", type=float, default=0.9, help="Threshold for the face detector")
+    parser.add_argument("--classifier_threshold", type=float, default=0.4, help="Threshold for the face classifier")
     
     return parser.parse_args()
 
@@ -152,7 +154,7 @@ def CHALL_AGC_ComputeRecognScores(auto_ids, true_ids):
     return FR_score
 
 
-def load_model() -> frp.Pipeline:
+def load_model(detector_threshold: float, classifier_threshold: float) -> frp.Pipeline:
     transform = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.4964, 0.5473, 0.5568], std=[0.1431, 0.0207, 0.0262]),
@@ -163,9 +165,9 @@ def load_model() -> frp.Pipeline:
         frp.MTCNNDetector(use_gpu=False, thresholds=[0.6, 0.7, 0.7]),
         # frp.MediaPipeDetector(model_asset_path="models/detector.tflite"),
         frp.FeatureExtractorPreprocessor(new_size=128, output_channels=3, color_transform=cv2.COLOR_RGB2LAB),
-        frp.DeepLearningExtractor(model_path="models/transfer_learning/model_3/epoch-69.ckpt", num_classes=80, input_channels=3, use_gpu=False, torch_transform=transform),
-        detection_min_prob=0.9,
-        classification_min_prob=0.4,
+        frp.DeepLearningExtractor(model_path="models/transfer_learning/model_1/epoch-200.ckpt", num_classes=80, input_channels=3, use_gpu=False, torch_transform=transform),
+        detection_min_prob=detector_threshold,
+        classification_min_prob=classifier_threshold,
     )
     print(f"Loaded model with {pipeline.feature_extractor.num_parameters()} parameters")
     return pipeline
@@ -218,7 +220,7 @@ AutoRecognSTR = []
 
 
 # Load your FRModel
-my_FRmodel = load_model()
+my_FRmodel = load_model(arguments.detector_threshold, arguments.classifier_threshold)
 
 # Initialize timer accumulator
 total_images = len(imageName)
