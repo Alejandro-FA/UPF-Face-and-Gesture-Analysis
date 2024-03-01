@@ -163,7 +163,6 @@ def load_model(detector_threshold: float, classifier_threshold: float) -> frp.Pi
     pipeline = frp.Pipeline(
         frp.FaceDetectorPreprocessor(output_channels=3),
         frp.MTCNNDetector(use_gpu=False, thresholds=[0.6, 0.7, 0.7]),
-        # frp.MediaPipeDetector(model_asset_path="models/detector.tflite"),
         frp.FeatureExtractorPreprocessor(new_size=128, output_channels=3, color_transform=cv2.COLOR_RGB2LAB),
         frp.DeepLearningExtractor(model_path="models/transfer_learning/superlight_v4_lab_norm/epoch-200.ckpt", num_classes=80, input_channels=3, use_gpu=False, torch_transform=transform),
         detection_min_prob=detector_threshold,

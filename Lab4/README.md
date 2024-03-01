@@ -2,27 +2,7 @@
 
 ## Installation instructions
 
-### conda
-
-To **replicate the development environment** simply run the following commands (you can change the name of the environment from `face_analysis` to something else):
-
-```bash
-conda env create --name face_analysis --file environment.yml &&
-conda activate face_analysis &&
-conda config --env --add channels conda-forge &&
-conda config --env --add channels pytorch &&
-conda config --env --add channels nvidia # Only needed if you have an Nvidia GPU
-```
-
-### pip
-
-Alternatively, we also provide a `requirements.txt` file that can be used with `pip`. Please take into account that the project has been developed with `python 3.11`. We have not tested if the code works with other versions of `python`. To **replicate the development environment** simply run the following commands:
-
-```bash
-python3 -m venv .venv &&
-source .venv/bin/activate &&
-python -m pip install -r requirements.txt
-```
+Check the [README](https://github.com/Alejandro-FA/UPF-Face-and-Gesture-Analysis/blob/main/README.md) of the repository.
 
 ## Execution instructions
 
@@ -34,23 +14,24 @@ python src/CHALL_AGC_FRbasicScript.py
 
 This script will load on the CPU the DL model that we have trained and will start recognizing the identity of the people in each of the images stored in the `data/TRAINING` directory.
 
-> NOTE: by default, the models will be loaded on the CPU. If you want to execute them in the GPU, you need to change the `load_model()` function for the following one:
->
-> ```python
-> def load_model() -> frp.Pipeline:
->    pipeline = frp.Pipeline(
->        frp.FaceDetectorPreprocessor(output_channels=3),
->        frp.MTCNNDetector(use_gpu=True, thresholds=[0.6, 0.7, 0.7]),
->        # frp.MediaPipeDetector(model_asset_path="model/detector.tflite"),
->        frp.FeatureExtractorPreprocessor(new_size=128, output_channels=3),
->        frp.DeepLearningExtractor(model_path="model/transfer_learning/lab4_version/model_4-15.ckpt", num_classes=80, input_channels=3, use_gpu=True),
->        detection_min_prob=0.5, # Increasing this value to 0.9 improves the accuracy
->        classification_min_prob=0.4,
->    )
->    print(f"Loaded model with {pipeline.feature_extractor.num_parameters()} parameters")
->    return pipeline
-> ```
+> NOTE: by default, the models will be loaded on the CPU. If you want to execute them in the GPU, you need to change the `load_model()` function. In particular, you need to change the `use_gpu` parameter value of the `MTCNNDetector` and the `DeepLearningExtractor` to `True`.
 > We strongly recommend <span style="color:red">NOT TO DO THIS</span> unless you have CUDA installed. We have not tested the code with other GPUs and we can not guarantee that it will run without errors.
+
+## How to navigate the Lab files
+
+The pretrained models are stored in the `models` folder. In the root of the `models` folder you will find the models trained with the `VGGFace2` dataset, and inside the `transfer_learning` folder you will find the models that have re-trained the last fully connected layer with the expanded dataset. The best model (and the one hard-coded in `src/CHALL_AGC_FRbasicScript.py`) is `transfer_learning/superlight_v4_lab_norm`. Inside its corresponding folder you will find the training checkpoints, a pickle containing the training and validation results and a summary of the model in `.txt` format.
+
+Evaluation results of each of the mdoels can be found in the `assets` folder. The structure of this folder is the same as the `models` folder. For each subdirectory, you will find three different plots: loss_acc_per_batch.png, train_validation_accuracy.png and train_validation_loss.png. The `assets/transfer_learning` directory contains the same structure, but the results correspond to the models after the transfer learning step has been done. Additionally, the assets folder includes the `assets/pipeline_visualization` directory, where you can find a visualization of each step of the pipeline for a particular image instance.
+
+All the source code can be found inside the `src` folder. Each component of the project is divided among three modules:
+- `Datasets`: this module contains all the source code used to preprocess the images of the datasets used. It also contains the `FeatureExtractorDataset`, which inherits from the `Dataset` class of PyTorch.
+- `FaceRecognitionPipeline`: this module contains all the pipline components used for the challenge (from detecting a face to returning an ID). 
+- `MyTorchWrapper`: An evolution of the end-to-end DL framework developed by us during last year's Deep Learning subject. It contains basic functionality to train, test, evaluate, save, load, ... a DL model with PyTorch.
+
+Additionaly, there are other useful python scripts (self explanatory with their names) mainly used to train, evaluate and preprocess datasets.
+
+The `data` folder contains the challenge images and some of the images that we have used during trainig.
+
 
 ## Face detector
 
@@ -84,7 +65,7 @@ The F1 score obtained for the TRAINING dataset that we were provided is of 79.18
 | Ryzen 9 7900X                  | 0 m 37.14 s |
 | Apple M1 Pro                   | 1 m 48.71 s |
 
-## Different models tried
+## Different models tried (OUTDATED)
 
 This is a summary of the performance of the new models with the VGG-Face2 dataset and the EXPANDED_v2 dataset
 
