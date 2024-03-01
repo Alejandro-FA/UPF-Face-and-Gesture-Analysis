@@ -4,7 +4,7 @@
 
 ### conda
 
-To **replicate the development environment** simply run the following commands (you can change the name of the environment from `face_analysis` to something else):
+Before proceeding with the installation, please check the `environment.yml` file. It is now configured to install the CUDA-enabled version of pytorch, but if your computer does not have an Nvidia GPU it will fail. Please comment the appropriate lines if this is your case. To **replicate the development environment** simply run the following commands (you can change the name of the environment from `face_analysis` to something else):
 
 ```bash
 conda env create --name face_analysis --file environment.yml &&
