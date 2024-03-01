@@ -21,8 +21,8 @@ SUMMARY_FILE_EXTENSION = "txt"
 def get_args():
     parser = argparse.ArgumentParser(description="Face recognition challenge")
     parser.add_argument("--summary", action=argparse.BooleanOptionalAction, default=False, help="After the execution of the challenge, generate a summary of the performance of the model")
-    parser.add_argument("--detector_threshold", type=float, default=0.9, help="Threshold for the face detector")
-    parser.add_argument("--classifier_threshold", type=float, default=0.4, help="Threshold for the face classifier")
+    parser.add_argument("--detector_threshold", type=float, default=0.98, help="Threshold for the face detector")
+    parser.add_argument("--classifier_threshold", type=float, default=0.49, help="Threshold for the face classifier")
     
     return parser.parse_args()
 
