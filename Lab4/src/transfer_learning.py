@@ -12,16 +12,13 @@ from torchvision import transforms
 
 if __name__ == "__main__":
     # Set global variables
-    seed_value = 42
+    seed_value = None
     use_gpu = True
     iomanager = mtw.IOManager(storage_dir="models/transfer_learning")
     batch_size = 512
     DATASET_BASE_PATH = "data"
-    PRETRAINED_MODEL_PATH = "models/model_7/epoch-8.ckpt"
+    PRETRAINED_MODEL_PATH = "models/superlight_v4_lab_norm/epoch-11.ckpt"
     PRETRAINED_MODEL_IDS = "data/datasets/VGG-Face2/vgg_expanded_annotations_relabeled.txt"
-    
-    color_transform = None
-    # color_transform = cv2.COLOR_RGB2LAB
 
     ###########################################################################
     # Train
