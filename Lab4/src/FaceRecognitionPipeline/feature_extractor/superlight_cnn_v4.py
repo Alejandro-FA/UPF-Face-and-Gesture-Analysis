@@ -73,7 +73,7 @@ class inception_mfm(nn.Module):
     
 
 class superlight_cnn_v4(nn.Module):
-    def __init__(self, num_classes=79077, input_channels=1, instance_norm: bool=False):
+    def __init__(self, num_classes=79077, input_channels=1, instance_norm: bool=False, dropout:float=0.5):
         super(superlight_cnn_v4, self).__init__()
         self.conv1 = inception_mfm(input_channels, 16, kernel_size_1=5, kernel_size_2=7, instance_norm=instance_norm)
         self.conv2 = inception_mfm(16, 32, kernel_size_1=3, kernel_size_2=5, instance_norm=instance_norm)
@@ -83,6 +83,7 @@ class superlight_cnn_v4(nn.Module):
 
         self.fc1 = mfm_v3(8*8*48, 133, type=0, instance_norm=instance_norm)
         self.fc2 = nn.Linear(133, num_classes)
+        self.dropout = dropout
 
     def forward(self, x):
         # Feature extraction
@@ -103,5 +104,5 @@ class superlight_cnn_v4(nn.Module):
         x = self.fc1(x)
 
         # Classification
-        x = F.dropout(x, p=0.2, training=self.training)
+        x = F.dropout(x, p=self.dropout, training=self.training)
         return self.fc2(x)

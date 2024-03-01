@@ -7,6 +7,7 @@ import torch.optim.lr_scheduler as lr_scheduler
 import numpy as np
 import argparse
 import cv2
+from torchvision import transforms
 
 
 def parse_args() -> argparse.Namespace:
@@ -30,8 +31,7 @@ if __name__ == "__main__":
     use_gpu = True
     iomanager = mtw.IOManager(storage_dir="models")
     batch_size = 512
-    # color_transform = None
-    color_transform = cv2.COLOR_RGB2LAB
+
     RESULTS_PATH = f"assets"
     CELEBA_DATASET_BASE_PATH = "data/datasets/CelebA"
     VGGFACE2_DATASET_BASE_PATH = "data/datasets/VGG-Face2"
@@ -40,6 +40,14 @@ if __name__ == "__main__":
     ###########################################################################
     # Train
     ###########################################################################
+    # Dataset transformations
+    color_transform = cv2.COLOR_RGB2LAB
+    # color_transform = None
+    transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.4964, 0.5473, 0.5568], std=[0.1431, 0.0207, 0.0262]),
+    ])
+
     # Torch device
     device = mtw.get_torch_device(use_gpu=True, debug=True)
 
@@ -57,11 +65,13 @@ if __name__ == "__main__":
         images_dir=train_dir,
         ids_file_path=ids_file,
         color_transform=color_transform,
+        transform=transform,
     )    
     validation_dataset = ds.FeatureExtractorDataset(
         images_dir=test_dir,
         ids_file_path=ids_file,
         color_transform=color_transform,
+        transform=transform,
     )
     
 
@@ -75,7 +85,7 @@ if __name__ == "__main__":
     evaluation = mtw.AccuracyEvaluation(loss_criterion=nn.CrossEntropyLoss())
 
     # Create an instance of the model
-    model = frp.superlight_cnn_v4(train_dataset.num_classes, input_channels=3, instance_norm=True)
+    model = frp.superlight_cnn_v4(train_dataset.num_classes, input_channels=3, instance_norm=False, dropout=0.5)
     # model = frp.superlight_network_9layers(train_dataset.num_classes, input_channels=3)
 
     # Optimizer and a learning rate scheduler

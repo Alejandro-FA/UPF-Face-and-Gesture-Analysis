@@ -11,6 +11,7 @@ import FaceRecognitionPipeline as frp
 import argparse
 import os
 import cv2
+from torchvision import transforms
 
 
 SUMMARY_FILE_NAME = "summary"
@@ -152,12 +153,17 @@ def CHALL_AGC_ComputeRecognScores(auto_ids, true_ids):
 
 
 def load_model() -> frp.Pipeline:
+    transform = transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.4964, 0.5473, 0.5568], std=[0.1431, 0.0207, 0.0262]),
+    ])
+
     pipeline = frp.Pipeline(
         frp.FaceDetectorPreprocessor(output_channels=3),
         frp.MTCNNDetector(use_gpu=False, thresholds=[0.6, 0.7, 0.7]),
         # frp.MediaPipeDetector(model_asset_path="models/detector.tflite"),
         frp.FeatureExtractorPreprocessor(new_size=128, output_channels=3, color_transform=cv2.COLOR_RGB2LAB),
-        frp.DeepLearningExtractor(model_path="models/transfer_learning/model_2/epoch-50.ckpt", num_classes=80, input_channels=3, use_gpu=False),
+        frp.DeepLearningExtractor(model_path="models/transfer_learning/model_3/epoch-69.ckpt", num_classes=80, input_channels=3, use_gpu=False, torch_transform=transform),
         detection_min_prob=0.9,
         classification_min_prob=0.4,
     )

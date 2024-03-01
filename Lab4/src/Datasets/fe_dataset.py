@@ -12,13 +12,13 @@ class FeatureExtractorDataset(Dataset):
     """
     Required class to load the any of the datasets used to train a feature extractor dataset provided for training
     """
-    def __init__(self, images_dir: str, ids_file_path: str, color_transform: int = None) -> None:
+    def __init__(self, images_dir: str, ids_file_path: str, color_transform: int = None, transform = transforms.ToTensor()) -> None:
         if not os.path.isdir(images_dir):
             raise ValueError(f"Invalid directory {images_dir}")
         if not os.path.isfile(ids_file_path):
             raise ValueError(f"Invalid file {ids_file_path}")
     
-        self.transform = transforms.ToTensor()
+        self.transform = transform
         self.color_transform = color_transform
         ids: dict[str, int] = get_ids(ids_file_path, extension="jpg")
         self.num_classes = get_num_unique_ids(ids_file_path)
