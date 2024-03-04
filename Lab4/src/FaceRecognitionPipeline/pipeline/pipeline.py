@@ -73,7 +73,8 @@ class Pipeline:
         
         # Save the Feature Extractor preprocessed image
         boxed_image: imageio.v2.Array = self.fe_preprocessor(fd_preprocessed, bounding_box)
-        imageio.imwrite(f"{output_dir}/fe_preprocessed.png", boxed_image)
+        boxed_image = cv2.cvtColor(boxed_image, cv2.COLOR_RGB2BGR)
+        cv2.imwrite(f"{output_dir}/fe_preprocessed.png", boxed_image)
         
         
     

@@ -14,11 +14,11 @@ pipeline = frp.Pipeline(
     frp.MTCNNDetector(use_gpu=False, thresholds=[0.6, 0.7, 0.7]),
     # frp.MediaPipeDetector(model_asset_path="models/detector.tflite"),
     # frp.FeatureExtractorPreprocessor(new_size=128, output_channels=3, color_transform=None),
-    frp.FeatureExtractorPreprocessor(new_size=128, output_channels=3, color_transform=cv2.COLOR_RGB2LAB),
-    frp.DeepLearningExtractor(model_path="models/transfer_learning/superlight_lab_expandedv2/epoch-50.ckpt", num_classes=80, input_channels=3, use_gpu=False),
+    frp.FeatureExtractorPreprocessor(new_size=128, output_channels=3, color_transform=None),
+    frp.DeepLearningExtractor(model_path="models/transfer_learning/superlight_v4_lab_norm/epoch-200.ckpt", num_classes=80, input_channels=3, use_gpu=False),
     detection_min_prob=0.9,
     classification_min_prob=0.4,
 )
 
-image = imread("data/TRAINING/image_A0017.jpg")
+image = imread("data/TRAINING/image_A0007.jpg")
 pipeline.visualize(image, "assets/pipeline_visualization")
